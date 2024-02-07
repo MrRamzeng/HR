@@ -1,0 +1,195 @@
+const keys = [{
+  'code': 'Backquote',
+  'symbol': 'ё',
+}, {
+  'code': 'Digit1',
+  'symbol': '1'
+}, {
+  'code': 'Digit2',
+  'symbol': '2',
+}, {
+  'code': 'Digit3',
+  'symbol': '3'
+}, {
+  'code': 'Digit4',
+  'symbol': '4',
+}, {
+  'code': 'Digit5',
+  'symbol': '5'
+}, {
+  'code': 'Digit6',
+  'symbol': '6',
+}, {
+  'code': 'Digit7',
+  'symbol': '7'
+}, {
+  'code': 'Digit8',
+  'symbol': '8',
+}, {
+  'code': 'Digit9',
+  'symbol': '9'
+}, {
+  'code': 'Digit0',
+  'symbol': '0',
+}, {
+  'code': 'Minus',
+  'symbol': '-'
+}, {
+  'code': 'Equal',
+  'symbol': '=',
+}, {
+  'code': 'Backspace',
+  'symbol': 'delete',
+  'class': 'size-3 small-type right'
+}, {
+  'code': 'Tab',
+  'symbol': 'Tab',
+  'class': 'size-3 small-type unused'
+}, {
+  'code': 'KeyQ',
+  'symbol': 'й'
+}, {
+  'code': 'KeyW',
+  'symbol': 'ц',
+}, {
+  'code': 'KeyE',
+  'symbol': 'у'
+}, {
+  'code': 'KeyR',
+  'symbol': 'к',
+}, {
+  'code': 'KeyT',
+  'symbol': 'е'
+}, {
+  'code': 'KeyY',
+  'symbol': 'н',
+}, {
+  'code': 'KeyU',
+  'symbol': 'г'
+}, {
+  'code': 'KeyI',
+  'symbol': 'ш',
+}, {
+  'code': 'KeyO',
+  'symbol': 'щ'
+}, {
+  'code': 'KeyP',
+  'symbol': 'з',
+}, {
+  'code': 'BracketLeft',
+  'symbol': 'х'
+}, {
+  'code': 'BracketRight',
+  'symbol': 'ъ',
+}, {
+  'code': 'Backslash',
+  'symbol': '\\',
+}, {
+  'code': 'CapsLock',
+  'symbol': 'Caps lock',
+  'class': 'size-4 small-type caps'
+}, {
+  'code': 'KeyA',
+  'symbol': 'ф'
+}, {
+  'code': 'KeyS',
+  'symbol': 'ы',
+}, {
+  'code': 'KeyD',
+  'symbol': 'в'
+}, {
+  'code': 'KeyF',
+  'symbol': 'а',
+}, {
+  'code': 'KeyG',
+  'symbol': 'п'
+}, {
+  'code': 'KeyH',
+  'symbol': 'р',
+}, {
+  'code': 'KeyJ',
+  'symbol': 'о'
+}, {
+  'code': 'KeyK',
+  'symbol': 'л',
+}, {
+  'code': 'KeyL',
+  'symbol': 'д'
+}, {
+  'code': 'Semicolon',
+  'symbol': 'ж'
+}, {
+  'code': 'Quote',
+  'symbol': 'э'
+}, {
+  'code': 'Enter',
+  'symbol': 'Enter',
+  'class': 'size-4 small-type right'
+}, {
+  'code': 'ShiftLeft',
+  'symbol': 'Shift',
+  'class': 'size-5 small-type'
+}, {
+  'code': 'KeyZ',
+  'symbol': 'я',
+}, {
+  'code': 'KeyX',
+  'symbol': 'ч'
+}, {
+  'code': 'KeyC',
+  'symbol': 'с',
+}, {
+  'code': 'KeyV',
+  'symbol': 'м'
+}, {
+  'code': 'KeyB',
+  'symbol': 'и',
+}, {
+  'code': 'KeyN',
+  'symbol': 'т'
+}, {
+  'code': 'KeyM',
+  'symbol': 'ь',
+}, {
+  'code': 'Comma',
+  'symbol': 'б'
+}, {
+  'code': 'Period',
+  'symbol': 'ю',
+}, {
+  'code': 'Slash',
+  'symbol': '.'
+}, {
+  'code': 'ShiftRight',
+  'symbol': 'Shift',
+  'class': 'size-6 small-type right'
+}, {
+  'code': 'ControlLeft',
+  'symbol': 'Ctrl',
+  'class': 'size-2 small-type'
+}, {
+  'code': 'MetaLeft',
+  'symbol': 'Win',
+  'class': 'size-2 small-type unused'
+}, {
+  'code': 'AltLeft',
+  'symbol': 'Alt',
+  'class': 'size-3 small-type'
+}, {
+  'code': 'Space',
+  'symbol': '',
+  'class': 'size-7'
+}, {
+  'code': 'AltRight',
+  'symbol': 'Alt',
+  'class': 'size-3 small-type right'
+}, {
+  'code': 'ContextMenu',
+  'symbol': '☰',
+  'class': 'size-2 small-type right unused'
+}, {
+  'code': 'ControlRight',
+  'symbol': 'Ctrl',
+  'class': 'size-2 small-type right'
+},
+]

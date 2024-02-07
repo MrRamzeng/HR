@@ -1,0 +1,49 @@
+{% load static %}
+{% block styles %}
+  <link rel="stylesheet" href="{% static 'styles/keyboard.css' %}"/>
+{% endblock styles %}
+<div id="root"></div>
+<script src="{% static 'scripts/vendor/react.development.js' %}"></script>
+<script src="{% static 'scripts/vendor/react-dom.development.js' %}"></script>
+<script src="{% static 'scripts/vendor/babel.min.js' %}"></script>
+<script src="{% static 'scripts/keyboard.js' %}"></script>
+<script type="text/babel">
+  const container = document.getElementById('root');
+  const root = ReactDOM.createRoot(container);
+  root.render(<Keyboard keys={keys}/>);
+
+  function Keyboard({keys = []}) {
+    const getKey = (code) => {
+      return document.querySelector(`[data-code="${code}"]`)
+    }
+
+    document.addEventListener('keydown', function (e) {
+      const button = getKey(e.code)
+
+      button.setAttribute('data-pressed', 'on')
+    })
+
+    document.addEventListener('keyup', function (e) {
+      const button = getKey(e.code)
+      const classes = button.classList
+
+      if (classes.contains('caps-active')) {
+        classes.remove('caps-active')
+      } else if (classes.contains('caps')) {
+        classes.add('caps-active')
+      }
+
+      button && button.removeAttribute('data-pressed')
+    })
+
+    return (
+      <figure className="keyboard">
+        {keys.map((key, index) => (
+          <div data-code={key.code} className={`key ${key.class || ''}`} key={index}>
+            {key.symbol}
+          </div>
+        ))}
+      </figure>
+    )
+  }
+</script>

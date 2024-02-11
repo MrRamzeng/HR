@@ -8,42 +8,71 @@
 <script src="{% static 'scripts/vendor/babel.min.js' %}"></script>
 <script src="{% static 'scripts/keyboard.js' %}"></script>
 <script type="text/babel">
-  const container = document.getElementById('root');
-  const root = ReactDOM.createRoot(container);
-  root.render(<Keyboard keys={keys}/>);
+  const container = document.getElementById('root')
+  const root = ReactDOM.createRoot(container)
+  root.render(<Keyboard keys={keys}/>)
 
   function Keyboard({keys = []}) {
-    const getKey = (code) => {
-      return document.querySelector(`[data-code="${code}"]`)
-    }
-
-    document.addEventListener('keydown', function (e) {
-      const button = getKey(e.code)
-
-      button.setAttribute('data-pressed', 'on')
-    })
-
-    document.addEventListener('keyup', function (e) {
-      const button = getKey(e.code)
-      const classes = button.classList
-
-      if (classes.contains('caps-active')) {
-        classes.remove('caps-active')
-      } else if (classes.contains('caps')) {
-        classes.add('caps-active')
-      }
-
-      button && button.removeAttribute('data-pressed')
-    })
-
     return (
       <figure className="keyboard">
         {keys.map((key, index) => (
           <div data-code={key.code} className={`key ${key.class || ''}`} key={index}>
-            {key.symbol}
+            {key.tagbol}
           </div>
         ))}
       </figure>
     )
   }
+</script>
+
+<script>
+  const text = document.getElementById('text-container').firstChild
+  let tags = [...text.children]
+  const inp = document.getElementById('inp')
+  let pos = 0
+
+  const getKey = (code) => {
+    return document.querySelector(`[data-code="${code}"]`)
+  }
+
+  function newLine() {
+    tags = tags.slice(pos + 1)
+    text.innerHTML = null
+    tags.forEach(tag => text.appendChild(tag))
+    pos = 0
+  }
+
+  inp.addEventListener('keydown', function (e) {
+    const button = getKey(e.code)
+    button.setAttribute('data-pressed', 'on')
+  })
+
+  inp.addEventListener('keyup', function (e) {
+    const button = getKey(e.code)
+    const classes = button.classList
+    const tag = tags[pos]
+    const char = tag.textContent
+
+    {# todo: edit #}
+    if (!['Alt', 'Shift', 'Control', 'CapsLock'].includes(e.key)) {
+
+      if (char === e.key ) {
+        tag.style.cssText = 'background: transparent; color: lightgrey'
+        tag.lastChild.nodeName === 'BR' && e.code === 'Space' ? newLine() : pos++
+      } else if (char.charCodeAt(0) === 182 && e.code === 'Enter') {
+        newLine()
+      } else {
+        inp.value = text.textContent.slice(0, pos)
+        tag.style.background = 'orange'
+      }
+    }
+
+    if (classes.contains('caps-active')) {
+      classes.remove('caps-active')
+    } else if (classes.contains('caps')) {
+      classes.add('caps-active')
+    }
+
+    button.removeAttribute('data-pressed')
+  })
 </script>

@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils.safestring import mark_safe
+from django.contrib.auth.models import User
 
 
-# Create your models here.
 class Book(models.Model):
     author = models.CharField('Автор', max_length=50)
     name = models.CharField('Название', max_length=50)
@@ -14,29 +14,27 @@ class Book(models.Model):
         verbose_name = 'книга'
 
     def __str__(self):
-        return self.name[:511]
+        return self.name
 
     def html_text(self):
         text = self.text
         index = 0
         space_idx = 0
         tags = []
-        # todo: edit
-        for tag in list(text):
-            if tag == '\r':
+
+        for symbol in list(text):
+            if symbol == '\r':
                 tags.append('<span>&para;\n</span>')
                 index = 0
-            elif tag == '\n':
+            elif symbol == '\n':
                 continue
-            elif tag == ' ':
-                tags.append(f'<span>{tag}</span>')
-                if index < 99:
-                    space_idx = len(tags) - 1
-                    index += 1
-                else:
-                    tags[space_idx] = f'<span>{tag}<br></span>'
-                    index = len(tags[space_idx:])
+            elif symbol == ' ':
+                tags.append(f'<span>{symbol}</span>')
+                if index >= 99:
+                    tags[space_idx] = f'<span>{symbol}<br></span>'
+                    index = len(tags[space_idx + 1:])
+                space_idx = len(tags) - 1
             else:
-                tags.append(f'<span>{tag}</span>')
-                index += 1
+                tags.append(f'<span>{symbol}</span>')
+            index += 1
         return mark_safe(''.join(tags))

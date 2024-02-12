@@ -3,11 +3,9 @@
   {{ book.name }}
 {% endblock title %}
 {% block content %}
-  <textarea rows="5" cols="80" id="inp" onselectStart="return false"
-       onpaste="return false" onCopy="return false" onCut="return false" onDrag="return false"
-            onDrop="return false" onblur="this.focus()" autofocus></textarea>
-  <div contenteditable="true" onselectStart="return false"
-       onpaste="return false" onCopy="return false" onCut="return false" onDrag="return false"
-            onDrop="return false" onblur="this.focus()" autofocus id="text-container">{{ book.html_text|linebreaks }}</div>
+  <input id="inp" onselectStart="return false" onpaste="return false"
+         onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false"
+         onblur="this.focus()" autofocus>
+  <div id="text-container">{{ book.html_text|linebreaks }}</div>
   {% include 'keyboard.html' %}
 {% endblock content %}

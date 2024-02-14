@@ -3,9 +3,8 @@
   {{ book.name }}
 {% endblock title %}
 {% block content %}
-  <input id="inp" onselectStart="return false" onpaste="return false"
-         onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false"
-         onblur="this.focus()" autofocus>
-  <div id="text-container">{{ book.html_text|linebreaks }}</div>
-  {% include 'keyboard.html' %}
+  <h2>{{ book.name }}</h2>
+  <p>{{ book.author }}</p>
+  <p>{{ book.published }}</p>
+  <a href="{% url 'add_book' book.id %}">Читать</a>
 {% endblock content %}

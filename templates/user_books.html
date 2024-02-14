@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load tags %}
+{% block title %}
+  Мои книги
+{% endblock title %}
+{% block content %}
+  <h1>Мои книги</h1>
+  {% for book in books %}
+    <div>
+      {{ book.book.name }}
+      <span>{% get_progress book.book_id book.position %}</span>
+    </div>
+    {% if book.is_finished %}
+      Книга прочитана
+    {% else %}
+      <a href="{% url 'printing' book.book_id %}">
+        {% if book.position %}
+          Продолжить чтение
+          {#{% elif book.is_finished %}#}
+          {#Читать снова#}
+        {% else %}
+          Начать чтение
+        {% endif %}
+      </a>
+    {% endif %}
+  {% endfor %}
+{% endblock content %}

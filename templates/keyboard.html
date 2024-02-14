@@ -27,36 +27,49 @@
 
 <script>
   const text = document.getElementById('text-container').firstChild
+
   let tags = [...text.children]
-  const inp = document.getElementById('inp')
-  let pos = 0
+  let stringPosition = 0
+  let tag = tags[stringPosition]
 
   const getKey = (code) => {
     return document.querySelector(`[data-code="${code}"]`)
   }
 
   function newLine() {
-    tags = tags.slice(pos + 1)
+    textPosition.value++
+    tags = tags.slice(stringPosition + 1)
     text.innerHTML = null
     tags.forEach(tag => text.appendChild(tag))
-    pos = 0
+    stringPosition = 0
   }
 
   inp.addEventListener('keydown', function (e) {
     const button = getKey(e.code)
-    const tag = tags[pos]
     const char = tag.textContent
 
     // todo: edit
     if (!['Alt', 'Shift', 'Control', 'CapsLock'].includes(e.key)) {
-      if (char === e.key ) {
+      if (char === e.key) {
         tag.style.cssText = 'background: transparent; color: lightgrey'
-        tag.lastChild.nodeName === 'BR' && e.code === 'Space' ? newLine() : pos++
+        tag.lastChild.nodeName === 'BR' && e.code === 'Space' ? newLine() : stringPosition++
+        textPosition.value++
       } else if (char.charCodeAt(0) === 182 && e.code === 'Enter') {
-        newLine()
+        textPosition.value = parseInt(textPosition.value) + 2
+        form.submit()
+        {# } else if (char !== e.key && e.key === 'Backspace') {#}
+        {#  stringPosition ? stringPosition-- : 0#}
+        {#  tag = tags[stringPosition]#}
+        {#  tag.style.cssText = 'background: yellow; color: black'#}
       } else {
-        inp.value = text.textContent.slice(0, pos)
-        tag.style.background = 'orange'
+        tag.style.cssText = 'background: orange; color: white'
+        {#stringPosition++#}
+      }
+
+      tag = tags[stringPosition]
+      if (!tags[stringPosition]) {
+        is_finished.value = true
+        form.submit()
       }
     }
 

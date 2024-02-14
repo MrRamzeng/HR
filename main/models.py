@@ -16,25 +16,46 @@ class Book(models.Model):
     def __str__(self):
         return self.name
 
-    def html_text(self):
-        text = self.text
+    def tags(self, position=0):
+        text = self.text[position:]
         index = 0
         space_idx = 0
         tags = []
 
-        for symbol in list(text):
-            if symbol == '\r':
+        for char in list(text):
+            if char == '\r':
                 tags.append('<span>&para;\n</span>')
                 index = 0
-            elif symbol == '\n':
+            elif char == '\n':
                 continue
-            elif symbol == ' ':
-                tags.append(f'<span>{symbol}</span>')
+            elif char == ' ':
+                tags.append(f'<span>{char}</span>')
                 if index >= 99:
-                    tags[space_idx] = f'<span>{symbol}<br></span>'
+                    tags[space_idx] = f'<span>{char}<br></span>'
                     index = len(tags[space_idx + 1:])
                 space_idx = len(tags) - 1
             else:
-                tags.append(f'<span>{symbol}</span>')
+                tags.append(f'<span>{char}</span>')
             index += 1
-        return mark_safe(''.join(tags))
+        return tags
+
+
+class Printing(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    book = models.ForeignKey(
+        'Book',
+        on_delete=models.CASCADE,
+        verbose_name='Книга'
+    )
+    position = models.PositiveIntegerField('Позиция', default=0)
+    is_finished = models.BooleanField('Закончена', default=False)
+
+    class Meta:
+        verbose_name_plural = 'книги'
+        verbose_name = 'книга'
+
+    def __str__(self):
+        return f'{self.book.name}, pos: {self.position}'
+
+    def text(self):
+        return mark_safe(''.join(self.book.tags(self.position)))

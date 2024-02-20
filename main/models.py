@@ -1,13 +1,12 @@
 from django.db import models
-from django.utils.safestring import mark_safe
 from django.contrib.auth.models import User
 
 
 class Book(models.Model):
     author = models.CharField('Автор', max_length=50)
     name = models.CharField('Название', max_length=50)
+    debug = models.BooleanField('Отладка', default=True)
     published = models.DateField('Дата публикации')
-    text = models.TextField('Текст')
 
     class Meta:
         verbose_name_plural = 'книги'
@@ -16,39 +15,43 @@ class Book(models.Model):
     def __str__(self):
         return self.name
 
-    def tags(self, position=0):
-        text = self.text[position:]
-        index = 0
-        space_idx = 0
-        tags = []
 
-        for char in list(text):
-            if char == '\r':
-                tags.append('<span>&para;\n</span>')
-                index = 0
-            elif char == '\n':
-                continue
-            elif char == ' ':
-                tags.append(f'<span>{char}</span>')
-                if index >= 99:
-                    tags[space_idx] = f'<span>{char}<br></span>'
-                    index = len(tags[space_idx + 1:])
-                space_idx = len(tags) - 1
-            else:
-                tags.append(f'<span>{char}</span>')
-            index += 1
-        return tags
+# class Chapter(models.Model):
+#     book = None
+#     name = None
+    # ...
+    # ...
+    # ...
+
+
+class Tag(models.Model):
+    book = models.ForeignKey('Book', on_delete=models.CASCADE)
+    name = models.CharField('HTML тэг', max_length=10)
+    src = models.TextField('источник', blank=True, null=True)
+    css = models.CharField('Css', max_length=50, blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = 'типы текста'
+        verbose_name = 'тип текста'
+
+    def __str__(self):
+        return f'{self.name}'
+
+
+class Content(models.Model):
+    tag = models.ForeignKey('Tag', on_delete=models.CASCADE)
+    text = models.TextField(verbose_name=None, blank=True, null=True)
+
+    def get_text_length(self):
+        return len(self.text)
 
 
 class Printing(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    book = models.ForeignKey(
-        'Book',
-        on_delete=models.CASCADE,
-        verbose_name='Книга'
-    )
+    book = models.ForeignKey('Book', on_delete=models.CASCADE)
+    content = models.ManyToManyField('Content', blank=True)
+    # todo: edit
     position = models.PositiveIntegerField('Позиция', default=0)
-    is_finished = models.BooleanField('Закончена', default=False)
 
     class Meta:
         verbose_name_plural = 'книги'
@@ -56,6 +59,3 @@ class Printing(models.Model):
 
     def __str__(self):
         return f'{self.book.name}, pos: {self.position}'
-
-    def text(self):
-        return mark_safe(''.join(self.book.tags(self.position)))

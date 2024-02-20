@@ -1,26 +1,43 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}
   {{ book.name }}
 {% endblock title %}
 {% block content %}
+  <style>
+      p {
+          margin: 6px 0;
+          font-weight: 400;
+          line-height: 1.4;
+          font-family: "Open Sans", sans-serif;
+          font-size: 17px;
+          text-indent: 35px;
+      }
+  </style>
   <form id="text-form" method="post">
     {% csrf_token %}
     {{ form }}
   </form>
-{#  {% if book.is_finished %}#}
-{#    <h1>Книга прочитана</h1>#}
-{#    <a href="{% url 'user_books' %}">Мои книги</a>#}
-{#  {% else %}#}
-    <input id="inp" onselectStart="return false" onpaste="return false"
-           onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false"
-           onblur="this.focus()" autofocus>
-    <div id="text-container">{{ book.text|linebreaks }}</div>
-    {% include 'keyboard.html' %}
-{#  {% endif %}#}
+  <input id="inp" autofocus>
+  <div id="text-container"></div>
+  <script src="{% static 'scripts/slicer.js' %}"></script>
+  <script src="{% static 'scripts/elements.js' %}"></script>
   <script>
-    const inp = document.getElementById('inp')
-    const textPosition = document.getElementById('id_position')
-    const is_finished = document.getElementById('id_is_finished')
-    const form = document.getElementById('text-form')
+    let htmlTag
+
+    {% for data in content %}
+      htmlTag = document.createElement(`{{ data.tag }}`)
+
+      {% if data.tag.css %}
+        htmlTag.setAttribute('class', '{{ data.tag.css }}')
+      {% endif %}
+
+      {% if data.tag.src %}
+        htmlTag.setAttribute('src', '{{ data.tag.src }}')
+      {% endif %}
+      htmlTag.nodeName !== 'IMG' ? htmlTag.innerHTML = slicer(`{{ data.text|safe }}`) : null
+      textContainer.appendChild(htmlTag)
+    {% endfor %}
   </script>
+  {% include 'keyboard.html' %}
 {% endblock content %}

@@ -8,20 +8,12 @@
   {% for book in books %}
     <div>
       {{ book.book.name }}
-      <span>{% get_progress book.book_id book.position %}</span>
+      <span>{% get_progress book.book_id book.content.count %}</span>
     </div>
-    {% if book.is_finished %}
-      Книга прочитана
+    {% if book.content %}
+      <a href="{% url 'printing' book.book_id %}">Начать чтение</a>
     {% else %}
-      <a href="{% url 'printing' book.book_id %}">
-        {% if book.position %}
-          Продолжить чтение
-          {#{% elif book.is_finished %}#}
-          {#Читать снова#}
-        {% else %}
-          Начать чтение
-        {% endif %}
-      </a>
+      Книга прочитана
     {% endif %}
   {% endfor %}
 {% endblock content %}

@@ -32,7 +32,7 @@ def book(request, id):
 
 def add_book(request, book_id):
     content = Content.objects.filter(
-        tag__book_id=book_id
+        type__book_id=book_id
     ).values_list(
         'id',
         flat=True

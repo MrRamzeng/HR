@@ -7,6 +7,7 @@
 <script src="{% static 'scripts/vendor/react-dom.development.js' %}"></script>
 <script src="{% static 'scripts/vendor/babel.min.js' %}"></script>
 <script src="{% static 'scripts/keyboard.js' %}"></script>
+<script src="{% static 'scripts/cursor.js' %}"></script>
 <script type="text/babel">
   const container = document.getElementById('root')
   const root = ReactDOM.createRoot(container)
@@ -26,7 +27,7 @@
 </script>
 
 <script>
-  const currentTag = textContainer.firstChild
+  const currentTag = textContainer.firstElementChild
   let tags = [...currentTag.children]
   let stringPosition = 0
   let tag = tags[stringPosition]
@@ -36,8 +37,7 @@
   }
 
   function newLine() {
-    console.log(true)
-    textPosition.value++
+    currentTag.style.cssText = 'text-indent: 0'
     tags = tags.slice(stringPosition + 1)
     currentTag.innerHTML = null
     tags.forEach(tag => currentTag.appendChild(tag))
@@ -52,18 +52,18 @@
     }
   }
 
-
-  inp.addEventListener('keydown', function (e) {
+  textContainer.addEventListener('keydown', function (e) {
     const button = getKey(e.code)
     const char = getChar(tag)
-
     if (!['Alt', 'Shift', 'Control', 'CapsLock'].includes(e.key)) {
       if (currentTag.nodeName === 'IMG') {
+        {#setCursorPosition(1)#}
         if (e.code === 'Enter') {
           form.submit()
         }
       } else if (char === e.key) {
         tag.style.cssText = 'background: transparent; color: lightgrey'
+        {#tag.textContent = null#}
         tag.lastChild.nodeName === 'BR' && ['Space', 'Enter'].includes(e.key)
           ? newLine() : stringPosition++
       } else if (char.charCodeAt(0) === 182 && e.code === 'Enter') {
@@ -83,12 +83,14 @@
       } catch (e) {
         return
       }
+      setCursorPosition(stringPosition)
     }
 
     button.setAttribute('data-pressed', 'on')
+    e.preventDefault()
   })
 
-  inp.addEventListener('keyup', function (e) {
+  textContainer.addEventListener('keyup', function (e) {
     const button = getKey(e.code)
     const classes = button.classList
 

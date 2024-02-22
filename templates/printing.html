@@ -13,27 +13,42 @@
           font-size: 17px;
           text-indent: 35px;
       }
+
+      .text-center {
+          text-align: center;
+      }
+
+      #text-container {
+          margin: 0 auto;
+          width: 751px;
+          height: 320px;
+          scrollbar-width: none;
+          overflow: auto;
+          padding: 10px;
+      }
   </style>
   <form id="text-form" method="post">
     {% csrf_token %}
     {{ form }}
   </form>
-  <input id="inp" autofocus>
-  <div id="text-container"></div>
+  <div id="text-container" contenteditable="true" onselectstart="return false" onCut="return false"
+       onpaste="return false;" onCopy="return false" onDrag="return false" onDrop="return false"
+       onblur="this.focus()" autofocus>
+  </div>
   <script src="{% static 'scripts/slicer.js' %}"></script>
   <script src="{% static 'scripts/elements.js' %}"></script>
   <script>
     let htmlTag
 
     {% for data in content %}
-      htmlTag = document.createElement(`{{ data.tag }}`)
+      htmlTag = document.createElement(`{{ data.type.tag }}`)
 
-      {% if data.tag.css %}
-        htmlTag.setAttribute('class', '{{ data.tag.css }}')
+      {% if data.type.css %}
+        htmlTag.setAttribute('class', '{{ data.type.css }}')
       {% endif %}
 
-      {% if data.tag.src %}
-        htmlTag.setAttribute('src', '{{ data.tag.src }}')
+      {% if data.type.src %}
+        htmlTag.setAttribute('src', '{{ data.type.src.url }}')
       {% endif %}
       htmlTag.nodeName !== 'IMG' ? htmlTag.innerHTML = slicer(`{{ data.text|safe }}`) : null
       textContainer.appendChild(htmlTag)

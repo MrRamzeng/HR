@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Book, Printing, Tag, Content
+from .models import Book, Printing, Paragraph, Content, Tag
 import nested_admin
 from django.db import models
 from django import forms
@@ -16,9 +16,10 @@ form_preset = {
 }
 
 admin.site.register(Printing)
+admin.site.register(Tag)
 
 
-class ContentInline(nested_admin.NestedStackedInline):
+class ContentInline(nested_admin.NestedTabularInline):
     formfield_overrides = form_preset
     model = Content
     verbose_name_plural = 'Text'
@@ -32,17 +33,17 @@ class ContentInline(nested_admin.NestedStackedInline):
         }
 
 
-class TagInline(nested_admin.NestedStackedInline):
+class ParagraphInline(nested_admin.NestedTabularInline):
     formfield_overrides = form_preset
-    model = Tag
-    extra = 1
+    model = Paragraph
+    extra = 0
     inlines = [ContentInline]
 
-    def has_delete_permission(self, request, obj=None):
-        return False
+    # def has_delete_permission(self, request, obj=None):
+    #     return False
 
 
 @admin.register(Book)
 class BookAdmin(nested_admin.NestedModelAdmin):
     formfield_overrides = form_preset
-    inlines = [TagInline]
+    inlines = [ParagraphInline]

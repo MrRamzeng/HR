@@ -10,6 +10,8 @@
     <title>{% block title %}HandRead{% endblock title %}</title>
   </head>
   <body>
+    <a href="{% url 'user_books' %}">Мои книги</a>
+    <a href="{% url 'books' %}">книги</a>
     {% block content %}
     {% endblock content %}
   </body>

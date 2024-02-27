@@ -36,12 +36,18 @@
     return document.querySelector(`[data-code="${code}"]`)
   }
 
+  function scroll(margin = 0) {
+    let timer = setInterval(() => textContainer.scrollBy(0, 1), 20)
+    const lh = parseInt(window.getComputedStyle(tag).lineHeight)
+    const height = lh ? lh : tag.offsetHeight
+    setTimeout(() => clearInterval(timer), (
+      height + margin) * 20
+    )
+  }
+
   function newLine() {
-    currentTag.style.cssText = 'text-indent: 0'
-    tags = tags.slice(stringPosition + 1)
-    currentTag.innerHTML = null
-    tags.forEach(tag => currentTag.appendChild(tag))
-    stringPosition = 0
+    stringPosition++
+    scroll()
   }
 
   function getChar(tag) {
@@ -57,18 +63,21 @@
     const char = getChar(tag)
     if (!['Alt', 'Shift', 'Control', 'CapsLock'].includes(e.key)) {
       if (currentTag.nodeName === 'IMG') {
-        {#setCursorPosition(1)#}
         if (e.code === 'Enter') {
           form.submit()
         }
-      } else if (char === e.key) {
+      } else if (char === e.key || (char.charCodeAt() === 8211 && e.key === '-')) {
         tag.style.cssText = 'background: transparent; color: lightgrey'
-        {#tag.textContent = null#}
-        tag.lastChild.nodeName === 'BR' && ['Space', 'Enter'].includes(e.key)
+        tag.lastChild.nodeName === 'BR' && ['Space', 'Enter'].includes(e.code)
           ? newLine() : stringPosition++
       } else if (char.charCodeAt(0) === 182 && e.code === 'Enter') {
         textPosition.value = 0
-
+        const margin = parseInt(
+          window.getComputedStyle(
+            tag.parentElement, null
+          ).getPropertyValue('margin-bottom')
+        )
+        scroll(margin)
         form.submit()
       } else {
         tag.style.cssText = 'background: orange; color: white'

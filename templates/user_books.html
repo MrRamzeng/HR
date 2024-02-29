@@ -1,15 +1,14 @@
 {% extends 'base.html' %}
-{% load tags %}
 {% block title %}
   Мои книги
 {% endblock title %}
 {% block content %}
   <h1>Мои книги</h1>
   {% for book in books %}
-    <div>
-      {{ book.book.name }}
-      <span>{% get_progress book.book_id book.content.count %}</span>
-    </div>
+    {% with book.book as book %}
+      {% include 'includes/book.html' %}
+    {% endwith %}
+    <span>{{ book.get_print_progress }}</span>
     {% if book.content %}
       <a href="{% url 'printing' book.book_id %}">Начать чтение</a>
     {% else %}

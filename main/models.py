@@ -1,25 +1,112 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from main.storage import OverwriteStorage
 
-def image_path(instance, file):
-    print(dir(instance))
-    return f'{instance}/{file}'
+
+def file_path(instance, file):
+    return f'{instance._meta.verbose_name_plural}/{instance}/{file}'
+
+
+class Country(models.Model):
+    name = models.CharField('Название', max_length=20)
+    image = models.ImageField(
+        'Флаг', storage=OverwriteStorage(), upload_to=file_path
+    )
+
+    class Meta:
+        verbose_name_plural = 'страны'
+        verbose_name = 'страна'
+
+    def __str__(self):
+        return self.name
+
+
+class Author(models.Model):
+    last_name = models.CharField('Фамилия', max_length=20)
+    first_name = models.CharField('Имя', max_length=20)
+    patronymic = models.CharField(
+        'Отчество', max_length=20, blank=True, null=True
+    )
+    pseudonym = models.CharField(
+        'Псевдоним', max_length=20, blank=True, null=True
+    )
+    image = models.ImageField(
+        'Фото', storage=OverwriteStorage(), upload_to=file_path
+    )
+    biography = models.TextField('Биография')
+    date_of_birth = models.DateField('Дата рождения')
+    date_of_death = models.DateField(
+        'Дата смерти', blank=True, null=True
+    )
+    country = models.ManyToManyField('Country', verbose_name='Гражданство')
+
+    class Meta:
+        verbose_name_plural = 'авторы'
+        verbose_name = 'автор'
+
+    def __str__(self):
+        return f'{self.pseudonym or self.get_full_name()}'
+
+    def get_full_name(self):
+        return f'{self.last_name} {self.first_name}'
+
+
+class Genre(models.Model):
+    name = models.CharField('Название жанра', max_length=50)
+
+    class Meta:
+        verbose_name_plural = 'жанры'
+        verbose_name = 'жанр'
+
+    def __str__(self):
+        return self.name
 
 
 class Font(models.Model):
     name = models.CharField('Шрифт', max_length=50)
-    file = models.FileField('Файл')
+    file = models.FileField(
+        'Файл', storage=OverwriteStorage(), upload_to=file_path
+    )
+
+    class Meta:
+        verbose_name_plural = 'шрифты'
+        verbose_name = 'шрифт'
+
+    def __str__(self):
+        return self.name
+
+
+class BookSeries(models.Model):
+    name = models.CharField('Название серии', max_length=50)
+
+    class Meta:
+        verbose_name_plural = 'серии'
+        verbose_name = 'серия'
 
 
 class Book(models.Model):
-    author = models.CharField('Автор', max_length=50)
-    image = models.ImageField('Обложка', upload_to=image_path)
     name = models.CharField('Название', max_length=50)
+    authors = models.ManyToManyField('Author', 'Авторы')
+    image = models.ImageField(
+        'Обложка', storage=OverwriteStorage(), upload_to=file_path
+    )
+    description = models.TextField('Описание')
     published = models.DateField('Дата публикации')
     font_family = models.ForeignKey(
         'Font', models.SET_NULL, blank=True, null=True
     )
+    genre = models.ManyToManyField('Genre', verbose_name='Жанр')
+    price = models.SmallIntegerField('Цена', default=100)
+    sale = models.SmallIntegerField('Скидка %', default=0)
+    series = models.ForeignKey(
+        'BookSeries', models.CASCADE, verbose_name='Серия', blank=True,
+        null=True
+    )
+    series_number = models.SmallIntegerField(
+        'Номер серии', blank=True, null=True
+    )
+    # languages = models.ManyToManyField('Language', verbose_name='Языки')
     debug = models.BooleanField('Отладка', default=True)
 
     class Meta:
@@ -40,6 +127,10 @@ class Book(models.Model):
 class Tag(models.Model):
     name = models.CharField('HTML тэг', max_length=10)
 
+    class Meta:
+        verbose_name_plural = 'тэги'
+        verbose_name = 'тэг'
+
     def __str__(self):
         return self.name
 
@@ -49,7 +140,10 @@ class Paragraph(models.Model):
     tag = models.ForeignKey(
         'Tag', models.SET_NULL, blank=True, null=True
     )
-    src = models.FileField('источник', blank=True, null=True)
+    src = models.FileField(
+        'источник', storage=OverwriteStorage(), upload_to=file_path,
+        blank=True, null=True
+    )
     css = models.CharField('Css', max_length=50, blank=True, null=True)
 
     class Meta:
@@ -62,7 +156,7 @@ class Paragraph(models.Model):
 
 class Content(models.Model):
     type = models.ForeignKey('Paragraph', models.CASCADE)
-    text = models.TextField(verbose_name=None, blank=True, null=True)
+    text = models.TextField('Текст', blank=True, null=True)
 
     class Meta:
         verbose_name_plural = 'тексты'
@@ -71,20 +165,42 @@ class Content(models.Model):
     def __str__(self):
         return str(self.id)
 
-    # def get_text_length(self):
-    #     return len(self.text)
+
+class BookPage(models.Model):
+    book = models.ForeignKey('Book', models.CASCADE)
+    A4 = 'A4'
+    A6 = 'A6'
+    SIZES = (
+        (A4, 'A4'),
+        (A6, 'A6'),
+    )
+    size = models.CharField(
+        'Размер', max_length=10, choices=SIZES, default=A4
+    )
+    image = models.ImageField(
+        'Файл книги', storage=OverwriteStorage(), upload_to=file_path
+    )
+
+
+# class Reading(models.Model):
+#     user = models.ForeignKey()
 
 
 class Printing(models.Model):
     user = models.ForeignKey(User, models.CASCADE)
     book = models.ForeignKey('Book', models.CASCADE)
     content = models.ManyToManyField('Content', blank=True)
+    read_content = models.ManyToManyField('BookPage', blank=True)
     # todo: edit
     position = models.PositiveIntegerField('Позиция', default=0)
 
     class Meta:
-        verbose_name_plural = 'книги'
-        verbose_name = 'книга'
+        verbose_name_plural = 'печать'
+        verbose_name = 'печать'
+
+    def get_print_progress(self):
+        count = Content.objects.filter(type__book_id=self.book_id).count()
+        return f'{int(100 / count * (count - self.content.count()))}%'
 
     def __str__(self):
         return f'{self.book.name}, pos: {self.position}'

@@ -1,3 +1,19 @@
 .module h2 {
     display: none;
 }
+
+.submit-row {
+    bottom: 10px;
+    position: fixed;
+    right: 0;
+}
+
+label {
+    min-width: max-content !important;
+    width: max-content !important;
+}
+
+.inline-group {
+    overflow: auto;
+    max-height: 373px;
+}

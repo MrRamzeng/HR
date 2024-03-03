@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load tags %}
 {% block title %}
   Мои книги
 {% endblock title %}
@@ -10,9 +11,21 @@
     {% endwith %}
     <span>{{ book.get_print_progress }}</span>
     {% if book.content %}
-      <a href="{% url 'printing' book.book_id %}">Начать чтение</a>
+      <a href="{% url 'printing' book.book_id %}">Печатать</a>
     {% else %}
-      Книга прочитана
+      Книга напечатана
+    {% endif %}
+    {% if book.page %}
+      <span>
+        {% get_progress book.pages.count book.page|add:1 %}
+      </span>
+    {% endif %}
+    {% if book.is_finished %}
+      Прочитана
+    {% elif book.page == 0 %}
+      <a href="{% url 'reading' book.book_id %}">Начать чтение</a>
+    {% else %}
+      <a href="{% url 'reading' book.book_id %}">Продолжить чтение</a>
     {% endif %}
   {% endfor %}
 {% endblock content %}

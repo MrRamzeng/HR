@@ -5,7 +5,7 @@ register = template.Library()
 
 
 @register.simple_tag
-def get_progress(book_id, reminder):
-    count = Content.objects.filter(type__book_id=book_id).count()
-    print(count, reminder)
-    return f'{100 / count * (count - reminder)}%'
+def get_progress(pages, page):
+    if page + 1 == pages:
+        return '100%'
+    return f'{int(page * 100 / pages)}%'

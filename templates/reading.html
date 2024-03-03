@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load tags %}
+{% block title %}
+  book
+{% endblock title %}
+{% block content %}
+  {#  {{ progress }}#}
+  {% with count=book.pages.count position=form.position.value %}
+    {% get_progress count position|add:1 %}
+    <div id="content" style="width: max-content; position: relative; padding: 0 100px">
+      {% for page in pages %}
+        <img src="{{ page.image.url }}" style="height: 90vh" alt="{{ page.image.name }}">
+      {% endfor %}
+      <form id="page-form" method="post">
+        {% csrf_token %}
+        {{ form }}
+        {% if position > 0 %}
+          <button type="submit" class="turn" style="left: 0" onclick="previousPage()"><</button>
+        {% endif %}
+        {% if position < count %}
+          <button type="submit" class="turn" style="right: 0" onclick="nextPage()">></button>
+        {% endif %}
+      </form>
+    </div>
+    <style>
+      .turn {
+          position: absolute;
+          height: 100%;
+          width: 100px;
+          top: 0;
+          font-size: 54px;
+          background: transparent;
+          border: none;
+          color: #e5e5e5;
+      }
+      .turn:hover {
+          background: #f5f5f5;
+          color: #7D7D7D;
+          opacity: 30%;
+      }
+    </style>
+    <script>
+      const page = document.getElementById('id_position')
+      const is_finished = document.getElementById('id_is_finished')
+
+      function nextPage() {
+        {% if not count|divisibleby:2 and position|add:1 == count or position|add:2 == count  %}
+          finish()
+        {% else %}
+          page.value = parseInt(page.value) + 2
+        {% endif %}
+      }
+
+      function previousPage() {
+        page.value = parseInt(page.value) - 2
+      }
+
+      function finish() {
+        confirm('Книга прочитана') ? is_finished.checked = true : null
+      }
+    </script>
+  {% endwith %}
+{% endblock content %}

@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -6,6 +7,13 @@ from main.storage import OverwriteStorage
 
 def file_path(instance, file):
     return f'{instance._meta.verbose_name_plural}/{instance}/{file}'
+
+
+def page_path(instance, file):
+    print(instance.book._meta.verbose_name_plural, instance.book.name,
+        instance._meta.verbose_name_plural, file)
+    return (f'{instance.book._meta.verbose_name_plural}/{instance.book.name}/'
+            f'{instance._meta.verbose_name_plural}/{file}')
 
 
 class Country(models.Model):
@@ -97,8 +105,11 @@ class Book(models.Model):
         'Font', models.SET_NULL, blank=True, null=True
     )
     genre = models.ManyToManyField('Genre', verbose_name='Жанр')
-    price = models.SmallIntegerField('Цена', default=100)
-    sale = models.SmallIntegerField('Скидка %', default=0)
+    price = models.PositiveSmallIntegerField('Цена', default=100)
+    sale = models.PositiveSmallIntegerField(
+        'Скидка %', validators=[MinValueValidator(0), MaxValueValidator(100)],
+        default=0
+    )
     series = models.ForeignKey(
         'BookSeries', models.CASCADE, verbose_name='Серия', blank=True,
         null=True
@@ -115,6 +126,26 @@ class Book(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class BookPage(models.Model):
+    book = models.ForeignKey('Book', models.CASCADE)
+    A4 = 'A4'
+    A6 = 'A6'
+    SIZES = (
+        (A4, 'A4'),
+        (A6, 'A6'),
+    )
+    size = models.CharField(
+        'Размер', max_length=10, choices=SIZES, default=A4
+    )
+    image = models.ImageField(
+        'Файл книги', storage=OverwriteStorage(), upload_to=page_path
+    )
+
+    class Meta:
+        verbose_name_plural = 'страницы'
+        verbose_name = 'старница'
 
 
 # class Chapter(models.Model):
@@ -166,33 +197,24 @@ class Content(models.Model):
         return str(self.id)
 
 
-class BookPage(models.Model):
+class Reading(models.Model):
+    user = models.ForeignKey(User, models.CASCADE)
     book = models.ForeignKey('Book', models.CASCADE)
-    A4 = 'A4'
-    A6 = 'A6'
-    SIZES = (
-        (A4, 'A4'),
-        (A6, 'A6'),
+    pages = models.ManyToManyField('BookPage', blank=True)
+    page = models.PositiveIntegerField(
+        validators=[MinValueValidator(0)], default=0
     )
-    size = models.CharField(
-        'Размер', max_length=10, choices=SIZES, default=A4
-    )
-    image = models.ImageField(
-        'Файл книги', storage=OverwriteStorage(), upload_to=file_path
-    )
-
-
-# class Reading(models.Model):
-#     user = models.ForeignKey()
+    is_finished = models.BooleanField(default=False)
 
 
 class Printing(models.Model):
     user = models.ForeignKey(User, models.CASCADE)
     book = models.ForeignKey('Book', models.CASCADE)
     content = models.ManyToManyField('Content', blank=True)
-    read_content = models.ManyToManyField('BookPage', blank=True)
     # todo: edit
-    position = models.PositiveIntegerField('Позиция', default=0)
+    position = models.PositiveIntegerField(
+        'Позиция', validators=[MinValueValidator(0)], default=0
+    )
 
     class Meta:
         verbose_name_plural = 'печать'

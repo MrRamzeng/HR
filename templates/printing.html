@@ -49,17 +49,17 @@
   <script>
     let htmlTag
 
-    {% for data in content %}
-      htmlTag = document.createElement(`{{ data.type.tag }}`)
+    {% for content in contents %}
+      htmlTag = document.createElement(`{{ content.type.tag }}`)
 
-      {% if data.type.css %}
-        htmlTag.setAttribute('class', '{{ data.type.css }}')
+      {% if content.type.css %}
+        htmlTag.setAttribute('class', '{{ content.type.css }}')
       {% endif %}
 
-      {% if data.type.src %}
-        htmlTag.setAttribute('src', '{{ data.type.src.url }}')
+      {% if content.type.src %}
+        htmlTag.setAttribute('src', '{{ content.type.src.url }}')
       {% endif %}
-      htmlTag.nodeName !== 'IMG' ? htmlTag.innerHTML = slicer(`{{ data.text|safe }}`) : null
+      htmlTag.nodeName !== 'IMG' ? htmlTag.innerHTML = slicer(`{{ content.text|safe }}`) : null
       textContainer.appendChild(htmlTag)
     {% endfor %}
   </script>

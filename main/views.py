@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from rest_framework.generics import ListAPIView, UpdateAPIView
 
 from .forms import UpdatePosition, UpdatePagePosition
-from .models import Book, Content, Printing, Reading, BookPage
+from .models import Book, Content, Reading, BookPage
 from .serializer import BooksSerializer
 
 
@@ -38,28 +38,29 @@ def book(request, id):
 
 
 def add_book(request, book_id):
-    content = Content.objects.filter(
+    contents = Content.objects.filter(
         type__book_id=book_id
     ).values_list(
-        'id',
-        flat=True
+        'id', flat=True
     )
-    p, created = Printing.objects.get_or_create(
+    pages = BookPage.objects.filter(
+        book_id=book_id
+    ).values_list(
+        'id', flat=True
+    )
+    r, created = Reading.objects.get_or_create(
         user_id=request.user.id,
         book_id=book_id
     )
-    r, created = Reading.objects.get_or_create(user_id=request.user.id,
-        book_id=book_id)
+    print(r)
     if created:
-        r.pages.add(*BookPage.objects.filter(book_id=book_id).values_list('id',
-            flat=True)
-        )
-        p.content.add(*content)
+        r.contents.add(*contents)
+        r.pages.add(*pages)
     return redirect('printing', book_id=book_id)
 
 
 def user_books(request):
-    books = Printing.objects.filter(user_id=request.user.id)
+    books = Reading.objects.filter(user_id=request.user.id)
     return render(
         request,
         'user_books.html',
@@ -72,12 +73,11 @@ def user_books(request):
 def reading(request, book_id):
     book = Reading.objects.get(book_id=book_id, user_id=request.user.id)
     pages = book.pages.all()[book.page:book.page + 2]
-    print(pages)
     if request.method == 'POST':
         form = UpdatePagePosition(request.POST)
         if form.is_valid():
             book.page = form.cleaned_data.get('position')
-            book.is_finished = form.cleaned_data.get('is_finished')
+            book.has_read = form.cleaned_data.get('has_read')
             book.save()
             return redirect('reading', book_id)
     else:
@@ -86,7 +86,7 @@ def reading(request, book_id):
                 'position': book.page
             }
         )
-    if book.is_finished:
+    if book.has_read:
         return redirect('user_books')
     return render(
         request,
@@ -105,14 +105,14 @@ def reading(request, book_id):
 
 
 def printing(request, book_id):
-    book = Printing.objects.get(book_id=book_id, user_id=request.user.id)
+    book = Reading.objects.get(book_id=book_id, user_id=request.user.id)
     if request.method == 'POST':
         form = UpdatePosition(request.POST)
         if form.is_valid():
             book.position = form.cleaned_data.get('position')
-            book.content.remove(book.content.first().id)
+            book.contents.remove(book.contents.first().id)
             book.save()
-            return redirect('user_books') if not book.content else redirect(
+            return redirect('user_books') if not book.contents else redirect(
                 'printing', book_id
             )
     else:
@@ -121,12 +121,12 @@ def printing(request, book_id):
                 'position': book.position
             }
         )
-    content = book.content.all()
+    contents = book.contents.all()
     return render(
         request,
         'printing.html',
         {
             'form': form,
-            'content': content
+            'contents': contents
         }
-    ) if content else redirect('user_books')
+    ) if contents else redirect('user_books')

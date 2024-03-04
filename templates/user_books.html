@@ -20,6 +20,7 @@
         {% get_progress book.pages.count book.page|add:1 %}
       </span>
     {% endif %}
+    {{ book. }}
     {% if book.is_finished %}
       Прочитана
     {% elif book.page == 0 %}

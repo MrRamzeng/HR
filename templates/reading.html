@@ -41,7 +41,7 @@
     </style>
     <script>
       const page = document.getElementById('id_position')
-      const is_finished = document.getElementById('id_is_finished')
+      const has_read = document.getElementById('id_has_read')
 
       function nextPage() {
         {% if not count|divisibleby:2 and position|add:1 == count or position|add:2 == count  %}
@@ -56,7 +56,7 @@
       }
 
       function finish() {
-        confirm('Книга прочитана') ? is_finished.checked = true : null
+        confirm('Книга прочитана') ? has_read.value = "True" : null
       }
     </script>
   {% endwith %}

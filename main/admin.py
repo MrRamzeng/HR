@@ -2,8 +2,8 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 
 from .models import (
-    Author, Book, Printing, Paragraph, Content, Tag, Country, BookSeries, Genre,
-    BookPage
+    Author, Book, Paragraph, Content, Tag, Country, BookSeries, Genre,
+    BookPage, Reading
 )
 import nested_admin
 from django.db import models
@@ -51,7 +51,7 @@ class AuthorAdmin(nested_admin.NestedModelAdmin):
 
 
 admin.site.register(Country)
-admin.site.register(Printing)
+admin.site.register(Reading)
 admin.site.register(Tag)
 admin.site.register(Genre)
 admin.site.register(BookSeries)

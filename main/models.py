@@ -197,32 +197,37 @@ class Content(models.Model):
         return str(self.id)
 
 
+# class Reading(models.Model):
+#     user = models.ForeignKey(User, models.CASCADE)
+#     book = models.ForeignKey('Book', models.CASCADE)
+#     is_finished = models.BooleanField(default=False)
+
+
 class Reading(models.Model):
     user = models.ForeignKey(User, models.CASCADE)
     book = models.ForeignKey('Book', models.CASCADE)
+    contents = models.ManyToManyField('Content', blank=True)
+    # todo: edit
+    print_position = models.PositiveIntegerField(
+        'Позиция', validators=[MinValueValidator(0)], default=0
+    )
     pages = models.ManyToManyField('BookPage', blank=True)
     page = models.PositiveIntegerField(
         validators=[MinValueValidator(0)], default=0
     )
-    is_finished = models.BooleanField(default=False)
-
-
-class Printing(models.Model):
-    user = models.ForeignKey(User, models.CASCADE)
-    book = models.ForeignKey('Book', models.CASCADE)
-    content = models.ManyToManyField('Content', blank=True)
-    # todo: edit
+    has_read = models.BooleanField(default=False)
+    has_print = models.BooleanField(default=False)
     position = models.PositiveIntegerField(
         'Позиция', validators=[MinValueValidator(0)], default=0
     )
 
     class Meta:
-        verbose_name_plural = 'печать'
-        verbose_name = 'печать'
+        verbose_name_plural = 'чтение'
+        verbose_name = 'чтение'
 
     def get_print_progress(self):
         count = Content.objects.filter(type__book_id=self.book_id).count()
-        return f'{int(100 / count * (count - self.content.count()))}%'
+        return f'{int(100 / count * (count - self.contents.count()))}%'
 
     def __str__(self):
-        return f'{self.book.name}, pos: {self.position}'
+        return f'{self.book.name}'

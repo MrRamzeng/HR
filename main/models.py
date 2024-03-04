@@ -1,8 +1,8 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from django.contrib.auth.models import User
 
-from main.storage import OverwriteStorage
+from user.models import User
+from HandRead.storage import OverwriteStorage
 
 
 def file_path(instance, file):
@@ -195,12 +195,6 @@ class Content(models.Model):
 
     def __str__(self):
         return str(self.id)
-
-
-# class Reading(models.Model):
-#     user = models.ForeignKey(User, models.CASCADE)
-#     book = models.ForeignKey('Book', models.CASCADE)
-#     is_finished = models.BooleanField(default=False)
 
 
 class Reading(models.Model):

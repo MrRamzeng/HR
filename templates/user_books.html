@@ -9,24 +9,27 @@
     {% with book.book as book %}
       {% include 'includes/book.html' %}
     {% endwith %}
-    <span>{{ book.get_print_progress }}</span>
-    {% if book.content %}
-      <a href="{% url 'printing' book.book_id %}">Печатать</a>
-    {% else %}
-      Книга напечатана
-    {% endif %}
-    {% if book.page %}
-      <span>
-        {% get_progress book.pages.count book.page|add:1 %}
-      </span>
-    {% endif %}
-    {{ book. }}
-    {% if book.is_finished %}
+    {% if book.has_read %}
       Прочитана
     {% elif book.page == 0 %}
       <a href="{% url 'reading' book.book_id %}">Начать чтение</a>
     {% else %}
-      <a href="{% url 'reading' book.book_id %}">Продолжить чтение</a>
+      <a href="{% url 'reading' book.book_id %}">
+        {% if book.page %}
+          <span>
+            {% get_progress book.pages.count book.page|add:1 %}
+          </span>
+        {% endif %}
+        Продолжить чтение
+      </a>
+    {% endif %}<br>
+    {% if book.contents.count %}
+      {% if book.contents %}
+        <span>{{ book.get_print_progress }}</span>
+        <a href="{% url 'printing' book.book_id %}">Печатать</a>
+      {% else %}
+        Книга напечатана
+      {% endif %}
     {% endif %}
   {% endfor %}
 {% endblock content %}

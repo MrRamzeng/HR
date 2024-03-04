@@ -1,18 +1,11 @@
 from django.shortcuts import render, redirect
-from rest_framework.generics import ListAPIView, UpdateAPIView
 
 from .forms import UpdatePosition, UpdatePagePosition
 from .models import Book, Content, Reading, BookPage
-from .serializer import BooksSerializer
 
 
 def index(request):
     return render(request, 'index.html')
-
-
-class BooksAPIView(ListAPIView):
-    queryset = Book.objects.all()
-    serializer_class = BooksSerializer
 
 
 def books(request):
@@ -38,11 +31,6 @@ def book(request, id):
 
 
 def add_book(request, book_id):
-    contents = Content.objects.filter(
-        type__book_id=book_id
-    ).values_list(
-        'id', flat=True
-    )
     pages = BookPage.objects.filter(
         book_id=book_id
     ).values_list(
@@ -52,11 +40,9 @@ def add_book(request, book_id):
         user_id=request.user.id,
         book_id=book_id
     )
-    print(r)
     if created:
-        r.contents.add(*contents)
         r.pages.add(*pages)
-    return redirect('printing', book_id=book_id)
+    return redirect('user_books', book_id=book_id)
 
 
 def user_books(request):
@@ -99,13 +85,15 @@ def reading(request, book_id):
     )
 
 
-# class Print(UpdateAPIView):
-#     get
-#     queryset = Printing.objects.get(book_id=book_id, user_id=req)
-
-
 def printing(request, book_id):
-    book = Reading.objects.get(book_id=book_id, user_id=request.user.id)
+    contents = Content.objects.filter(
+        type__book_id=book_id
+    ).values_list(
+        'id', flat=True
+    )
+    book, created = Reading.objects.get_or_create(book_id=book_id,
+        user_id=request.user.id)
+    book.contents.add(*contents)
     if request.method == 'POST':
         form = UpdatePosition(request.POST)
         if form.is_valid():
@@ -122,11 +110,13 @@ def printing(request, book_id):
             }
         )
     contents = book.contents.all()
-    return render(
-        request,
-        'printing.html',
-        {
-            'form': form,
-            'contents': contents
-        }
-    ) if contents else redirect('user_books')
+    if contents:
+        return render(
+            request,
+            'printing.html',
+            {
+                'form': form,
+                'contents': contents
+            }
+        )
+    return redirect('user_books')

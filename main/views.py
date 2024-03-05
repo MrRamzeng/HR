@@ -5,14 +5,14 @@ from .models import Book, Content, UserBooks, BookPage
 
 
 def index(request):
-    return render(request, 'index.html')
+    return render(request, 'book/index.html')
 
 
 def books(request):
     books = Book.objects.all()
     return render(
         request,
-        'books.html',
+        'book/books.html',
         {
             'books': books
         }
@@ -23,7 +23,7 @@ def book(request, id):
     book = Book.objects.get(id=id)
     return render(
         request,
-        'book.html',
+        'book/book.html',
         {
             'book': book
         }
@@ -42,7 +42,7 @@ def user_books(request):
     books = UserBooks.objects.filter(user_id=request.user.id)
     return render(
         request,
-        'user_books.html',
+        'book/user_books.html',
         {
             'books': books
         }
@@ -74,7 +74,7 @@ def reading(request, book_id):
     )[book.page_position:book.page_position + 2]
     return render(
         request,
-        'reading.html',
+        'book/reading.html',
         {
             'pages': pages,
             'form': form,
@@ -130,7 +130,7 @@ def printing(request, book_id):
     part = set_part(contents)
     return render(
         request,
-        'printing.html',
+        'book/printing.html',
         {
             'form': form,
             'contents': part

@@ -197,31 +197,35 @@ class Content(models.Model):
         return str(self.id)
 
 
-class Reading(models.Model):
+class UserBooks(models.Model):
     user = models.ForeignKey(User, models.CASCADE)
     book = models.ForeignKey('Book', models.CASCADE)
-    contents = models.ManyToManyField('Content', blank=True)
     # todo: edit
     print_position = models.PositiveIntegerField(
-        'Позиция', validators=[MinValueValidator(0)], default=0
+        validators=[MinValueValidator(0)], default=0
     )
-    pages = models.ManyToManyField('BookPage', blank=True)
-    page = models.PositiveIntegerField(
+    page_position = models.PositiveIntegerField(
         validators=[MinValueValidator(0)], default=0
     )
     has_read = models.BooleanField(default=False)
     has_print = models.BooleanField(default=False)
     position = models.PositiveIntegerField(
-        'Позиция', validators=[MinValueValidator(0)], default=0
+        validators=[MinValueValidator(0)], default=0
     )
 
     class Meta:
         verbose_name_plural = 'чтение'
         verbose_name = 'чтение'
 
+    def get_pages_count(self):
+        return BookPage.objects.filter(book_id=self.book_id).count()
+
+    def has_contents(self):
+        return Content.objects.filter(type__book_id=self.book_id).exists()
+
     def get_print_progress(self):
         count = Content.objects.filter(type__book_id=self.book_id).count()
-        return f'{int(100 / count * (count - self.contents.count()))}%'
+        return int(self.print_position * 100 / count)
 
     def __str__(self):
         return f'{self.book.name}'

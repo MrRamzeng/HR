@@ -3,7 +3,7 @@ from django.utils.safestring import mark_safe
 
 from .models import (
     Author, Book, Paragraph, Content, Tag, Country, BookSeries, Genre,
-    BookPage, Reading
+    BookPage, UserBooks
 )
 import nested_admin
 from django.db import models
@@ -51,7 +51,7 @@ class AuthorAdmin(nested_admin.NestedModelAdmin):
 
 
 admin.site.register(Country)
-admin.site.register(Reading)
+admin.site.register(UserBooks)
 admin.site.register(Tag)
 admin.site.register(Genre)
 admin.site.register(BookSeries)
@@ -85,10 +85,10 @@ class PageInline(nested_admin.NestedTabularInline):
 @admin.register(Book)
 class BookAdmin(nested_admin.NestedModelAdmin):
     formfield_overrides = form_preset
-    inlines = [ParagraphInline, PageInline]
+    inlines = [PageInline, ParagraphInline]
     readonly_fields = [img]
     fieldsets = [
-        ('Title', {
+        ('О книге', {
             'fields': [
                 ('name', 'published', 'series', 'series_number', 'font_family'),
                 ('authors', 'genre'),

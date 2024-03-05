@@ -50,14 +50,14 @@
     let htmlTag
 
     {% for content in contents %}
-      htmlTag = document.createElement(`{{ content.type.tag }}`)
+      htmlTag = document.createElement(`{{ content.tag }}`)
 
-      {% if content.type.css %}
-        htmlTag.setAttribute('class', '{{ content.type.css }}')
+      {% if content.css %}
+        htmlTag.setAttribute('class', '{{ content.css }}')
       {% endif %}
 
-      {% if content.type.src %}
-        htmlTag.setAttribute('src', '{{ content.type.src.url }}')
+      {% if content.src %}
+        htmlTag.setAttribute('src', '{{ content.src.url }}')
       {% endif %}
       htmlTag.nodeName !== 'IMG' ? htmlTag.innerHTML = slicer(`{{ content.text|safe }}`) : null
       textContainer.appendChild(htmlTag)

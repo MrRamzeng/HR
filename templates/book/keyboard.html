@@ -71,7 +71,7 @@
         tag.lastChild.nodeName === 'BR' && ['Space', 'Enter'].includes(e.code)
           ? newLine() : stringPosition++
       } else if (char.charCodeAt(0) === 182 && e.code === 'Enter') {
-        textPosition.value = 0
+        textPosition.value++
         const margin = parseInt(
           window.getComputedStyle(
             tag.parentElement, null

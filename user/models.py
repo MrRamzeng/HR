@@ -10,7 +10,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     email = models.EmailField('Адрес электронной почты', unique=True)
     is_active = models.BooleanField(default=True)
-    REQUIRED_FIELDS = ('username', 'phone_number')
+    REQUIRED_FIELDS = 'username',
     USERNAME_FIELD = 'email'
     objects = CustomUserManager()
 

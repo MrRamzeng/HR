@@ -9,6 +9,50 @@
     {% block styles %}{% endblock styles %}
     <title>{% block title %}HandRead{% endblock title %}</title>
   </head>
+
+  <style>
+      h1, h2, h3 {
+          margin-block-start: 0;
+       }
+
+      #text-container p {
+          margin-top: 0;
+          font-weight: 400;
+          line-height: 1.4;
+          font-family: "Open Sans", sans-serif;
+          font-size: 17px;
+          text-indent: 35px;
+          scroll-snap-stop: normal;
+      }
+
+      .p-italic {
+          font-style: italic;
+      }
+
+      .text-center {
+          text-align: center;
+      }
+
+      #text-container {
+          position: relative;
+          padding: 0 20px;
+          margin: 0 auto;
+      }
+
+      #text-container:focus-visible {
+          outline: none;
+          border-left: solid 1px #A0A0A0;
+          border-right: solid 1px #A0A0A0;
+      }
+
+      #container {
+          margin: 0 auto;
+          width: 760px;
+          height: 350px;
+          overflow: hidden;
+          padding: 0 10px 0 10px;
+      }
+  </style>
   <body>
     <header>
       <a href="{% url 'index' %}">HandRead</a>

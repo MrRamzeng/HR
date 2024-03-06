@@ -31,23 +31,45 @@
   let tags = [...currentTag.children]
   let stringPosition = 0
   let tag = tags[stringPosition]
+  let marginEnd = parseFloat(window.getComputedStyle(currentTag).marginBlockEnd)
+  let shift = 0
 
   const getKey = (code) => {
     return document.querySelector(`[data-code="${code}"]`)
   }
 
-  function scroll(margin = 0) {
-    let timer = setInterval(() => textContainer.scrollBy(0, 1), 20)
-    const lh = parseInt(window.getComputedStyle(tag).lineHeight)
-    const height = lh ? lh : tag.offsetHeight
-    setTimeout(() => clearInterval(timer), (
-      height + margin) * 20
-    )
+  function scroll(height) {
+    if (height < 1) {
+      shift += 0.1
+      height -= 0.1
+    } else {
+      shift += 1
+      height -= 1
+    }
+    textContainer.style.cssText = `top: -${shift}px`
+    return height
   }
 
-  function newLine() {
+  /*
+  function tops() {
+    for (let i = 0; i < textContainer.childElementCount; i++) {
+      textContainer.children[i].style.cssText = `top: 0`
+    }
+    currentTag.style.cssText = 'text-indent: 0'
+    tags = tags.slice(stringPosition + 1)
+    currentTag.innerHTML = null
+    tags.forEach(tag => currentTag.appendChild(tag))
+    stringPosition = 0
+  }
+  */
+
+  function newLine(mE = 0) {
     stringPosition++
-    scroll()
+    const lh = parseFloat(window.getComputedStyle(tag).lineHeight)
+    let height = lh ? lh + mE : parseFloat(tag.offsetHeight) + mE
+    const timer = setInterval(() => {
+      height > 0 ? height = scroll(height) : clearInterval(timer)
+    }, 10)
   }
 
   function getChar(tag) {
@@ -64,6 +86,7 @@
     if (!['Alt', 'Shift', 'Control', 'CapsLock'].includes(e.key)) {
       if (currentTag.nodeName === 'IMG') {
         if (e.code === 'Enter') {
+          {#scroll()#}
           form.submit()
         }
       } else if (char === e.key || (char.charCodeAt() === 8211 && e.key === '-')) {
@@ -72,12 +95,7 @@
           ? newLine() : stringPosition++
       } else if (char.charCodeAt(0) === 182 && e.code === 'Enter') {
         textPosition.value++
-        const margin = parseInt(
-          window.getComputedStyle(
-            tag.parentElement, null
-          ).getPropertyValue('margin-bottom')
-        )
-        scroll(margin)
+        newLine(marginEnd)
         form.submit()
       } else {
         tag.style.cssText = 'background: orange; color: white'

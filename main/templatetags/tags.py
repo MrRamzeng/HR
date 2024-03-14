@@ -1,5 +1,4 @@
 from django import template
-from main.models import Content
 
 register = template.Library()
 

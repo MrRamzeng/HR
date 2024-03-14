@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 
 from .models import (
-    Author, Book, Paragraph, Content, Tag, Country, BookSeries, Genre,
+    Author, Book, Paragraph, Content, Country, BookSeries, Genre,
     BookPage, UserBooks
 )
 import nested_admin
@@ -52,7 +52,6 @@ class AuthorAdmin(nested_admin.NestedModelAdmin):
 
 admin.site.register(Country)
 admin.site.register(UserBooks)
-admin.site.register(Tag)
 admin.site.register(Genre)
 admin.site.register(BookSeries)
 
@@ -60,20 +59,16 @@ admin.site.register(BookSeries)
 class ContentInline(nested_admin.NestedTabularInline):
     formfield_overrides = form_preset
     model = Content
+    exclude = 'text_len',
     extra = 1
     max_num = 1
 
 
 class ParagraphInline(nested_admin.NestedTabularInline):
     formfield_overrides = form_preset
-    # ordering = ('-id',)
     model = Paragraph
     extra = 0
     inlines = [ContentInline]
-    # template = 'inlines/tabular.html'
-
-    # def has_delete_permission(self, request, obj=None):
-    #     return False
 
 
 class PageInline(nested_admin.NestedTabularInline):

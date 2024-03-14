@@ -25,8 +25,8 @@
     {% endif %}<br>
     {% if book.has_print %}
       Книга напечатана
-    {% elif book.has_contents %}
-      <a href="{% url 'printing' book.book_id %}">
+    {% elif book.has_content %}
+      <a href="{% url 'typing' book.book_id %}">
         {% if book.print_position %}
           Продолжить печатать
           <span>{{ book.get_print_progress }}%</span>

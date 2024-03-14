@@ -1,7 +1,14 @@
 {% extends 'base.html' %}
-{% load static %}
 {% block title %}
-	Главная
+  HandRead
 {% endblock %}
 {% block content %}
+  <div id="book-container" style="display: grid; grid-auto-columns: 300px auto">
+    <div id="book-info" style="grid-column: 1; justify-self: center; display: inline-grid">
+    </div>
+    <div id="print-container" style="grid-column: 2">
+      {% include 'includes/print_container.html' %}
+      {% include 'book/keyboard.html' %}
+    </div>
+  </div>
 {% endblock content %}

@@ -1,20 +1,40 @@
 from django.shortcuts import render, redirect
+from random import shuffle
 
 from .forms import UpdatePosition
 from .models import Book, Content, UserBooks, BookPage
 
 
 def index(request):
-    return render(request, 'book/index.html')
+    books = list(Book.objects.values_list('id', flat=True))
+    queryset = Content.objects.filter(
+        type__tag='p', text_len__lte=500  # , text_len__gte=100
+    ).values(
+        'text', 'type__book', 'type__book__name', 'type__book__price',
+        'type__book__image'
+    ).order_by('?')
+    contents = []
+    while books:
+        id = books.pop()
+        for content in queryset:
+            if content['type__book'] == id:
+                contents.append(content)
+                break
+    return render(
+        request, 'book/index.html', {
+            'contents': contents,
+            'books': books
+        }
+    )
 
 
 def books(request):
-    books = Book.objects.all()
+    books = Book.objects.values('id', 'image', 'name', 'price')
     return render(
         request,
         'book/books.html',
         {
-            'books': books
+            'books': books,
         }
     )
 
@@ -32,8 +52,7 @@ def book(request, id):
 
 def add_book(request, book_id):
     UserBooks.objects.get_or_create(
-        user_id=request.user.id,
-        book_id=book_id
+        user_id=request.user.id, book_id=book_id
     )
     return redirect('user_books')
 
@@ -67,8 +86,6 @@ def reading(request, book_id):
                 'position': book.page_position
             }
         )
-
-    # pages = book.pages.all()[book.page:book.page + 2]
     pages = BookPage.objects.filter(
         book_id=book_id
     )[book.page_position:book.page_position + 2]
@@ -107,30 +124,32 @@ def slice_content(lst, content, slice=0):
     )
 
 
-def printing(request, book_id):
+def typing(request, book_id):
     book = UserBooks.objects.get(book_id=book_id, user_id=request.user.id)
     if book.has_print:
         return redirect('user_books')
     if request.method == 'POST':
         form = UpdatePosition(request.POST)
         if form.is_valid():
-            book.print_position = form.cleaned_data.get('position')
+            book.typing_position = form.cleaned_data.get('position')
             if book.get_print_progress() == 100:
                 book.has_print = True
             book.save()
-            return redirect('printing', book_id)
+            return redirect('typing', book_id)
     else:
         form = UpdatePosition(
             initial={
-                'position': book.print_position
+                'position': book.typing_position
             }
         )
 
-    contents = Content.objects.filter(type__book_id=book_id)[book.print_position:]
+    contents = Content.objects.filter(
+        type__book_id=book_id
+    )[book.typing_position:]
     part = set_part(contents)
     return render(
         request,
-        'book/printing.html',
+        'book/typing.html',
         {
             'form': form,
             'contents': part

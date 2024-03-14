@@ -10,8 +10,6 @@ def file_path(instance, file):
 
 
 def page_path(instance, file):
-    print(instance.book._meta.verbose_name_plural, instance.book.name,
-        instance._meta.verbose_name_plural, file)
     return (f'{instance.book._meta.verbose_name_plural}/{instance.book.name}/'
             f'{instance._meta.verbose_name_plural}/{file}')
 
@@ -145,7 +143,7 @@ class BookPage(models.Model):
 
     class Meta:
         verbose_name_plural = 'страницы'
-        verbose_name = 'старница'
+        verbose_name = 'страница'
 
 
 # class Chapter(models.Model):
@@ -155,21 +153,29 @@ class BookPage(models.Model):
 # ...
 # ...
 
-class Tag(models.Model):
-    name = models.CharField('HTML тэг', max_length=10)
-
-    class Meta:
-        verbose_name_plural = 'тэги'
-        verbose_name = 'тэг'
-
-    def __str__(self):
-        return self.name
-
 
 class Paragraph(models.Model):
     book = models.ForeignKey('Book', models.CASCADE)
-    tag = models.ForeignKey(
-        'Tag', models.SET_NULL, blank=True, null=True
+    P = 'p'
+    H1 = 'h1'
+    H2 = 'h2'
+    H3 = 'h3'
+    H4 = 'h4'
+    H5 = 'h5'
+    I = 'i'
+    IMG = 'img'
+    TAGS = (
+        (H1, 'h1'),
+        (H2, 'h2'),
+        (H3, 'h3'),
+        (H4, 'h4'),
+        (H5, 'h5'),
+        (I, 'i'),
+        (IMG, 'img'),
+        (P, 'p'),
+    )
+    tag = models.CharField(
+        'Тег', choices=TAGS, default=P, max_length=20
     )
     src = models.FileField(
         'источник', storage=OverwriteStorage(), upload_to=file_path,
@@ -182,12 +188,14 @@ class Paragraph(models.Model):
         verbose_name = 'абзац'
 
     def __str__(self):
-        return f'{self.tag.name}'
+        return f'{self.tag}'
+
 
 
 class Content(models.Model):
     type = models.ForeignKey('Paragraph', models.CASCADE)
     text = models.TextField('Текст', blank=True, null=True)
+    text_len = models.PositiveIntegerField()
 
     class Meta:
         verbose_name_plural = 'тексты'
@@ -196,12 +204,16 @@ class Content(models.Model):
     def __str__(self):
         return str(self.id)
 
+    def save(self, *args, **kwargs):
+        self.text_len = len(self.text)
+        return super(Content, self).save(*args, **kwargs)
+
 
 class UserBooks(models.Model):
     user = models.ForeignKey(User, models.CASCADE)
     book = models.ForeignKey('Book', models.CASCADE)
     # todo: edit
-    print_position = models.PositiveIntegerField(
+    typing_position = models.PositiveIntegerField(
         validators=[MinValueValidator(0)], default=0
     )
     page_position = models.PositiveIntegerField(
@@ -220,12 +232,12 @@ class UserBooks(models.Model):
     def get_pages_count(self):
         return BookPage.objects.filter(book_id=self.book_id).count()
 
-    def has_contents(self):
+    def has_content(self):
         return Content.objects.filter(type__book_id=self.book_id).exists()
 
     def get_print_progress(self):
         count = Content.objects.filter(type__book_id=self.book_id).count()
-        return int(self.print_position * 100 / count)
+        return int(self.typing_position * 100 / count)
 
     def __str__(self):
         return f'{self.book.name}'

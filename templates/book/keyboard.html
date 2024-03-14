@@ -3,130 +3,112 @@
   <link rel="stylesheet" href="{% static 'styles/keyboard.css' %}"/>
 {% endblock styles %}
 <div id="root"></div>
-<script src="{% static 'scripts/vendor/react.development.js' %}"></script>
-<script src="{% static 'scripts/vendor/react-dom.development.js' %}"></script>
-<script src="{% static 'scripts/vendor/babel.min.js' %}"></script>
-<script src="{% static 'scripts/keyboard.js' %}"></script>
-<script src="{% static 'scripts/cursor.js' %}"></script>
-<script type="text/babel">
-  const container = document.getElementById('root')
-  const root = ReactDOM.createRoot(container)
-  root.render(<Keyboard keys={keys}/>)
+{% block scripts %}
+  <script src="{% static 'scripts/vendor/react.development.js' %}"></script>
+  <script src="{% static 'scripts/vendor/react-dom.development.js' %}"></script>
+  <script src="{% static 'scripts/vendor/babel.min.js' %}"></script>
+  <script src="{% static 'scripts/keyboard.js' %}"></script>
+  <script src="{% static 'scripts/cursor.js' %}"></script>
+  <script type="text/babel">
+    const container = document.getElementById('root')
+    const root = ReactDOM.createRoot(container)
+    root.render(<Keyboard keys={keys}/>)
 
-  function Keyboard({keys = []}) {
-    return (
-      <figure className="keyboard">
-        {keys.map((key, index) => (
-          <div data-code={key.code} className={`key ${key.class || ''}`} key={index}>
-            {key.symbol}
-          </div>
-        ))}
-      </figure>
-    )
-  }
-</script>
-
-<script>
-  const currentTag = textContainer.firstElementChild
-  let tags = [...currentTag.children]
-  let stringPosition = 0
-  let tag = tags[stringPosition]
-  let marginEnd = parseFloat(window.getComputedStyle(currentTag).marginBlockEnd)
-  let shift = 0
-
-  const getKey = (code) => {
-    return document.querySelector(`[data-code="${code}"]`)
-  }
-
-  function scroll(height) {
-    if (height < 1) {
-      shift += 0.1
-      height -= 0.1
-    } else {
-      shift += 1
-      height -= 1
+    function Keyboard({keys = []}) {
+      return (
+        <figure className="keyboard">
+          {keys.map((key, index) => (
+            <div data-code={key.code} className={`key ${key.class || ''}`} key={index}>
+              {key.symbol}
+            </div>
+          ))}
+        </figure>
+      )
     }
-    textContainer.style.cssText = `top: -${shift}px`
-    return height
-  }
+  </script>
 
-  /*
-  function tops() {
-    for (let i = 0; i < textContainer.childElementCount; i++) {
-      textContainer.children[i].style.cssText = `top: 0`
+  <script>
+    let textBlock = textContainer.firstElementChild
+    let tags = [...textBlock.children]
+    let caretPosition = 0
+    let tag = tags[caretPosition]
+    const getKey = (code) => {
+      return document.querySelector(`[data-code="${code}"]`)
     }
-    currentTag.style.cssText = 'text-indent: 0'
-    tags = tags.slice(stringPosition + 1)
-    currentTag.innerHTML = null
-    tags.forEach(tag => currentTag.appendChild(tag))
-    stringPosition = 0
-  }
-  */
 
-  function newLine(mE = 0) {
-    stringPosition++
-    const lh = parseFloat(window.getComputedStyle(tag).lineHeight)
-    let height = lh ? lh + mE : parseFloat(tag.offsetHeight) + mE
-    const timer = setInterval(() => {
-      height > 0 ? height = scroll(height) : clearInterval(timer)
-    }, 10)
-  }
-
-  function getChar(tag) {
-    try {
-      return tag.textContent
-    } catch (e) {
-      return ' '
+    /*
+    function scroll(height) {
+        shift += height
+        textContainer.style.cssText = `transition: top 0.3s linear; top: -${shift}px`
     }
-  }
+     */
 
-  textContainer.addEventListener('keydown', function (e) {
-    const button = getKey(e.code)
-    const char = getChar(tag)
-    if (!['Alt', 'Shift', 'Control', 'CapsLock'].includes(e.key)) {
-      if (currentTag.nodeName === 'IMG') {
-        if (e.code === 'Enter') {
-          {#scroll()#}
-          form.submit()
-        }
-      } else if (char === e.key || (char.charCodeAt() === 8211 && e.key === '-')) {
-        tag.style.cssText = 'background: transparent; color: lightgrey'
-        tag.lastChild.nodeName === 'BR' && ['Space', 'Enter'].includes(e.code)
-          ? newLine() : stringPosition++
-      } else if (char.charCodeAt(0) === 182 && e.code === 'Enter') {
-        textPosition.value++
-        newLine(marginEnd)
-        form.submit()
+    function newLine(end = false) {
+      if (end) {
+        textContainer.firstElementChild.remove()
       } else {
-        tag.style.cssText = 'background: orange; color: white'
-      }
-
-      tag = tags[stringPosition]
-      try {
-        if (tag.firstChild.nodeName === 'BR') {
-          newLine()
-          tag = tags[stringPosition]
+        textContainer.firstElementChild
+        for (let i = 0; i <= caretPosition; i++) {
+          textContainer.firstElementChild.firstChild.remove()
+          textContainer.firstElementChild.style.textIndent = '0';
         }
-      } catch (e) {
-        return
       }
-      setCursorPosition(stringPosition)
+      caretPosition = 0
+      textBlock = textContainer.firstElementChild
+      tags = [...textBlock.children]
+      tag = tags[caretPosition]
     }
 
-    button.setAttribute('data-pressed', 'on')
-    e.preventDefault()
-  })
-
-  textContainer.addEventListener('keyup', function (e) {
-    const button = getKey(e.code)
-    const classes = button.classList
-
-    if (classes.contains('caps-active')) {
-      classes.remove('caps-active')
-    } else if (classes.contains('caps')) {
-      classes.add('caps-active')
+    function getChar(tag) {
+      try {
+        return tag.textContent
+      } catch (e) {
+        return ' '
+      }
     }
 
-    button.removeAttribute('data-pressed')
-  })
-</script>
+    textContainer.addEventListener('keydown', function (e) {
+      const button = getKey(e.code)
+      const char = getChar(tag)
+      if (!['Alt', 'Shift', 'Control', 'CapsLock'].includes(e.key)) {
+        if (char === e.key || (char.charCodeAt(0) === 8211 && e.key === '-')) {
+          tag.style.cssText = 'background: transparent; color: lightgrey'
+          tag.lastChild.nodeName === 'BR' && ['Space', 'Enter'].includes(e.code)
+            ? newLine() : caretPosition++
+        } else if (char.charCodeAt(0) === 182 && e.code === 'Enter') {
+          textPosition ? textPosition.value++ : null
+          newLine(true)
+          bookInfo.firstElementChild.remove()
+          form ? form.submit() : null
+        } else {
+          tag.style.cssText = 'background: orange; color: white'
+        }
+        tag = tags[caretPosition]
+        try {
+          if (tag.firstChild.nodeName === 'BR') {
+            newLine()
+          }
+        } catch (e) {
+          return
+        }
+        setCursorPosition(caretPosition)
+      }
+
+      button.setAttribute('data-pressed', 'on')
+      e.preventDefault()
+    })
+
+    textContainer.addEventListener('keyup', function (e) {
+      const button = getKey(e.code)
+      const classes = button.classList
+
+      if (classes.contains('caps-active')) {
+        classes.remove('caps-active')
+      } else if (classes.contains('caps')) {
+        classes.add('caps-active')
+      }
+
+      button.removeAttribute('data-pressed')
+    })
+  </script>
+{% endblock scripts %}

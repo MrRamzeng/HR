@@ -8,7 +8,10 @@
     </div>
     <div id="print-container" style="grid-column: 2">
       {% include 'includes/print_container.html' %}
-      {% include 'book/keyboard.html' %}
+      {% include 'includes/keyboard.html' %}
     </div>
   </div>
 {% endblock content %}
+{% block scripts %}
+  {% include 'includes/scripts.html' %}
+{% endblock scripts %}

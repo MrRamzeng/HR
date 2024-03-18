@@ -4,111 +4,110 @@
 {% endblock styles %}
 <div id="root"></div>
 {% block scripts %}
-  <script src="{% static 'scripts/vendor/react.development.js' %}"></script>
-  <script src="{% static 'scripts/vendor/react-dom.development.js' %}"></script>
-  <script src="{% static 'scripts/vendor/babel.min.js' %}"></script>
-  <script src="{% static 'scripts/keyboard.js' %}"></script>
-  <script src="{% static 'scripts/cursor.js' %}"></script>
-  <script type="text/babel">
+    <script src="{% static 'scripts/vendor/react.development.js' %}"></script>
+    <script src="{% static 'scripts/vendor/react-dom.development.js' %}"></script>
+    <script src="{% static 'scripts/vendor/babel.min.js' %}"></script>
+    <script src="{% static 'scripts/keycaps.js' %}"></script>
+    <script src="{% static 'scripts/cursor.js' %}"></script>
+    <script type="text/babel">
     const container = document.getElementById('root')
     const root = ReactDOM.createRoot(container)
     root.render(<Keyboard keys={keys}/>)
 
     function Keyboard({keys = []}) {
-      return (
+        return (
         <figure className="keyboard">
-          {keys.map((key, index) => (
+            {keys.map((key, index) => (
             <div data-code={key.code} className={`key ${key.class || ''}`} key={index}>
-              {key.symbol}
+                {key.symbol}
             </div>
-          ))}
+            ))}
         </figure>
-      )
+        )
     }
-  </script>
+    </script>
 
-  <script>
+    <script>
     let textBlock = textContainer.firstElementChild
     let tags = [...textBlock.children]
     let caretPosition = 0
     let tag = tags[caretPosition]
     const getKey = (code) => {
-      return document.querySelector(`[data-code="${code}"]`)
+        return document.querySelector(`[data-code="${code}"]`)
     }
 
-    /*
+
     function scroll(height) {
         shift += height
         textContainer.style.cssText = `transition: top 0.3s linear; top: -${shift}px`
     }
-     */
 
     function newLine(end = false) {
-      if (end) {
+        if (end) {
         textContainer.firstElementChild.remove()
-      } else {
+        } else {
         textContainer.firstElementChild
         for (let i = 0; i <= caretPosition; i++) {
-          textContainer.firstElementChild.firstChild.remove()
-          textContainer.firstElementChild.style.textIndent = '0';
+            textContainer.firstElementChild.firstChild.remove()
+            textContainer.firstElementChild.style.textIndent = '0';
         }
-      }
-      caretPosition = 0
-      textBlock = textContainer.firstElementChild
-      tags = [...textBlock.children]
-      tag = tags[caretPosition]
+        }
+        caretPosition = 0
+        textBlock = textContainer.firstElementChild
+        tags = [...textBlock.children]
+        tag = tags[caretPosition]
     }
 
     function getChar(tag) {
-      try {
+        try {
         return tag.textContent
-      } catch (e) {
+        } catch (e) {
         return ' '
-      }
+        }
     }
 
     textContainer.addEventListener('keydown', function (e) {
-      const button = getKey(e.code)
-      const char = getChar(tag)
-      if (!['Alt', 'Shift', 'Control', 'CapsLock'].includes(e.key)) {
+        const button = getKey(e.code)
+        const char = getChar(tag)
+        if (!['Alt', 'Shift', 'Control', 'CapsLock'].includes(e.key)) {
         if (char === e.key || (char.charCodeAt(0) === 8211 && e.key === '-')) {
-          tag.style.cssText = 'background: transparent; color: lightgrey'
-          tag.lastChild.nodeName === 'BR' && ['Space', 'Enter'].includes(e.code)
+            tag.style.cssText = 'background: transparent; color: lightgrey'
+            tag.lastChild.nodeName === 'BR' && ['Space', 'Enter'].includes(e.code)
             ? newLine() : caretPosition++
         } else if (char.charCodeAt(0) === 182 && e.code === 'Enter') {
-          textPosition ? textPosition.value++ : null
-          newLine(true)
-          bookInfo.firstElementChild.remove()
-          form ? form.submit() : null
+            textPosition ? textPosition.value++ : null
+            newLine(true)
+            bookInfo.firstElementChild.remove()
+            form ? form.submit() : null
         } else {
-          tag.style.cssText = 'background: orange; color: white'
+            tag.style.cssText = 'background: orange; color: white'
         }
         tag = tags[caretPosition]
         try {
-          if (tag.firstChild.nodeName === 'BR') {
+            if (tag.firstChild.nodeName === 'BR') {
             newLine()
-          }
+            }
         } catch (e) {
-          return
+            return
         }
         setCursorPosition(caretPosition)
-      }
+        }
 
-      button.setAttribute('data-pressed', 'on')
-      e.preventDefault()
+        button.setAttribute('data-pressed', 'on')
+        e.preventDefault()
     })
 
     textContainer.addEventListener('keyup', function (e) {
-      const button = getKey(e.code)
-      const classes = button.classList
+        const button = getKey(e.code)
+        const classes = button.classList
 
-      if (classes.contains('caps-active')) {
+        if (classes.contains('caps-active')) {
         classes.remove('caps-active')
-      } else if (classes.contains('caps')) {
+        } else if (classes.contains('caps')) {
         classes.add('caps-active')
-      }
+        }
 
-      button.removeAttribute('data-pressed')
+        button.removeAttribute('data-pressed')
     })
-  </script>
-{% endblock scripts %}
+    </script>
+{% endblock scripts%}

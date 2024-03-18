@@ -1,6 +1,8 @@
 {% load static %}
 <div>
-  <img style="width: 233.33px; height: 350px;" src="{% get_media_prefix %}{{ content.type__book__image }}"/>
+  <img style="width: 233.33px; height: 350px;"
+       src="{% get_media_prefix %}{{ content.type__book__image }}"
+       alt="{{ content.type__book_name }}"/>
   <h3>{{ content.type__book__name }}</h3>
   <span>{{ content.type__book__price }}₽</span>
 </div>

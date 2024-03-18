@@ -1,31 +1,6 @@
-{% load static %}
 <div id="container">
   <div id="text-container" contenteditable="true" onselectstart="return false" autofocus
        onCut="return false" onpaste="return false;" onCopy="return false" onDrag="return false"
        onDrop="return false" onblur="this.focus()">
   </div>
 </div>
-{% block scripts %}
-<script src="{% static 'scripts/slicer.js' %}"></script>
-<script src="{% static 'scripts/elements.js' %}"></script>
-<script>
-  let htmlTag
-  {% for content in contents %}
-    htmlTag = document.createElement(`{{ content.tag|default:'p' }}`)
-    {% if content.css %}
-      htmlTag.setAttribute('class', '{{ content.css }}')
-    {% endif %}
-    {% if content.src %}
-      htmlTag.setAttribute('src', '{{ content.src.url }}')
-    {% endif %}
-    htmlTag.nodeName !== 'IMG' ? htmlTag.innerHTML = slicer(`{{ content.text|safe }}`) : null
-    textContainer.appendChild(htmlTag)
-    {% if request.resolver_match.url_name == 'index' %}
-      htmlTag = document.createElement('a')
-      htmlTag.setAttribute('href', `{% url 'book' content.type__book %}`)
-      htmlTag.innerHTML = `{% include 'includes/book_info.html' %}`
-      bookInfo.appendChild(htmlTag)
-    {% endif %}
-  {% endfor %}
-</script>
-{% endblock scripts %}

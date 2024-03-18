@@ -1,0 +1,17 @@
+<script type="text/babel">
+  const container = document.getElementById('root')
+  const root = ReactDOM.createRoot(container)
+  root.render(<Keyboard keys={Array.from(keycaps.entries())}/>)
+
+  function Keyboard({keys = []}) {
+    return (
+      <figure className="keyboard">
+        {keys.map((key, index) => (
+          <div data-code={key[0]} className={`key ${key[1].class || ''}`} key={index}>
+            {key[1].key}
+          </div>
+        ))}
+      </figure>
+    )
+  }
+</script>

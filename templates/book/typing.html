@@ -1,12 +1,21 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}
   {{ book.name }}
 {% endblock title %}
+{% block styles %}
+  <link rel="stylesheet" href="{% static 'styles/keyboard.css' %}"/>
+{% endblock styles %}
 {% block content %}
   <form id="text-form" method="post">
     {% csrf_token %}
     {{ form }}
   </form>
   {% include 'includes/print_container.html' %}
-  {% include 'book/keyboard.html' %}
+  <div id="root"></div>
+  {% include 'includes/keyboard.html' %}
 {% endblock content %}
+{% block scripts %}
+  {% include 'includes/scripts.html' %}
+  <script></script>
+{% endblock scripts %}

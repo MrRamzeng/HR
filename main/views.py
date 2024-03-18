@@ -6,9 +6,9 @@ from .models import Book, Content, UserBooks, BookPage
 
 
 def index(request):
-    books = list(Book.objects.values_list('id', flat=True))
+    books = list(Book.objects.order_by('?').values_list('id', flat=True))
     queryset = Content.objects.filter(
-        type__tag='p', text_len__lte=500  # , text_len__gte=100
+        type__tag='p', text_len__gte=200  # , text_len__lte=500
     ).values(
         'text', 'type__book', 'type__book__name', 'type__book__price',
         'type__book__image'

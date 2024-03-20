@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-from random import shuffle
 
 from .forms import UpdatePosition
 from .models import Book, Content, UserBooks, BookPage
@@ -20,6 +19,7 @@ def index(request):
             if content['type__book'] == id:
                 contents.append(content)
                 break
+
     return render(
         request, 'book/index.html', {
             'contents': contents,
@@ -72,6 +72,7 @@ def reading(request, book_id):
     book = UserBooks.objects.get(book_id=book_id, user_id=request.user.id)
     if book.has_read:
         return redirect('user_books')
+
     if request.method == 'POST':
         form = UpdatePosition(request.POST)
         if form.is_valid():
@@ -79,6 +80,7 @@ def reading(request, book_id):
             if book.page_position >= book.get_pages_count():
                 book.has_read = True
             book.save()
+
             return redirect('reading', book_id)
     else:
         form = UpdatePosition(
@@ -89,6 +91,7 @@ def reading(request, book_id):
     pages = BookPage.objects.filter(
         book_id=book_id
     )[book.page_position:book.page_position + 2]
+
     return render(
         request,
         'book/reading.html',
@@ -113,13 +116,14 @@ def set_part(contents):
     return part
 
 
-def slice_content(lst, content, slice=0):
+def slice_content(lst, content, position=0):
     lst.append(
         {
             'tag': content.type.tag,
             'css': content.type.css,
             'src': content.type.src,
-            'text': content.text[:slice] + '...' if slice else content.text
+            'text': content.text[:position] + '...' if position else
+            content.text
         }
     )
 
@@ -128,6 +132,7 @@ def typing(request, book_id):
     book = UserBooks.objects.get(book_id=book_id, user_id=request.user.id)
     if book.has_print:
         return redirect('user_books')
+
     if request.method == 'POST':
         form = UpdatePosition(request.POST)
         if form.is_valid():
@@ -147,6 +152,7 @@ def typing(request, book_id):
         type__book_id=book_id
     )[book.typing_position:]
     part = set_part(contents)
+
     return render(
         request,
         'book/typing.html',

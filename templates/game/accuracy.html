@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Тест{% endblock title %}
+{% block content %}
+  <form id="text-form" method="post">
+    {% csrf_token %}
+    {{ form }}
+  </form>
+  <div id="timer"></div>
+  {% include 'includes/print_container.html' %}
+{% endblock content %}
+{% block scripts %}
+  <script src="{% static 'scripts/slicer.js' %}"></script>
+  <script src="{% static 'scripts/elements.js' %}"></script>
+  <script src="{% static 'scripts/keycaps.js' %}"></script>
+  <script src="{% static 'scripts/compare.js' %}"></script>
+  <script src="{% static 'scripts/cursor.js' %}"></script>
+  <script src="{% static 'scripts/game/compare.js' %}"></script>
+  <script>
+    let htmlTag = document.createElement('p')
+    htmlTag.innerHTML = slicer(`{{ words|safe }}`)
+    textContainer.appendChild(htmlTag)
+  </script>
+{% endblock scripts %}

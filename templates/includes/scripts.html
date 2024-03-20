@@ -1,4 +1,4 @@
-{% load static%}
+{% load static %}
 <!--
 <script src="{% static 'scripts/vendor/react.development.js' %}"></script>
 <script src="{% static 'scripts/vendor/react-dom.development.js' %}"></script>
@@ -9,23 +9,24 @@
 <script src="{% static 'scripts/keycaps.js' %}"></script>
 <script src="{% static 'scripts/compare.js' %}"></script>
 <script src="{% static 'scripts/cursor.js' %}"></script>
+<script src="{% static 'scripts/book/compare.js' %}"></script>
 <script>
   let htmlTag
   {% for content in contents %}
     htmlTag = document.createElement(`{{ content.tag|default:'p' }}`)
     {% if content.css %}
-    htmlTag.setAttribute('class', '{{ content.css }}')
+      htmlTag.setAttribute('class', '{{ content.css }}')
     {% endif %}
     {% if content.src %}
-    htmlTag.setAttribute('src', '{{ content.src.url }}')
+      htmlTag.setAttribute('src', '{{ content.src.url }}')
     {% endif %}
     htmlTag.nodeName !== 'IMG' ? htmlTag.innerHTML = slicer(`{{ content.text|safe }}`) : null
     textContainer.appendChild(htmlTag)
     {% if request.resolver_match.url_name == 'index' %}
-    htmlTag = document.createElement('a')
-    htmlTag.setAttribute('href', `{% url 'book' content.type__book %}`)
-    htmlTag.innerHTML = `{% include 'includes/book_info.html' %}`
-    bookInfo.appendChild(htmlTag)
+      htmlTag = document.createElement('a')
+      htmlTag.setAttribute('href', `{% url 'book' content.type__book %}`)
+      htmlTag.innerHTML = `{% include 'includes/book_info.html' %}`
+      bookInfo.appendChild(htmlTag)
     {% endif %}
   {% endfor %}
 </script>

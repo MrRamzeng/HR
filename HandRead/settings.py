@@ -16,6 +16,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'game.apps.GameConfig',
     'main.apps.MainConfig',
     'user.apps.UserConfig',
     'nested_admin',

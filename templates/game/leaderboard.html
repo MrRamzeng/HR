@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block styles %}
+  <style>
+      table {
+          width: 100%;
+      }
+
+      table, th, td {
+          border: 1px solid;
+          border-collapse: collapse;
+          text-align: center;
+      }
+  </style>
+{% endblock styles %}
+{% block title %}Таблица лидеров{% endblock title %}
+{% block content %}
+  <a href="{% url 'accuracy' %}">пройти еще раз</a>
+  <table>
+    <tr>
+      <th>#</th>
+      <th>Пользователь</th>
+      <th>Счет</th>
+      <th>Количество слов</th>
+      <th>Слов без ошибок</th>
+    </tr>
+    {% for result in results %}
+      {% if position >= results.count|add:1 and result == results.last %}
+        <tr>
+          <td colspan="5">...</td>
+        </tr>
+      {% endif %}
+      <tr>
+        <td>
+          {% if position > 1 and result == results.last %}
+            {{ position }}
+          {% else %}
+            {{ forloop.counter }}
+          {% endif %}
+        </td>
+        <td>
+          {% if request.user.is_anonymous and result.user.id == 1 or request.user == result.user %}
+            Вы
+          {% else %}
+            {{ result.user.username }}
+          {% endif %}
+        </td>
+        <td>
+          {{ result.best_score }}
+        </td>
+        <td>{{ result.last_word_count }}</td>
+        <td>{{ result.last_correct_words }}</td>
+      </tr>
+    {% endfor results %}
+  </table>
+{% endblock content %}

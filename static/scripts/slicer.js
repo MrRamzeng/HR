@@ -7,7 +7,7 @@ function slicer(text, end = '\n') {
       if (sep) {
         tags.push(`<span>${sep}<br></span>`)
       } else {
-        tags[i - 1] = `<span>${previous}<br></span>`
+        tags[tags.length - 1] = `<span>${previous}<br></span>`
       }
     } else {
       tags.push(`<span>${text[i]}</span>`)

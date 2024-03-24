@@ -13,7 +13,7 @@ class AccuracyResult(models.Model):
         'Счёт', blank=True, null=True
     )
     best_score = models.PositiveSmallIntegerField(
-        'Лучший счёт', blank=True, null=True
+        'Лучший счёт', default=0
     )
     best_score_time = models.DateTimeField(
         'Время лучшего счета', blank=True, null=True

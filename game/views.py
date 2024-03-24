@@ -27,8 +27,7 @@ def shuffle_words(list):
 
 def game(request):
     result, is_created = AccuracyResult.objects.get_or_create(
-        user_id=(
-                request.user.id or 1)
+        user_id=(request.user.id or 1)
     )
     if request.method == 'POST':
         form = GameForm(request.POST)

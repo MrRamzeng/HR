@@ -26,9 +26,8 @@ textContainer.addEventListener('keydown', function (e) {
       } else if ((tagContent.charCodeAt(0) === 182 || tagContent === '\n')
         && e.code === 'Enter') {
         newTextBlock()
-      } else {
-        caretPosition++
       }
+      caretPosition++
     } else {
       tag.style.cssText = 'background: orange; color: white;'
     }

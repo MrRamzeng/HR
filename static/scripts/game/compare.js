@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 let is_start = true
 let isCorrect = true
+let word_len = 0
 
 textContainer.addEventListener('keydown', function (e) {
   if (!['Alt', 'Shift', 'Control', 'CapsLock', 'Delete'].includes(e.key)) {
@@ -14,16 +15,18 @@ textContainer.addEventListener('keydown', function (e) {
     }
     const tagContent = tag.textContent
 
-    if (e.key.match(/[a-zа-я -]/) && e.key === tagContent) {
+    if (e.key.match(/[а-я -]/) && e.key === tagContent) {
       tag.style.cssText = 'background: transparent; color: lightgrey'
+      word_len++
       if (e.code === 'Space') {
+        score.value = parseInt(score.value) + word_len
+        word_len = 0
         isCorrect && correctWords.value++
         wordCount.value++
         isCorrect = true
-      } else if (tag.lastChild.nodeName === 'BR') {
+      }
+      if (tag.lastChild.nodeName === 'BR') {
         newLine()
-      } else {
-        score.value++
       }
       caretPosition++
     } else {

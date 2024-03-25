@@ -1,38 +1,39 @@
 document.addEventListener('DOMContentLoaded', function () {
   const height = window.getComputedStyle(tag).lineHeight
+  TIMER.textContent = timerField.options[timerField.selectedIndex].textContent
   document.getElementById('container').style.height = `${parseFloat(height) * 2}px`
 })
 
 let is_start = true
-let isCorrect = true
-let word_len = 0
+let errors = 0
+
+function setTimer() {
+  TIMER.textContent = timerField.options[timerField.selectedIndex].textContent
+}
 
 textContainer.addEventListener('keydown', function (e) {
   if (!['Alt', 'Shift', 'Control', 'CapsLock', 'Delete'].includes(e.key)) {
     if (is_start) {
-      timer()
+      timer(timerField.value)
       is_start = false
     }
     const tagContent = tag.textContent
 
     if (e.key.match(/[а-я -]/) && e.key === tagContent) {
       tag.style.cssText = 'background: transparent; color: lightgrey'
-      word_len++
-      if (e.code === 'Space') {
-        score.value = parseInt(score.value) + word_len
-        word_len = 0
-        isCorrect && correctWords.value++
-        wordCount.value++
-        isCorrect = true
-      }
+      score.value++
       if (tag.lastChild.nodeName === 'BR') {
         newLine()
       }
       caretPosition++
     } else {
       parseInt(score.value) && score.value--
+      errors++
       tag.style.cssText = 'background: orange; color: white'
-      isCorrect = false
+    }
+    accuracy.value = ((caretPosition - errors) * 100 / (caretPosition || 1)).toFixed(2)
+    if (parseInt(accuracy.value) < 0) {
+        accuracy.value = 0
     }
   }
   tag = tags[caretPosition]
@@ -40,14 +41,16 @@ textContainer.addEventListener('keydown', function (e) {
   e.preventDefault()
 })
 
-function timer(seconds = 30) {
-  TIMER.textContent = seconds
+function timer(timeStamp) {
   const timer = setInterval(() => {
-    if (seconds) {
-      TIMER.textContent = seconds
-      seconds--
+    if (timeStamp) {
+      timeStamp--
+      let minutes = Math.floor(timeStamp / 60)
+      let seconds = timeStamp % 60
+      TIMER.textContent = `${minutes}:${seconds > 9 ? seconds : '0' + seconds}`
     } else {
       clearInterval(timer)
+      speed.value = Math.floor(caretPosition / parseInt(timerField.value) * 60)
       form.submit()
     }
   }, 1000)

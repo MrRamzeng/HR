@@ -4,15 +4,15 @@ from random import shuffle
 
 from .forms import GameForm
 from .words import words
-from .models import AccuracyResult
+from .models import AccuracyGame
 
 
-def shuffle_words(list):
+def shuffle_words(list, ):
     shuffle(words)
     string = ''
     string_len = 0
     for word in words:
-        if len(string) < 2000:
+        if len(string) < 10000:
             word_len = len(word) + 1
             if string_len + word_len < 80:
                 string += f'{word} '
@@ -26,29 +26,32 @@ def shuffle_words(list):
 
 
 def game(request):
-    result, is_created = AccuracyResult.objects.get_or_create(
-        user_id=(request.user.id or 1)
-    )
     if request.method == 'POST':
         form = GameForm(request.POST)
         if form.is_valid():
-            result.last_score = form.cleaned_data.get('score')
-            result.last_word_count = form.cleaned_data.get('word_count')
-            result.last_correct_words = form.cleaned_data.get('correct_words')
-            result.best_score_time = datetime.now()
-            if request.user.is_anonymous:
-                result.best_score = result.last_score
-            else:
-                if result.last_score > result.best_score:
-                    result.best_score = result.last_score
+            timer = form.cleaned_data.get('timer')
+            result, is_created = AccuracyGame.objects.get_or_create(
+                user_id=(request.user.id or 1), timer=timer
+            )
+            result.timer = timer
+            result.score = form.cleaned_data.get('score')
+            result.accuracy = form.cleaned_data.get('accuracy')
+            result.speed = form.cleaned_data.get('speed')
+            if request.user.is_anonymous or result.score > result.max_score:
+                result.max_score = result.score
+                result.max_speed = result.speed
+                result.best_accuracy = result.accuracy
+                result.best_score_time = datetime.now()
+            if request.user.is_authenticated and 1000 // 60 < result.speed:
+                result.is_win = True
             result.save()
             return redirect('leaderboard')
     else:
         form = GameForm(
             initial={
-                'last_word_count': 0,
-                'last_correct_words': 0,
-                'last_score': 0
+                'score': 0,
+                'accuracy': 0,
+                'speed': 0
             }
         )
     return render(
@@ -62,22 +65,24 @@ def game(request):
 def leaderboard(request):
     position = None
     if request.user.is_anonymous:
-        results = AccuracyResult.objects.filter(best_score__gt=0)[:3]
+        results = AccuracyGame.objects.filter(max_score__gt=0)[:3]
         user_id = 1
     else:
-        results = AccuracyResult.objects.exclude(user_id=1).filter(
-            best_score__gt=0
+        results = AccuracyGame.objects.exclude(user_id=1).filter(
+            max_score__gt=0
         )[:3]
         user_id = request.user.id
-    result = AccuracyResult.objects.filter(user_id=user_id)
-    if result not in results:
+    result = AccuracyGame.objects.filter(user_id=user_id)
+    if result and result not in results:
         results = results | result
-        position = AccuracyResult.objects.exclude(user_id=1).filter(
-            best_score__gte=result.first().best_score
+        position = AccuracyGame.objects.exclude(user_id=1).filter(
+            max_score__gte=result.first().max_score
         ).count()
     return render(
         request, 'game/leaderboard.html', {
-            'results': results,
-            'position': position
+            'results30': results.filter(timer=30),
+            'results60': results.filter(timer=60),
+            'results120': results.filter(timer=120),
+            'position': position or 0
         }
     )

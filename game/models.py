@@ -1,26 +1,33 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 
-class AccuracyResult(models.Model):
+class AccuracyGame(models.Model):
     user = models.ForeignKey('user.User', models.CASCADE)
-    last_word_count = models.PositiveSmallIntegerField(
-        'Количество слов', blank=True, null=True
+    timer = models.PositiveSmallIntegerField('Таймер', default=60)
+    score = models.PositiveSmallIntegerField(default=0)
+    accuracy = models.DecimalField(
+        validators=(MinValueValidator(0), MaxValueValidator(100)), max_digits=5,
+        decimal_places=2, default=0
     )
-    last_correct_words = models.PositiveSmallIntegerField(
-        'Количество слов без ошибок', blank=True, null=True
+    speed = models.PositiveSmallIntegerField(
+        'Количество слов', default=0
     )
-    last_score = models.PositiveSmallIntegerField(
-        'Счёт', blank=True, null=True
-    )
-    best_score = models.PositiveSmallIntegerField(
+    max_score = models.PositiveSmallIntegerField(
         'Лучший счёт', default=0
     )
-    best_score_time = models.DateTimeField(
-        'Время лучшего счета', blank=True, null=True
+    best_accuracy = models.DecimalField(
+        'лучшая аккуратность',  max_digits=5, decimal_places=2,
+        validators=(MinValueValidator(0), MaxValueValidator(100)), default=0
     )
+    max_speed = models.PositiveSmallIntegerField(default=0)
+    best_score_time = models.DateTimeField(blank=True, null=True)
+    is_win = models.BooleanField(default=False)
 
-    def __str__(self) -> str:
-        return f'{self.user.username} {self.best_score}'
-    
+    def __str__(self):
+        return f'{self.timer} {self.user.username}'
+
     class Meta:
-        ordering = '-best_score', '-best_score_time'
+        ordering = (
+            '-max_score', '-max_speed', '-best_accuracy', '-best_score_time'
+        )

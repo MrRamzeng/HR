@@ -72,7 +72,7 @@ def leaderboard(request):
     result = AccuracyResult.objects.filter(user_id=user_id)
     if result not in results:
         results = results | result
-        position = AccuracyResult.objects.filter(
+        position = AccuracyResult.objects.exclude(user_id=1).filter(
             best_score__gte=result.first().best_score
         ).count()
     return render(

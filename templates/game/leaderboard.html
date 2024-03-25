@@ -25,7 +25,7 @@
       <th>Слов без ошибок</th>
     </tr>
     {% for result in results %}
-      {% if position >= results.count|add:1 and result == results.last %}
+      {% if position > results.count|add:1 and result == results.last %}
         <tr>
           <td colspan="5">...</td>
         </tr>
@@ -39,11 +39,7 @@
           {% endif %}
         </td>
         <td>
-          {% if request.user.is_anonymous and result.user.id == 1 or request.user == result.user %}
-            Вы
-          {% else %}
-            {{ result.user.username }}
-          {% endif %}
+          {{ result.user.username }}
         </td>
         <td>
           {{ result.best_score }}

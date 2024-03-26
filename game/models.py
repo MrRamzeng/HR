@@ -10,14 +10,21 @@ class AccuracyGame(models.Model):
         validators=(MinValueValidator(0), MaxValueValidator(100)), max_digits=5,
         decimal_places=2, default=0
     )
-    speed = models.PositiveSmallIntegerField(
-        'Количество слов', default=0
+    W = 'Только слова'
+    D = 'Только числа'
+    S = 'Только знаки'
+    ALL = 'Все'
+    MODES = (
+        (W, 'Только слова'),
+        (D, 'Только числа'),
+        (S, 'Только знаки'),
+        (ALL, 'Все')
     )
-    max_score = models.PositiveSmallIntegerField(
-        'Лучший счёт', default=0
-    )
+    mode = models.CharField('Режим', choices=MODES, default=W, max_length=20)
+    speed = models.PositiveSmallIntegerField('Количество символов', default=0)
+    max_score = models.PositiveSmallIntegerField('Лучший счёт', default=0)
     best_accuracy = models.DecimalField(
-        'лучшая аккуратность',  max_digits=5, decimal_places=2,
+        'лучшая аккуратность', max_digits=5, decimal_places=2,
         validators=(MinValueValidator(0), MaxValueValidator(100)), default=0
     )
     max_speed = models.PositiveSmallIntegerField(default=0)

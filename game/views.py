@@ -30,13 +30,15 @@ def game(request):
         form = GameForm(request.POST)
         if form.is_valid():
             timer = form.cleaned_data.get('timer')
+            mode = form.cleaned_data.get('mode')
             result, is_created = AccuracyGame.objects.get_or_create(
-                user_id=(request.user.id or 1), timer=timer
+                user_id=(request.user.id or 1), timer=timer, mode=mode
             )
             result.timer = timer
             result.score = form.cleaned_data.get('score')
             result.accuracy = form.cleaned_data.get('accuracy')
             result.speed = form.cleaned_data.get('speed')
+            result.mode = mode
             if request.user.is_anonymous or result.score > result.max_score:
                 result.max_score = result.score
                 result.max_speed = result.speed
@@ -45,7 +47,7 @@ def game(request):
             if request.user.is_authenticated and 1000 // 60 < result.speed:
                 result.is_win = True
             result.save()
-            return redirect('leaderboard')
+            return redirect('leaderboard', mode)
     else:
         form = GameForm(
             initial={
@@ -62,7 +64,7 @@ def game(request):
     )
 
 
-def leaderboard(request):
+def leaderboard(request, mode):
     position = None
     if request.user.is_anonymous:
         results = AccuracyGame.objects.filter(max_score__gt=0)[:3]
@@ -80,9 +82,9 @@ def leaderboard(request):
         ).count()
     return render(
         request, 'game/leaderboard.html', {
-            'results30': results.filter(timer=30),
-            'results60': results.filter(timer=60),
-            'results120': results.filter(timer=120),
+            'results30': results.filter(timer=30, mode=mode),
+            'results60': results.filter(timer=60, mode=mode),
+            'results120': results.filter(timer=120, mode=mode),
             'position': position or 0
         }
     )

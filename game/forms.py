@@ -1,4 +1,5 @@
 from django import forms
+from .models import AccuracyGame
 
 
 class GameForm(forms.Form):
@@ -6,6 +7,14 @@ class GameForm(forms.Form):
         (30, "0:30"),
         (60, "1:00"),
         (120, "2:00")
+    )
+    mode = forms.ChoiceField(
+        choices=AccuracyGame.MODES, label='Режим',
+        widget=forms.RadioSelect(
+            attrs={
+                'onChange': 'setContent(this.value)'
+            }
+        ), initial=AccuracyGame.W
     )
     timer = forms.ChoiceField(
         choices=TIMERS, label='Таймер', initial=TIMERS[0],

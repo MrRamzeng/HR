@@ -9,6 +9,10 @@ let errors = 0
 
 let symbols = 0
 
+function setTimer() {
+  TIMER.textContent = timerField.options[timerField.selectedIndex].textContent
+}
+
 const modeField = document.getElementById('id_mode')
 
 let htmlTag = document.createElement('symbols')

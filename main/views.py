@@ -122,7 +122,7 @@ def reading(request, book_id):
         {
             'pages': pages,
             'form': form,
-            'pages_count': book.get_pages_count()
+            'progress': book.get_read_progress(),
         }
     )
 

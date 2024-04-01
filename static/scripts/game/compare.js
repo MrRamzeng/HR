@@ -70,7 +70,6 @@ textContainer.addEventListener('keydown', function (e) {
       is_start = false
     }
     const tagContent = tag.textContent
-    console.log(e.key, tagContent)
     if (e.key === tagContent) {
       tag.style.cssText = 'background: transparent; color: lightgrey'
       score.value++

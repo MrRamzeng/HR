@@ -25,6 +25,7 @@
     textContainer.appendChild(htmlTag)
     {% if request.resolver_match.url_name == 'index' %}
       imgUrl = `{% get_media_prefix %}{{ content.type__book__image|safe }}`
+      console.log(imgUrl)
       htmlTag = document.createElement('div')
       htmlTag.style.cssText = `background: url(${imgUrl}); background-size: 200px 300px`
       htmlTag.setAttribute(

@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
-{% load tags %}
 {% block title %}
   book
 {% endblock title %}
 {% block content %}
   {#  {{ progress }}#}
   {% with position=form.position.value %}
-    {% get_progress pages_count position|add:1 %}
+    {{ progress }}
     <div id="content" style="width: max-content; position: relative; padding: 0 100px">
       {% for page in pages %}
         <img src="{{ page.image.url }}" style="height: 90vh" alt="{{ page.image.name }}">

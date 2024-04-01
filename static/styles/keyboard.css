@@ -28,7 +28,7 @@
     border: 1px solid #A0A0A0;
 }
 
-.key[data-pressed]:not(.unused) {
+.key[data-pressed]:not(.unused), .key:active{
     transform: translateY(4px);
     box-shadow: none;
 }
@@ -57,27 +57,35 @@
     outline: none;
 }
 
-.size-3 {
-    width: 68px;
+.logo {
+    padding-top: 3px;
+    height: 30px;
+    margin: 4px 6px 6px 2px;
+    width: 30px;
+    font-size: 20px;
 }
 
-.size-4 {
-    width: 79px;
-}
-
-.size-5 {
-    width: 104px;
-}
-
-.size-6 {
-    width: 105px;
-}
-
-.size-2 {
+.key-size-2 {
     width: 58px;
 }
 
-.size-7 {
+.key-size-3 {
+    width: 68px;
+}
+
+.key-size-4 {
+    width: 79px;
+}
+
+.key-size-5 {
+    width: 104px;
+}
+
+.key-size-6 {
+    width: 105px;
+}
+
+.key-size-7 {
     width: 291px;
 }
 

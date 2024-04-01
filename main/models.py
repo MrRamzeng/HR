@@ -6,7 +6,8 @@ from HandRead.storage import OverwriteStorage
 
 
 def file_path(instance, file):
-    return f'{instance._meta.verbose_name_plural}/{instance}/{file}'
+    return f'{instance._meta.verbose_name_plural}/{instance}/{file}'.replace(
+        ' ', '_')
 
 
 def page_path(instance, file):
@@ -123,7 +124,7 @@ class Book(models.Model):
         verbose_name = 'книга'
 
     def __str__(self):
-        return self.name
+        return f'{self.name} {self.bookpage_set.count()}'
 
 
 class BookPage(models.Model):
@@ -191,7 +192,6 @@ class Paragraph(models.Model):
         return f'{self.tag}'
 
 
-
 class Content(models.Model):
     type = models.ForeignKey('Paragraph', models.CASCADE)
     text = models.TextField('Текст', blank=True, null=True)
@@ -229,15 +229,18 @@ class UserBooks(models.Model):
         verbose_name_plural = 'чтение'
         verbose_name = 'чтение'
 
-    def get_pages_count(self):
-        return BookPage.objects.filter(book_id=self.book_id).count()
+    def get_read_progress(self):
+        pages = self.book.bookpage_set.count()
+        if self.page_position + 1 == pages:
+            return '100%'
+        return f'{(self.page_position + 1) * 100 // pages}%'
 
     def has_content(self):
         return Content.objects.filter(type__book_id=self.book_id).exists()
 
     def get_print_progress(self):
-        count = Content.objects.filter(type__book_id=self.book_id).count()
-        return int(self.typing_position * 100 / count)
+        count = self.book.paragraph_set.count()
+        return f'{self.typing_position * 100 // count}%'
 
     def __str__(self):
         return f'{self.book.name}'

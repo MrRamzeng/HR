@@ -1,13 +1,24 @@
 {% load static %}
-<div>
-  <img src="{% get_media_prefix %}{{ book.image }}" alt="{{ book.name }}" width="285px" height="427.5px">
-  {# <a href="{% url 'add_book' book.id %}">+</a> #}
-  {#        <span style="font-size: .85em; margin-bottom: 0.5em; display: block; line-height: 1.3;#}
-  {#              opacity: .6;">#}
-  {#          {{ book.authors.all|join:", " }}#}
-  {#        </span>#}
-  <h2 style="margin-top: 0; margin-bottom: 0.5em; padding: 0; font-size: 1em">
-    {{ book.name }}
-  </h2>
-  <span style="line-height: 1.3; font-weight: 700; margin-bottom: 0.5em; font-size: .9em;">{{ book.price }}₽</span>
+<div
+    class="w-[285px] max-w-sm bg-white border border-gray-200 rounded-lg shadow">
+  <a href="{% url 'book' book.id %}">
+  <img src="{% get_media_prefix %}{{ book.image }}" class="w-[285px] h-[428px] rounded-t-lg"
+       alt="{{ book.name }}">
+  </a>
+  <div class="px-5 pb-5">
+    <a href="{% url 'book' book.id %}">
+      <h5 class="mb-2 text-xl tracking-tight text-gray-900">{{ book.name }}</h5>
+    </a>
+    <div class="flex items-center justify-between">
+      <span class="text-2xl font-bold text-gray-900">{{ book.price }}₽</span>
+      <button class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none">
+        Добавить в корзину
+      </button>
+    </div>
+  </div>
 </div>
+{# <a href="{% url 'add_book' book.id %}">+</a> #}
+{#        <span style="font-size: .85em; margin-bottom: 0.5em; display: block; line-height: 1.3;#}
+{#              opacity: .6;">#}
+{#          {{ book.authors.all|join:", " }}#}
+{#        </span>#}

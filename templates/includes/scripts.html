@@ -12,6 +12,7 @@
 <script src="{% static 'scripts/book/compare.js' %}"></script>
 <script>
   let htmlTag
+  let imgUrl
   {% for content in contents %}
     htmlTag = document.createElement(`{{ content.tag|default:'p' }}`)
     {% if content.css %}
@@ -23,8 +24,15 @@
     htmlTag.nodeName !== 'IMG' ? htmlTag.innerHTML = slicer(`{{ content.text|safe }}`) : null
     textContainer.appendChild(htmlTag)
     {% if request.resolver_match.url_name == 'index' %}
-      htmlTag = document.createElement('a')
-      htmlTag.setAttribute('href', `{% url 'book' content.type__book %}`)
+      imgUrl = `{% get_media_prefix %}{{ content.type__book__image|safe }}`
+      htmlTag = document.createElement('div')
+      htmlTag.style.cssText = `background: url(${imgUrl}); background-size: 200px 300px`
+      htmlTag.setAttribute(
+        'class',
+        'w-[200px] h-[300px] border border-gray-200 rounded-lg shadow-lg ' +
+        'dark:bg-gray-800 dark:border-gray-700 card'
+      )
+      {#htmlTag.style.width = 'min-content'#}
       htmlTag.innerHTML = `{% include 'includes/book_info.html' %}`
       bookInfo.appendChild(htmlTag)
     {% endif %}

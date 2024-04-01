@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}{% endblock title %}
+{% block content %}
+  <div class="grid grid-cols-5 gap-4">
+    {% for author in authors %}
+      <div class="w-[285px] max-w-sm bg-white border border-gray-200 rounded-lg shadow">
+        <img src="{{ author.image.url }}" class="w-[285px] h-[428px] rounded-t-lg"
+             alt="{{ author.pseudonym|default_if_none:author.get_full_name }}">
+        <div class="px-5 pb-5">
+          <h5 class="mb-2 text-xl tracking-tight text-gray-900">
+            {{ author.pseudonym|default_if_none:author.get_full_name }}
+          </h5>
+          <div class="flex items-center justify-between">
+            <span class="text-2xl font-bold text-gray-900">books</span>
+            <button
+                class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none">
+              about
+            </button>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock content %}

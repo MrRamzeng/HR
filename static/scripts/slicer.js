@@ -5,14 +5,14 @@ function slicer(text, end = '\n') {
       const previous = text[i - 1]
       const sep = previous === '-' ? '' : ' '
       if (sep) {
-        tags.push(`<span>${sep}<br></span>`)
+        tags.push(`<symbol>${sep}<br></symbol>`)
       } else {
-        tags[tags.length - 1] = `<span>${previous}<br></span>`
+        tags[tags.length - 1] = `<symbol>${previous}<br></symbol>`
       }
     } else {
-      tags.push(`<span>${text[i]}</span>`)
+      tags.push(`<symbol>${text[i]}</symbol>`)
     }
   }
-  tags.push(`<span>${end}</span>`)
+  tags.push(`<symbol>${end}</symbol>`)
   return tags.join('')
 }

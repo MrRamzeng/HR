@@ -1,8 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
-  const height = window.getComputedStyle(tag).lineHeight
-  TIMER.textContent = timerField.options[timerField.selectedIndex].textContent
-  document.getElementById('container').style.height = `${parseFloat(height) * 2}px`
-})
+TIMER.textContent = timerField.options[timerField.selectedIndex].textContent
 
 let is_start = true
 let errors = 0
@@ -22,7 +18,6 @@ function getRandomNumber() {
   const multipliers = [
     10, 100, 1000, 10000, 100000, 1000000, -10, -100, -1000, -10000, -100000, -1000000,
   ]
-  const probability = Math.random()
   return (
     Math.random() * getRandomElement(multipliers)
   ).toFixed(2)

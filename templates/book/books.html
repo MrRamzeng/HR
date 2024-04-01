@@ -3,11 +3,45 @@
   Книги
 {% endblock title %}
 {% block content %}
-  <div style="display: flex; justify-content: space-evenly">
+  <div class="grid grid-cols-5 gap-4">
+    <div class="min-h-full">
+      <h5>Авторы:</h5>
+      <div class="h-[193px]">
+        {% for author in authors %}
+          <ul class="text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg ">
+            <li class="w-full border-b border-gray-200 rounded-t-lg">
+              <div class="flex items-center ps-3">
+                <input id="author{{ author.id }}" type="checkbox" value=""
+                       class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                <label for="author{{ author.id }}"
+                       class="w-full py-3 ms-2 text-sm font-medium text-gray-900 ">
+                  {{ author }}
+                </label>
+              </div>
+            </li>
+          </ul>
+        {% endfor %}
+      </div>
+      <h5>Жанры</h5>
+      <div class="h-[193px]">
+        {% for genre in genres %}
+          <ul class="text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg ">
+            <li class="w-full border-b border-gray-200 rounded-t-lg">
+              <div class="flex items-center ps-3">
+                <input id="genre{{ author.id }}" type="checkbox" value=""
+                       class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                <label for="genre{{ author.id }}"
+                       class="w-full py-3 ms-2 text-sm font-medium text-gray-900 ">
+                  {{ genre }}
+                </label>
+              </div>
+            </li>
+          </ul>
+        {% endfor %}
+      </div>
+    </div>
     {% for book in books %}
-      <a href="{% url 'book' book.id %}" style="text-decoration: none; color: black;">
       {% include 'includes/book.html' %}
-      </a>
     {% endfor %}
   </div>
 {% endblock content %}

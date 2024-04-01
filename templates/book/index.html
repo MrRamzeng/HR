@@ -3,13 +3,20 @@
   HandRead
 {% endblock %}
 {% block content %}
-  <div id="book-container" style="display: grid; grid-auto-columns: 300px auto">
-    <div id="book-info" style="grid-column: 1; justify-self: center; display: inline-grid">
-    </div>
+  <div id="book-container" class="flex flex-row justify-center">
+    <div id="book-info" class="basis-1/6"></div>
     <div id="print-container" style="grid-column: 2">
       {% include 'includes/print_container.html' %}
       {% include 'includes/keyboard.html' %}
     </div>
+  </div>
+  <h3 class="pt-24 mb-4 font-extrabold text-gray-900 md:text-xl lg:text-3xl dark:text-white">
+    Новинки
+  </h3>
+  <div class="grid grid-cols-5 gap-4 mt-6">
+    {% for book in books %}
+      {% include 'includes/book.html' %}
+    {% endfor %}
   </div>
 {% endblock content %}
 {% block scripts %}

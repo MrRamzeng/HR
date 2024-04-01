@@ -5,35 +5,37 @@
 {% endblock title %}
 {% block content %}
   <h1>Мои книги</h1>
-  {% for book in books %}
-    {% with book.book as book %}
-      {% include 'includes/book.html' %}
-    {% endwith %}
-    {% if book.has_read %}
-      Прочитана
-    {% elif book.page_position == 0 %}
-      <a href="{% url 'reading' book.book_id %}">Начать чтение</a>
-    {% else %}
-      <a href="{% url 'reading' book.book_id %}">
-        {% if book.page_position %}
-          <span>
-            {% get_progress book.pages.count book.page|add:1 %}
-          </span>
-        {% endif %}
-        Продолжить чтение
-      </a>
-    {% endif %}<br>
-    {% if book.has_print %}
-      Книга напечатана
-    {% elif book.has_content %}
-      <a href="{% url 'typing' book.book_id %}">
-        {% if book.print_position %}
-          Продолжить печатать
-          <span>{{ book.get_print_progress }}%</span>
-        {% else %}
-          Начать печатать
-        {% endif %}
-      </a>
-    {% endif %}
-  {% endfor %}
+  <div class="grid grid-cols-5 gap-4">
+    {% for book in books %}
+      <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow" style="width: 250px">
+        <img src="{{ book.book.image.url }}" class="rounded-t-lg" alt="{{ book.book.name }}"
+             style="width: 250px !important; height: 375px !important;">
+        <div class="px-5 pb-5">
+          <h5 class="mb-2 text-xl tracking-tight text-gray-900">{{ book.book.name }}</h5>
+          <div class="flex flex-col items-center justify-between">
+            {% if book.has_read %}
+              Прочитана
+            {% elif book.page_position == 0 %}
+              <a href="{% url 'reading' book.book_id %}">Начать чтение</a>
+            {% else %}
+              <a href="{% url 'reading' book.book_id %}">
+                Продолжить чтение {{ book.get_read_progress }}
+              </a>
+            {% endif %}<br>
+            {% if book.has_print %}
+              Книга напечатана
+            {% elif book.has_content %}
+              <a href="{% url 'typing' book.book_id %}">
+                {% if book.typing_position %}
+                  Продолжить печатать {{ book.get_print_progress }}
+                {% else %}
+                  Начать печатать
+                {% endif %}
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
 {% endblock content %}

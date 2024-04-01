@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}{{ author.get_full_name }}{% endblock title %}
+{% block content %}
+  {% with author.pseudonym|default_if_none:author.get_full_name as name %}
+
+    <div
+        class="space-y-8 animate-pulse md:space-y-0 md:space-x-8 rtl:space-x-reverse md:flex md:items-center">
+      <h1 class="mb-1 text-gray-900 dark:text-white"
+          style="font-size: 100px; font-family: 'EB Garamond', serif; font-weight: 500">
+        {{ name }}
+      </h1>
+      <div class="w-full">
+        <div class="mb-4" style="text-indent: 35px">
+          {{ author.biography }}
+        </div>
+      </div>
+
+      <div
+          class="flex items-center justify-center w-full h-48 bg-gray-300 sm:w-96 dark:bg-gray-700">
+        <img class="rounded" src="{{ author.image.url }}" alt="{{ name }}">
+      </div>
+    </div>
+
+  {% endwith %}
+{% endblock content %}

@@ -1,20 +1,24 @@
 from django.shortcuts import render, redirect
 
 from .forms import UpdatePosition
-from .models import Book, Content, UserBooks, BookPage
+from .models import Book, Content, UserBooks, BookPage, Genre, Author
 
 
 def index(request):
-    books = list(Book.objects.order_by('?').values_list('id', flat=True))
+    books = Book.objects.only(
+        'id', 'name', 'authors', 'price',
+        'image'
+    )
+    books_id_list = list(books.order_by('?').values_list('id', flat=True))
     queryset = Content.objects.filter(
-        type__tag='p', text_len__gte=200  # , text_len__lte=500
+        type__tag='p'  # , text_len__gte=200, text_len__lte=500
     ).values(
         'text', 'type__book', 'type__book__name', 'type__book__price',
         'type__book__image'
     ).order_by('?')
     contents = []
-    while books:
-        id = books.pop()
+    while books_id_list:
+        id = books_id_list.pop()
         for content in queryset:
             if content['type__book'] == id:
                 contents.append(content)
@@ -23,18 +27,39 @@ def index(request):
     return render(
         request, 'book/index.html', {
             'contents': contents,
-            'books': books
+            'books': books.order_by('-id')[:10]
+        }
+    )
+
+
+def authors(request):
+    return render(
+        request, 'book/authors.html', {
+            'authors': Author.objects.all()
+        }
+    )
+
+
+def author(request, id):
+    return render(
+        request, 'book/author.html', {
+            'author': Author.objects.get(id=id)
         }
     )
 
 
 def books(request):
-    books = Book.objects.values('id', 'image', 'name', 'price')
     return render(
         request,
         'book/books.html',
         {
-            'books': books,
+            'books': Book.objects.only(
+                'id', 'image', 'name', 'price', 'authors'
+            ),
+            'genres': Genre.objects.only('name'),
+            'authors': Author.objects.only(
+                'pseudonym' or ('first_name', 'last_name')
+            )
         }
     )
 
@@ -58,12 +83,11 @@ def add_book(request, book_id):
 
 
 def user_books(request):
-    books = UserBooks.objects.filter(user_id=request.user.id)
     return render(
         request,
         'book/user_books.html',
         {
-            'books': books
+            'books': UserBooks.objects.filter(user_id=request.user.id)
         }
     )
 

@@ -27,8 +27,7 @@ def index(request):
     return render(
         request, 'book/index.html', {
             'contents': contents,
-            'books': books.order_by('-id')[:10],
-            'a': dir(request.user)
+            'books': books.order_by('-id')[:10]
         }
     )
 

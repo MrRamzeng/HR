@@ -4,12 +4,12 @@ from django.shortcuts import render, redirect
 from django.views.generic import CreateView
 from django.urls import reverse_lazy as url
 
-from .forms import SignupForm
+from .forms import SignupForm, LoginForm
 from .models import User
 
 
 class RegisterView(CreateView):
-    template_name = 'user/user_form.html'
+    template_name = 'user/login.html'
     model = User
     form_class = SignupForm
     success_url = url('index')
@@ -35,7 +35,8 @@ class RegisterView(CreateView):
 
 
 class LogView(LoginView):
-    template_name = 'user/user_form.html'
+    form_class = LoginForm
+    template_name = 'user/login.html'
     success_url = url('user_books')
     redirect_authentication_user = True
 

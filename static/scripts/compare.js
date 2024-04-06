@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', function () {
 })
 
 function newLine(end = false) {
-  // caretPosition++
   shift += parseFloat(window.getComputedStyle(tag).lineHeight)
   textContainer.style.cssText = `
     transition: top 0.2s linear; top: -${shift + (end ? marginEnd : 0)}px;

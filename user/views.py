@@ -9,7 +9,7 @@ from .models import User
 
 
 class RegisterView(CreateView):
-    template_name = 'user/login.html'
+    template_name = 'user/singup.html'
     model = User
     form_class = SignupForm
     success_url = url('index')

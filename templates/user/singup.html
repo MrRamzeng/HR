@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+  {{ action }}
+{% endblock title %}
+{% block content %}
+  <section class="bg-gray-50 dark:bg-gray-900">
+    <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+      <div
+        class="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0 dark:border
+               dark:bg-gray-800 dark:border-gray-700"
+      >
+        <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+          <h1
+            class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl
+                   dark:text-white"
+          >
+            {{ action }}
+          </h1>
+          <form method="POST" class="space-y-4 md:space-y-6">
+            {% csrf_token %}
+            <div>
+              <label
+                for="email"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                {{ form.email.label }}
+              </label>
+              {{ form.email }}
+              {% if form.email.errors %}
+                <p class="mt-2 text-sm text-red-600 dark:text-red-500">
+                <span class="font-medium">
+                    {% for e in form.email.errors %}
+                      {{ e }}
+                    {% endfor %}
+                  </span>
+                </p>
+              {% endif %}
+            </div>
+            <div>
+              <label
+                for="username"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                {{ form.username.label }}
+              </label>
+              {{ form.username }}
+              {% if form.username.errors %}
+                <p class="mt-2 text-sm text-red-600 dark:text-red-500">
+                <span class="font-medium">
+                    {% for e in form.username.errors %}
+                      {{ e }}
+                    {% endfor %}
+                  </span>
+                </p>
+              {% endif %}
+            </div>
+            <div>
+              <label
+                for="password1"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                {{ form.password1.label }}
+              </label>
+              {{ form.password1 }}
+              <p id="letter" class="mt-2 text-sm font-medium text-red-600 dark:text-red-500">
+                Буквы
+              </p>
+              <p id="capital" class="mt-2 text-sm font-medium text-red-600 dark:text-red-500">
+                Буквы в верхнем регистре
+              </p>
+              <p id="number" class="mt-2 text-sm font-medium text-red-600 dark:text-red-500">
+                Числа
+              </p>
+              <p id="length" class="mt-2 text-sm font-medium text-red-600 dark:text-red-500">
+                Минимум 8 символов
+              </p>
+            </div>
+            <div>
+              <label
+                for="password2"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                {{ form.password2.label }}
+              </label>
+              {{ form.password2 }}
+              {% if form.password2.errors %}
+                <p class="mt-2 text-sm text-red-600 dark:text-red-500">
+                <span class="font-medium">
+                    {% for e in form.password2.errors %}
+                      {{ e }}
+                    {% endfor %}
+                  </span>
+                </p>
+              {% endif %}
+            <div class="flex items-center justify-between my-4">
+              <a
+                href="{% url 'registration' %}"
+                class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
+              >
+                Войти
+              </a>
+              <a
+                href="#passwordreset"
+                class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
+              >
+                Забыли пароль?
+              </a>
+            </div>
+            <button
+              type="submit"
+              class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4
+                     focus:outline-none focus:ring-blue-300 font-medium rounded-lg
+                     text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700
+                     dark:focus:ring-blue-800"
+            >
+              Зарегистрироваться
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock content %}
+{% block scripts %}
+  <script>
+    const pwd = document.getElementById("password1");
+    const pwd2 = document.getElementById("password2")
+    const letter = document.getElementById("letter");
+    const capital = document.getElementById("capital");
+    const number = document.getElementById("number");
+    const len = document.getElementById("length");
+
+    pwd.onkeyup = function () {
+      const lowerCaseLetters = /[a-zа-я]/g;
+      const upperCaseLetters = /[A-ZА-Я]/g;
+      const numbers = /[0-9]/g;
+
+      if (pwd.value.match(lowerCaseLetters)) {
+        letter.classList.add("hidden");
+      } else {
+        letter.classList.remove("hidden");
+      }
+
+      if (pwd.value.match(upperCaseLetters)) {
+        capital.classList.add("hidden");
+      } else {
+        capital.classList.remove("hidden");
+      }
+
+      if (pwd.value.match(numbers)) {
+        number.classList.add("hidden");
+      } else {
+        number.classList.remove("hidden");
+      }
+
+      if (pwd.value.length >= 8) {
+        len.classList.add("hidden");
+      } else {
+        len.classList.remove("hidden");
+      }
+
+      if (pwd.value.match(/^(?=.*[a-zа-я])(?=.*[A-ZА-Я])(?=.*\d)[a-zA-Zа-яА\d]{8,}$/g)) {
+        pwd.removeAttribute('class')
+        pwd.classList.add(
+          'bg-green-50', 'border', 'border-green-500', 'text-green-900', 'block', 'w-full',
+          'p-2.5', 'sm:text-sm', 'rounded-lg', 'focus:ring-green-500', 'focus:border-green-500',
+          'placeholder-green-700', 'dark:bg-gray-700', 'dark:border-green-500',
+          'dark:placeholder-green-500', 'dark:text-green-400'
+        )
+      } else {
+        pwd.removeAttribute('class')
+        pwd.classList.add(
+          'bg-red-50', 'border', 'border-red-500', 'text-red-900', 'block', 'w-full', 'p-2.5',
+          'sm:text-sm', 'rounded-lg', 'focus:ring-red-500', 'focus:border-red-500',
+          'placeholder-red-700', 'dark:bg-gray-700', 'dark:border-red-500',
+          'dark:placeholder-red-500', 'dark:text-red-500'
+        )
+      }
+    }
+
+    pwd2.onkeyup = function () {
+      if (pwd.value === pwd2.value) {
+        pwd2.removeAttribute('class')
+        pwd2.classList.add(
+          'bg-green-50', 'border', 'border-green-500', 'text-green-900', 'block', 'w-full',
+          'p-2.5', 'sm:text-sm', 'rounded-lg', 'focus:ring-green-500', 'focus:border-green-500',
+          'placeholder-green-700', 'dark:bg-gray-700', 'dark:border-green-500',
+          'dark:placeholder-green-500', 'dark:text-green-400'
+        )
+      } else {
+        pwd2.removeAttribute('class')
+        pwd2.classList.add(
+          'bg-red-50', 'border', 'border-red-500', 'text-red-900', 'block', 'w-full', 'p-2.5',
+          'sm:text-sm', 'rounded-lg', 'focus:ring-red-500', 'focus:border-red-500',
+          'placeholder-red-700', 'dark:bg-gray-700', 'dark:border-red-500',
+          'dark:placeholder-red-500', 'dark:text-red-500'
+        )
+      }
+    }
+  </script>
+{% endblock scripts %}

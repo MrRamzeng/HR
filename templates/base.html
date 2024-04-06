@@ -8,14 +8,14 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title>{% block title %}HandRead{% endblock title %}</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css"
-    />
     {% compress css %}
       <link rel="stylesheet" href="{% static 'css/output.css' %}">
       <link rel="stylesheet" href="{% static 'css/keyboard.css' %}"/>
     {% endcompress css %}
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css"
+    />
     {% block styles %}{% endblock styles %}
   </head>
 
@@ -76,9 +76,8 @@
   </style>
 
   <body>
-    <nav class="z-50 w-64 dark:bg-gray-800 xsm:w-full center">
+    <nav class="z-50 w-64 xsm:w-full center dark:bg-gray-800">
       <div class="px-3 py-3 lg:px-5 lg:pl-3 flex items-center justify-center">
-        {# id type (href url src) data area ... class #}
         <a href="{% url 'index' %}" class="text-xl font-semibold key logo key-size-6 z-50">
           HandRead
         </a>
@@ -99,16 +98,15 @@
     </nav>
 
     <aside
-      id="logo-sidebar" aria-label="Sidebar" {# top-0 left-0 #}
+      id="logo-sidebar" aria-label="Sidebar"
       class="fixed z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white
              border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
     >
       <div class="overflow-y-auto bg-white px-3 dark:bg-gray-800">
-        {# h-full pb-4 #}
         <ul class="space-y-2 font-medium">
           <li
-            class="rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 border-b
-                   p-2"
+            class="rounded-lg border-b p-2 hover:bg-gray-100 dark:hover:bg-gray-700
+                   dark:text-white"
           >
             <a
               href="{% url 'books' %}"
@@ -116,8 +114,8 @@
             >
               <svg
                 aria-hidden="true" fill="currentColor" viewBox="0 0 512 512"
-                class="dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white
-                       flex-shrink-0 w-7 h-7 text-gray-500 transition duration-75"
+                class="flex-shrink-0 w-7 h-7 text-gray-500 transition duration-75
+                       group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
               >
                 <rect x="406.324" y="145.007" width="23.173" height="308.599" transform="matrix(0.9808 -0.1951 0.1951 0.9808 -50.3631 87.2844)"/>
                 <path d="M0,99.049V457.58h77.646V99.049H0z M54.065,422.886H23.582V133.744h30.482V 422.886z"/>
@@ -130,8 +128,8 @@
           </li>
 
           <li
-            class="rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 border-b
-                   p-2"
+            class="rounded-lg border-b p-2 hover:bg-gray-100 dark:hover:bg-gray-700
+                   dark:text-white"
           >
             <a
               href="{% url 'authors' %}"
@@ -139,8 +137,8 @@
             >
               <svg
                 aria-hidden="true" fill="currentColor" viewBox="0 0 20 18"
-                class="dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white
-                       flex-shrink-0 w-7 h-7 text-gray-500 transition duration-75"
+                class="flex-shrink-0 w-7 h-7 text-gray-500 transition duration-75
+                       group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
               >
                 <path d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z"/>
               </svg>
@@ -149,8 +147,8 @@
           </li>
 
           <li
-            class="rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 border-b
-                   p-2"
+            class="rounded-lg border-b p-2 hover:bg-gray-100 dark:hover:bg-gray-700
+                   dark:text-white"
           >
             <a
               href="{% url 'accuracy' %}"
@@ -158,8 +156,8 @@
             >
               <svg
                 aria-hidden="true" fill="currentColor" viewBox="0 0 500 500"
-                class="dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white
-                       flex-shrink-0 w-7 h-7 text-gray-500 transition duration-75"
+                class="flex-shrink-0 w-7 h-7 text-gray-500 transition duration-75
+                       group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
               >
                 <g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)">
                   <path d="M3651 5092 c-22 -22 -29 -40 -34 -91 -14 -127 -91 -236 -205 -289 -55 -26 -66 -27 -287 -33 -200 -5 -238 -9 -289 -28 -121 -43 -212 -114 -277 -214 -56 -87 -80 -169 -89 -311 -7 -101 -34 -265 -65 -389 l-7 -27 162 0 c149 0 161 1 156 18 -2 9 -19 89 -36 177 -41 204 -40 308 5 398 33 67 91 124 167 164 52 27 57 27 283 33 203 6 238 9 295 29 116 40 206 108 269 202 98 146 125 340 53 378 -35 19 -72 13 -101 -17z"/>
@@ -180,14 +178,14 @@
           </li>
 
           <li
-            class="rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 border-b
-                   p-2"
+            class="rounded-lg border-b p-2 hover:bg-gray-100 dark:hover:bg-gray-700
+                   dark:text-white"
           >
             <a href="#" class="flex items-center text-gray-900 rounded-lg dark:text-white group">
               <svg
                 aria-hidden="true" fill="currentColor" viewBox="0 0 22 22"
-                class="dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white
-                       flex-shrink-0 w-7 h-7 text-gray-500 transition duration-75"
+                class="flex-shrink-0 w-7 h-7 text-gray-500 transition duration-75
+                       group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
               >
                 <path d="M20.29 8.567c.133.323.334.613.59.85v.002a3.536 3.536 0 0 1 0 5.166 2.442 2.442 0 0 0-.776 1.868 3.534 3.534 0 0 1-3.651 3.653 2.483 2.483 0 0 0-1.87.776 3.537 3.537 0 0 1-5.164 0 2.44 2.44 0 0 0-1.87-.776 3.533 3.533 0 0 1-3.653-3.654 2.44 2.44 0 0 0-.775-1.868 3.537 3.537 0 0 1 0-5.166 2.44 2.44 0 0 0 .775-1.87 3.55 3.55 0 0 1 1.033-2.62 3.594 3.594 0 0 1 2.62-1.032 2.401 2.401 0 0 0 1.87-.775 3.535 3.535 0 0 1 5.165 0 2.444 2.444 0 0 0 1.869.775 3.532 3.532 0 0 1 3.652 3.652c-.012.35.051.697.184 1.02ZM9.927 7.371a1 1 0 1 0 0 2h.01a1 1 0 0 0 0-2h-.01Zm5.889 2.226a1 1 0 0 0-1.414-1.415L8.184 14.4a1 1 0 0 0 1.414 1.414l6.218-6.217Zm-2.79 5.028a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2h-.01Z"/>
               </svg>
@@ -204,17 +202,17 @@
 
           {% if request.user.is_authenticated %}
             <li
-              class="rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 border-b
-                       p-2"
+              class="rounded-lg border-b p-2 hover:bg-gray-100 dark:hover:bg-gray-700
+                     dark:text-white"
             >
               <a
-                href="{% url 'user_books' %}" class="flex items-center text-gray-900 rounded-lg
-              dark:text-white group"
+                href="{% url 'user_books' %}"
+                class="flex items-center text-gray-900 rounded-lg dark:text-white group"
               >
                 <svg
                   aria-hidden="true" fill="currentColor" viewBox="0 0 50 50"
                   class="flex-shrink-0 w-7 h-7 text-gray-500 transition duration-75
-                         dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                         group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
                 >
                   <path d="M8 3C7.449219 3 7 3.449219 7 4L7 30C7 30.554688 7.449219 31 8 31L13 31C13.554688 31 14 30.554688 14 30L14 4C14 3.449219 13.554688 3 13 3 Z M 17 3C16.449219 3 16 3.449219 16 4L16 30C16 30.554688 16.449219 31 17 31L22 31C22.554688 31 23 30.554688 23 30L23 4C23 3.449219 22.554688 3 22 3 Z M 9.5 7L11.5 7C12.054688 7 12.5 7.449219 12.5 8C12.5 8.550781 12.054688 9 11.5 9L9.5 9C8.945313 9 8.5 8.550781 8.5 8C8.5 7.449219 8.945313 7 9.5 7 Z M 18.5 7L20.5 7C21.054688 7 21.5 7.449219 21.5 8C21.5 8.550781 21.054688 9 20.5 9L18.5 9C17.945313 9 17.5 8.550781 17.5 8C17.5 7.449219 17.945313 7 18.5 7 Z M 37.59375 8.4375L32.75 9.59375C32.492188 9.65625 32.265625 9.804688 32.125 10.03125C32.066406 10.125 32.023438 10.238281 32 10.34375L32 10C32 9.449219 31.554688 9 31 9L26 9C25.449219 9 25 9.449219 25 10L25 30C25 30.554688 25.449219 31 26 31L31 31C31.554688 31 32 30.554688 32 30L32 10.78125L36.8125 30.25C36.921875 30.710938 37.328125 31.03125 37.78125 31.03125C37.855469 31.03125 37.921875 31.015625 38 31L42.875 29.84375C43.132813 29.78125 43.359375 29.632813 43.5 29.40625C43.640625 29.179688 43.6875 28.914063 43.625 28.65625L38.8125 9.1875C38.683594 8.648438 38.128906 8.308594 37.59375 8.4375 Z M 36.96875 12.78125C37.351563 12.847656 37.6875 13.128906 37.78125 13.53125C37.90625 14.070313 37.566406 14.625 37.03125 14.75L36.0625 14.96875C35.984375 14.988281 35.917969 15 35.84375 15C35.390625 15 34.953125 14.679688 34.84375 14.21875C34.71875 13.679688 35.058594 13.15625 35.59375 13.03125L36.5625 12.8125C36.695313 12.78125 36.839844 12.757813 36.96875 12.78125 Z M 28 13L29 13C29.554688 13 30 13.449219 30 14C30 14.550781 29.554688 15 29 15L28 15C27.445313 15 27 14.550781 27 14C27 13.449219 27.445313 13 28 13 Z M 39.53125 24.46875C40.066406 24.347656 40.621094 24.679688 40.75 25.21875C40.875 25.753906 40.539063 26.28125 40 26.40625L39.03125 26.65625C38.953125 26.675781 38.855469 26.6875 38.78125 26.6875C38.328125 26.6875 37.921875 26.367188 37.8125 25.90625C37.6875 25.371094 38.023438 24.8125 38.5625 24.6875 Z M 9.5 25L11.5 25C12.054688 25 12.5 25.449219 12.5 26C12.5 26.550781 12.054688 27 11.5 27L9.5 27C8.945313 27 8.5 26.550781 8.5 26C8.5 25.449219 8.945313 25 9.5 25 Z M 18.5 25L20.5 25C21.054688 25 21.5 25.449219 21.5 26C21.5 26.550781 21.054688 27 20.5 27L18.5 27C17.945313 27 17.5 26.550781 17.5 26C17.5 25.449219 17.945313 25 18.5 25 Z M 28 25L29 25C29.554688 25 30 25.445313 30 26C30 26.554688 29.554688 27 29 27L28 27C27.445313 27 27 26.554688 27 26C27 25.445313 27.445313 25 28 25 Z M 3 32C2.449219 32 2 32.445313 2 33L2 36C2 36.554688 2.449219 37 3 37L47 37C47.554688 37 48 36.554688 48 36L48 33C48 32.445313 47.554688 32 47 32 Z M 6 39L6 44.5C6 45.878906 7.121094 47 8.5 47C9.878906 47 11 45.878906 11 44.5L11 39 Z M 39 39L39 44.5C39 45.878906 40.121094 47 41.5 47C42.878906 47 44 45.878906 44 44.5L44 39Z"/>
                 </svg>
@@ -234,14 +232,14 @@
             </li>
 
             <li
-              class="rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 border-b
-                       p-2"
+              class="rounded-lg border-b p-2 hover:bg-gray-100 dark:hover:bg-gray-700
+                     dark:text-white"
             >
               <a href="#" class="flex items-center text-gray-900 rounded-lg dark:text-white group">
                 <svg
                   aria-hidden="true" fill="currentColor" viewBox="0 0 600 600"
                   class="flex-shrink-0 w-7 h-7 text-gray-500 transition duration-75
-                         dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                         group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
                 >
                   <path d="M20.29 8.567c.133.323.334.613.59.85v.002a3.536 3.536 0 0 1 0 5.166 2.442 2.442 0 0 0-.776 1.868 3.534 3.534 0 0 1-3.651 3.653 2.483 2.483 0 0 0 -1.87.776 3.537 3.537 0 0 1-5.164 0 2.44 2.44 0 0 0-1.87-.776 3.533 3.533 0 0 1-3.653-3.654 2.44 2.44 0 0 0-.775-1.868 3.537 3.537 0 0 1 0-5.166 2.44 2.44 0 0 0.775-1.87 3.55 3.55 0 0 1 1.033-2.62 3.594 3.594 0 0 1 2.62-1.032 2.401 2.401 0 0 0 1.87-.775 3.535 3.535 0 0 1 5.165 0 2.444 2.444 0 0 0 1.869.775 3.532 3.532 0 0 1 3.652 3.652c-.012.35.051.697.184 1.02ZM9.927 7.371a1 1 0 1 0 0 2h.01a1 1 0 0 0 0-2h-.01Zm5.889 2.226a1 1 0 0 0-1.414 -1.415L8.184 14.4a1 1 0 0 0 1.414 1.414l6.218-6.217Zm-2.79 5.028a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2h-.01Z"/>
                   <path
@@ -263,8 +261,8 @@
 
           {% endif %}
           <li
-            class="rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 border-b
-                   p-2"
+            class="rounded-lg border-b p-2 hover:bg-gray-100 dark:hover:bg-gray-700
+                   dark:text-white"
           >
             {% if request.user.is_authenticated %}
               <a
@@ -274,7 +272,7 @@
                 <svg
                   viewBox="0 0 24 24" fill="currentColor"
                   class="flex-shrink-0 w-7 h-7 text-gray-500 transition duration-75
-                         dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                         group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
                 >
                   <path d="M16.125 12C16.125 11.5858 15.7892 11.25 15.375 11.25L4.40244 11.25L6.36309 9.56944C6.67759 9.29988 6.71401 8.8264 6.44444 8.51191C6.17488 8.19741 5.7014 8.16099 5.38691 8.43056L1.88691 11.4306C1.72067 11.573 1.625 11.7811 1.625 12C 1.625 12.2189 1.72067 12.427 1.88691 12.5694L5.38691 15.5694C5.7014 15.839 6.17488 15.8026 6.44444 15.4881C6.71401 15.1736 6.67759 14.7001 6.36309 14.4306L4.40244 12.75L15.375 12.75C15.7892 12.75 16.125 12.4142 16.125 12Z"/>
                   <path d="M9.375 8C9.375 8.70219 9.375 9.05329 9.54351 9.3055C9.61648 9.41471 9.71025 9.50848 9.81946 9.58145C10.0717 9.74996 10.4228 9.74996 11.125 9.74996L15.375 9.74996C16.6176 9.74996 17.625 10.7573 17.625 12C17.625 13.2426 16.6176 14.25 15.375 14.25L11.125 14.25C10.4228 14.25 10.0716 14.25 9.8194 14.4185C9.71023 14.4915 9.6165 14.5852 9.54355 14.6944C9.375 14.9466 9.375 15.2977 9.375 16C9.375 18.8284 9.375 20.2426 10.2537 21.1213C11.1324 22 12.5464 22 15.3748 22L16.3748 22C19.2032 22 20.6174 22 21.4961 21.1213C22.3748 20.2426 22.3748 18.8284 22.3748 16L22.3748 8C22.3748 5.17158 22.3748 3.75736 21.4961 2.87868C20.6174 2 19.2032 2 16.3748 2L15.3748 2C12.5464 2 11.1324 2 10.2537 2.87868C9.375 3.75736 9.375 5.17157 9.375 8Z"/>

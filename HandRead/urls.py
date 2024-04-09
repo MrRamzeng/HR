@@ -8,5 +8,5 @@ urlpatterns = [
     path('', include('game.urls')),
     path('', include('user.urls')),
     path('', include('main.urls')),
-    path('nested/', include('nested_admin.urls'))
+    path('nested/', include('nested_admin.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

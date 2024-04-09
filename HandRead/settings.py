@@ -1,9 +1,14 @@
 import os
+from os import environ as env
+from dotenv import load_dotenv, find_dotenv
 from pathlib import Path
+from django.core.management.utils import get_random_secret_key
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-fmbkq6xjo#8#@w-*pgwa35pz$u4kk1g($usq$(n9b)&^b6ui^('
+load_dotenv(find_dotenv())
+
+SECRET_KEY = get_random_secret_key()
 
 DEBUG = True
 
@@ -20,7 +25,7 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'user.apps.UserConfig',
     'nested_admin',
-    'compressor',
+    'compressor'
 ]
 
 AUTH_USER_MODEL = 'user.User'
@@ -40,8 +45,7 @@ ROOT_URLCONF = 'HandRead.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -58,35 +62,52 @@ WSGI_APPLICATION = 'HandRead.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3'
+        'ENGINE': env.get('ENGINE'),
+        'NAME': env.get('DB'),
+        'PASSWORD': env.get('DB_PASSWORD')
     }
 }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': 'django.contrib.auth.password_validation.UserAttribute'
+                'SimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME': 'django.contrib.auth.password_validation.MinimumLength'
+                'Validator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME': 'django.contrib.auth.password_validation.CommonPassword'
+                'Validator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': 'django.contrib.auth.password_validation.NumericPassword'
+                'Validator',
     },
 ]
-
-COMPRESS_ROOT = BASE_DIR / 'static'
-
-COMPRESS_ENABLED = True
-
-STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
 
 LOGIN_REDIRECT_URL = '/'
 
 LOGOUT_REDIRECT_URL = '/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = env.get('EMAIL_HOST')
+
+EMAIL_PORT = env.get('EMAIL_PORT')
+
+EMAIL_USE_TLS = env.get('EMAIL_TLS')
+
+EMAIL_HOST_USER = env.get('EMAIL')
+
+EMAIL_HOST_PASSWORD = env.get('PASSWORD')
+
+EMAIL_SERVER = EMAIL_HOST_USER
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+EMAIL_ADMIN = EMAIL_HOST_USER
 
 LANGUAGE_CODE = 'ru-ru'
 
@@ -97,6 +118,12 @@ USE_I18N = True
 USE_TZ = False
 
 STATIC_URL = 'static/'
+
+COMPRESS_ROOT = STATIC_URL
+
+COMPRESS_ENABLED = True
+
+STATICFILES_FINDERS = 'compressor.finders.CompressorFinder',
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')

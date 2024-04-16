@@ -15,8 +15,7 @@
             dark:text-white"
           >{{ title }}</h1>
           <p class="dark:text-white">
-            Вы будете перенаправлены на страницу авторизации через
-            <span id="timer"></span>с.
+            Вы будете перенаправлены на страницу авторизации через <span id="timer"></span> секунд.
           </p>
         </div>
       </div>
@@ -26,7 +25,6 @@
 {% block scripts %}
 	<script>
     let stamp = '5'
-    const TIMER = document.getElementById('timer')
     TIMER.textContent = stamp
     const timer = setInterval(() => {
       if (stamp) {

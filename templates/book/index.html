@@ -3,17 +3,73 @@
   HandRead
 {% endblock %}
 {% block content %}
-  <div id="book-container" class="flex flex-row justify-center">
-    <div id="book-info" class="basis-1/6"></div>
-    <div id="print-container" style="grid-column: 2">
-      {% include 'includes/print_container.html' %}
-      {% include 'includes/keyboard.html' %}
+  {{ contents|json_script:"json_data" }}
+  <div id="typing_books" class="grid grid-cols-2 gap-16 mt-8">
+    <div class="grid content-between">
+      <div id="typing_container">
+        <h1
+          id="book_title"
+          class="relative mb-3 bg-gray-50 text-4xl font-extrabold
+          text-gray-900 leading-none tracking-tight dark:bg-gray-800 z-10 dark:text-white"
+        ></h1>
+        {% include 'includes/typing_form.html' %}
+      </div>
+      <div class="flex justify-between items-center">
+        <div class="flex justify-start gap-4">
+          <button
+            class="bg-white px-5 py-2.5 border rounded-lg border-gray-200 text-sm font-medium
+            text-gray-900 cursor-not-allowed dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400
+            dark:hover:bg-gray-700"
+          >Другой абзац
+          </button>
+          <button
+            class="bg-white px-5 py-2.5 border rounded-lg border-gray-200 text-sm font-medium
+            text-gray-900 cursor-not-allowed dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400
+            dark:hover:bg-gray-700"
+          >Другая книга
+          </button>
+          <a
+            id="book_link"
+            class="px-5 py-2.5 bg-blue-600 rounded-lg text-sm text-center font-medium
+              text-white hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300
+              dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          >Подробнее</a>
+          <button
+            id="book_price"
+            class="bg-white px-5 py-2.5 border rounded-lg border-gray-200 text-sm font-medium
+            text-gray-900 focus:outline-none hover:bg-gray-100 hover:text-blue-700 focus:ring-4
+            focus:ring-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400
+            dark:focus:ring-gray-700 dark:hover:text-white dark:hover:bg-gray-700"
+          ></button>
+        </div>
+        <div class="flex items-center">
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            class="h-5"
+            style="color: rgb(250 202 21)"
+          >
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+          </svg>
+          <span class="dark:text-white">5</span>
+        </div>
+      </div>
     </div>
+    <div
+      id="preview_container"
+      class="w-[315px] h-[428px] border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800
+      dark:border-gray-700 card"
+    ></div>
   </div>
-  <h3 class="pt-24 mb-4 font-extrabold text-gray-900 md:text-xl lg:text-3xl dark:text-white">
-    Новинки
-  </h3>
-  <div class="grid grid-cols-5 gap-4 mt-6">
+
+  {% include 'includes/keyboard.html' %}
+
+  <h1
+    class="my-4 text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 leading-none
+    tracking-tight dark:bg-gray-800 z-10 dark:text-white"
+  >Популярные</h1>
+  <div class="flex justify-center flex-wrap gap-8">
     {% for book in books %}
       {% include 'includes/book.html' %}
     {% endfor %}

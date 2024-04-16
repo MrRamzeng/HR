@@ -5,29 +5,21 @@ from .models import Book, Content, UserBooks, BookPage, Genre, Author
 
 
 def index(request):
-    books = Book.objects.only(
-        'id', 'name', 'authors', 'price',
-        'image'
-    )
-    books_id_list = list(books.order_by('?').values_list('id', flat=True))
+    books = Book.objects.filter(debug=False).only(
+        'id', 'name', 'authors', 'price', 'image'
+    ).order_by('-id')[:10]
     queryset = Content.objects.filter(
-        type__tag='p'  # , text_len__gte=200, text_len__lte=500
+        type__tag='p', book__debug=False  # , text_len__gte=200,
+        # text_len__lte=500
     ).values(
-        'text', 'type__book', 'type__book__name', 'type__book__price',
-        'type__book__image'
+        'text', 'book', 'book__name', 'book__price',
+        'book__image'
     ).order_by('?')
-    contents = []
-    while books_id_list:
-        id = books_id_list.pop()
-        for content in queryset:
-            if content['type__book'] == id:
-                contents.append(content)
-                break
 
     return render(
         request, 'book/index.html', {
-            'contents': contents,
-            'books': books.order_by('-id')[:10]
+            'contents': list(queryset),
+            'books': books
         }
     )
 
@@ -65,12 +57,11 @@ def books(request):
 
 
 def book(request, id):
-    book = Book.objects.get(id=id)
     return render(
         request,
         'book/book.html',
         {
-            'book': book
+            'book': Book.objects.get(id=id)
         }
     )
 
@@ -79,6 +70,7 @@ def add_book(request, book_id):
     UserBooks.objects.get_or_create(
         user_id=request.user.id, book_id=book_id
     )
+
     return redirect('user_books')
 
 
@@ -137,6 +129,7 @@ def set_part(contents):
         else:
             slice_content(part, content, symbols)
             break
+
     return part
 
 
@@ -173,7 +166,7 @@ def typing(request, book_id):
         )
 
     contents = Content.objects.filter(
-        type__book_id=book_id
+        book_id=book_id
     )[book.typing_position:]
     part = set_part(contents)
 

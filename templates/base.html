@@ -2,7 +2,6 @@
 {% load compress %}
 {% load static %}
 <html lang="ru">
-
   <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -20,22 +19,38 @@
   </head>
 
   <style>
-    body {
-      background: rgb(249 250 251);
-    }
 
     aside .border-b {
       margin: 0 !important;
+    }
+
+    #typing_form {
+      width: 780px;
+      overflow-y: hidden;
+      position: relative;
+      top: 0;
+    }
+
+    #typing_form p {
+      text-indent: 30px;
     }
 
     @media (max-width: 640px) {
       .xsm\:w-full {
         width: 100% !important;
       }
+
+      .xsm\:px-3 {
+        padding: 0 .75rem;
+      }
+
+      #typing_books {
+        display: none;
+      }
     }
   </style>
 
-  <body class="dark:bg-gray-800">
+  <body class="bg-gray-50 dark:bg-gray-800">
     <nav
       class="fixed top-0 w-64 xsm:w-full bg-white border-b sm:border-r border-gray-200 z-50
       dark:bg-gray-800 dark:border-gray-700"
@@ -48,14 +63,14 @@
           dark:focus:ring-gray-600"
         >HandRead</a>
         <button
-          id="theme-toggle"
+          id="theme_toggle"
           type="button"
           class="ml-auto p-2 rounded-lg text-gray-500 z-50 hover:bg-gray-100 focus:outline-none
           focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700
           dark:focus:ring-gray-600"
         >
           <svg
-            id="theme-toggle-dark-icon"
+            id="toggle_dark"
             fill="currentColor"
             viewBox="0 0 20 20"
             class="hidden w-7 h-7"
@@ -64,7 +79,7 @@
           </svg>
 
           <svg
-            id="theme-toggle-light-icon"
+            id="toggle_light"
             fill="currentColor"
             viewBox="0 0 20 20"
             class="hidden w-7 h-7"
@@ -75,9 +90,9 @@
 
         <button
           type="button"
-          data-drawer-target="logo-sidebar"
-          data-drawer-toggle="logo-sidebar"
-          aria-controls="logo-sidebar"
+          data-drawer-target="logo_sidebar"
+          data-drawer-toggle="logo_sidebar"
+          aria-controls="logo_sidebar"
           class="sm:hidden ml-3 p-2 rounded-lg text-gray-500 z-50 hover:bg-gray-100
           focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400
           dark:hover:bg-gray-700 dark:focus:ring-gray-600"
@@ -91,9 +106,9 @@
     </nav>
 
     <aside
-      id="logo-sidebar"
+      id="logo_sidebar"
       aria-label="Sidebar"
-      class="fixed w-64 h-screen pt-20 bg-white border-r border-gray-200 z-40 transition-transform
+      class="fixed w-64 h-full pt-20 bg-white border-r border-gray-200 z-40 transition-transform
       -translate-x-full sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
     >
       <div class="px-3 bg-white overflow-y-auto dark:bg-gray-800">
@@ -113,9 +128,7 @@
                 class="w-7 h-7 text-gray-500 transition duration-75 group-hover:text-gray-900
                 dark:text-gray-400 dark:group-hover:text-white"
               >
-                <rect
-                  x="406.324" y="145.007" width="23.173" height="308.599" transform="matrix(0.9808 -0.1951 0.1951 0.9808 -50.3631 87.2844)"
-                />
+                <rect x="406.324" y="145.007" width="23.173" height="308.599" transform="matrix(0.9808 -0.1951 0.1951 0.9808 -50.3631 87.2844)"/>
                 <path d="M0,99.049V457.58h77.646V99.049H0z M54.065,422.886H23.582V133.744h30.482V 422.886z"/>
                 <rect x="108.132" y="219.882" width="98.347" height="237.692"/>
                 <path d="M108.128,54.422v14.145v120.837h98.343V60.972v-6.55H108.128z M182.275,160.792h -49.949v-30.482h49.949V160.792z M182.275,113.516h-49.949V 83.034h49.949V 113.516z"/>
@@ -300,7 +313,7 @@
       </div>
     </aside>
 
-    <div class="sm:ml-64">
+    <div class="sm:ml-64 px-16 xsm:px-3">
       {% block content %}{% endblock content %}
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>

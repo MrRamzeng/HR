@@ -3,13 +3,25 @@ document.addEventListener('DOMContentLoaded', function () {
 })
 
 function newLine(end = false) {
-  shift += parseFloat(window.getComputedStyle(tag).lineHeight)
-  textContainer.style.cssText = `
-    transition: top 0.2s linear; top: -${shift + (end ? marginEnd : 0)}px;
-  `
+  const POS = caretPosition
+  caretPosition = 0
+  tags.splice(0, POS)
+  // const shift = parseFloat(window.getComputedStyle(tag).lineHeight)
+  // typingForm.style.cssText = `
+  //   transition: top 0.1s linear; top: -${shift + (end ? marginEnd : 0)}px;
+  // `
+
+  // setTimeout(() => {
+    for (let pos = 0; pos < POS; pos++) {
+      textBlock.firstElementChild.remove()
+    }
+  //   typingForm.style.cssText = 'transition none; top: 0;'
+    textBlock.style.textIndent = 0
+  // }, 100);
+  // textBlock.removeAttribute('class')
+
   if (end) {
-    textContainer.firstElementChild.remove()
-    textContainer.style.cssText = 'transition: none; top: 0;'
+    typingForm.firstElementChild.remove()
     init()
   }
 }

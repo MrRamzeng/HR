@@ -6,28 +6,23 @@ function getSymbols(code) {
   return keycaps.get(code).symbols || null
 }
 
-const newTextBlock = () => {
-  textPosition && textPosition.value++
-  newLine(true)
-  bookInfo && bookInfo.firstElementChild.remove()
-  form ? form.submit() : null
-}
-
-textContainer.addEventListener('keydown', function (e) {
+typingForm.addEventListener('keydown', function (e) {
   if (!['Alt', 'Shift', 'Control', 'CapsLock'].includes(e.key)) {
     const tagContent = tag.textContent
     const symbols = getSymbols(e.code)
-
     if ((e.key.toLowerCase().match(/[a-zа-я]/) && e.key === tagContent)
       || (symbols && symbols.includes(tagContent))) {
-      tag.style.cssText = 'background: transparent; color: lightgrey;'
+      Object.assign(tag, {
+        className: 'text-gray-300 dark:text-gray-500',
+        style: 'background: transparent'
+      })
+      caretPosition++
       if (tag.lastChild.nodeName === 'BR') {
         newLine()
       } else if ((tagContent.charCodeAt(0) === 182 || tagContent === '\n')
         && e.code === 'Enter') {
-        newTextBlock()
+        newLine(true)
       }
-      caretPosition++
     } else {
       tag.style.cssText = 'background: orange; color: white;'
     }
@@ -38,7 +33,7 @@ textContainer.addEventListener('keydown', function (e) {
   e.preventDefault()
 })
 
-textContainer.addEventListener('keyup', function (e) {
+typingForm.addEventListener('keyup', function (e) {
   const button = getKey(e.code)
   if (button) {
     const classes = button.classList

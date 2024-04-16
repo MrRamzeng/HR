@@ -119,15 +119,17 @@ USE_TZ = False
 
 STATIC_URL = 'static/'
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 COMPRESS_ROOT = STATIC_URL
 
 COMPRESS_ENABLED = True
 
-STATICFILES_FINDERS = 'compressor.finders.CompressorFinder',
-
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
-]
+STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 

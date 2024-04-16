@@ -5,20 +5,26 @@
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const height = window.getComputedStyle(tag).lineHeight
-      document.getElementById('container').style.cssText = `height: ${parseFloat(height) * 2}px; overflow: hidden`
+      const paddings = parseInt(window.getComputedStyle(typingForm).paddingTop) + parseInt
+      (window.getComputedStyle(typingForm).paddingBottom)
+      document.getElementById('typing_form').style.cssText = `height: ${parseFloat(height) * 2 +
+      paddings}px;
+      overflow: hidden`
     })
   </script>
   <form id="text-form" method="post">
     {% csrf_token %}
     {{ form }}
   </form>
-  <h1 id="timer" class="mb-4 text-center text-4xl font-extrabold leading-none tracking-tight
-  text-gray-900 md:text-5xl lg:text-6xl dark:text-white"></h1>
-  {% include 'includes/print_container.html' %}
+  <h1
+    id="timer"
+    class="mb-4 text-center text-4xl font-extrabold leading-none tracking-tight text-gray-900
+    md:text-5xl lg:text-6xl dark:text-white"
+  ></h1>
+  {% include 'includes/typing_form.html' %}
 {% endblock content %}
 {% block scripts %}
   <script src="{% static 'scripts/slicer.js' %}"></script>
-  <script src="{% static 'scripts/elements.js' %}"></script>
   <script src="{% static 'scripts/keycaps.js' %}"></script>
   <script src="{% static 'scripts/compare.js' %}"></script>
   <script src="{% static 'scripts/cursor.js' %}"></script>

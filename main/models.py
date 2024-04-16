@@ -124,7 +124,7 @@ class Book(models.Model):
         verbose_name = 'книга'
 
     def __str__(self):
-        return f'{self.name} {self.bookpage_set.count()}'
+        return f'{self.name}'
 
 
 class BookPage(models.Model):
@@ -193,6 +193,7 @@ class Paragraph(models.Model):
 
 
 class Content(models.Model):
+    book = models.ForeignKey('Book', models.CASCADE)
     type = models.ForeignKey('Paragraph', models.CASCADE)
     text = models.TextField('Текст', blank=True, null=True)
     text_len = models.PositiveIntegerField()

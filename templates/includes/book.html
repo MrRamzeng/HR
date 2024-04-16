@@ -1,19 +1,22 @@
 {% load static %}
 <div
-    class="w-[285px] max-w-sm bg-white border border-gray-200 rounded-lg shadow">
+    class="w-[315px] max-w-sm bg-white border border-gray-200 rounded-lg shadow
+    dark:bg-gray-700 dark:border-gray-700">
   <a href="{% url 'book' book.id %}">
-  <img src="{% get_media_prefix %}{{ book.image }}" class="w-[285px] h-[428px] rounded-t-lg"
-       alt="{{ book.name }}">
+    <img
+      src="{% get_media_prefix %}{{ book.image }}"
+      class="w-[315px] h-[428px] rounded-t-lg"
+      alt="{{ book.name }}"
+    >
   </a>
-  <div class="px-5 pb-5">
-    <a href="{% url 'book' book.id %}">
-      <h5 class="mb-2 text-xl tracking-tight text-gray-900">{{ book.name }}</h5>
-    </a>
+  <div class="px-5 pb-5 border-t">
+    <h5 class="mb-2 text-xl tracking-tight text-gray-900 dark:text-white">{{ book.name }}</h5>
     <div class="flex items-center justify-between">
-      <span class="text-2xl font-bold text-gray-900">{{ book.price }}₽</span>
-      <button class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none">
-        Добавить в корзину
-      </button>
+      <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ book.price }}₽</p>
+      <button
+        class="me-2 mb-2 px-5 py-2 rounded-lg bg-blue-700 text-xl font-medium text-white
+        hover:bg-blue-800 focus:outline-none"
+      >Купить</button>
     </div>
   </div>
 </div>

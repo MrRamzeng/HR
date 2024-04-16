@@ -12,7 +12,7 @@ function setTimer() {
 const modeField = document.getElementById('id_mode')
 
 let htmlTag = document.createElement('symbols')
-textContainer.appendChild(htmlTag)
+typingForm.appendChild(htmlTag)
 
 function getRandomNumber() {
   const multipliers = [
@@ -63,7 +63,7 @@ function setContent(type) {
   init()
 }
 
-textContainer.addEventListener('keydown', function (e) {
+typingForm.addEventListener('keydown', function (e) {
   if (!['Alt', 'Shift', 'Control', 'CapsLock', 'Delete'].includes(e.key)) {
     if (is_start) {
       timer(timerField.value)
@@ -71,11 +71,14 @@ textContainer.addEventListener('keydown', function (e) {
     }
     const tagContent = tag.textContent
     if (e.key === tagContent) {
-      tag.style.cssText = 'background: transparent; color: lightgrey'
+      Object.assign(tag, {
+        className: 'text-gray-300 dark:text-gray-600',
+        style: 'background: transparent'
+      })
       score.value++
       symbols++
-      tag.lastChild.nodeName === 'BR' && newLine()
       caretPosition++
+      tag.lastChild.nodeName === 'BR' && newLine()
     } else {
       parseInt(score.value) && score.value--
       errors++

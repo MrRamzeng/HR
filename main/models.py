@@ -1,13 +1,16 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from image_cropping import ImageRatioField
 
 from user.models import User
 from HandRead.storage import OverwriteStorage
 
 
 def file_path(instance, file):
-    return f'{instance._meta.verbose_name_plural}/{instance}/{file}'.replace(
-        ' ', '_')
+    return (
+        f'{instance._meta.verbose_name_plural}/{instance}/{file}'
+        .replace(' ', '_')
+    )
 
 
 def page_path(instance, file):
@@ -41,6 +44,9 @@ class Author(models.Model):
     image = models.ImageField(
         'Фото', storage=OverwriteStorage(), upload_to=file_path
     )
+    cropping = ImageRatioField(
+        'image', '1000x1000', verbose_name='Предпросмотр'
+    )
     biography = models.TextField('Биография')
     date_of_birth = models.DateField('Дата рождения')
     date_of_death = models.DateField(
@@ -53,7 +59,10 @@ class Author(models.Model):
         verbose_name = 'автор'
 
     def __str__(self):
-        return f'{self.pseudonym or self.get_full_name()}'
+        return self.pseudonym or self.get_full_name()
+
+    def get_books_count(self):
+        return Book.objects.filter(authors__exact=self.pk).count()
 
     def get_full_name(self):
         return f'{self.last_name} {self.first_name}'

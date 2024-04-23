@@ -17,3 +17,7 @@ label {
     overflow: auto;
     max-height: 373px;
 }
+
+.jcrop-holder div div {
+    border-radius: 50%;
+}

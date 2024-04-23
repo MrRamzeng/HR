@@ -1,13 +1,19 @@
+import nested_admin
+from django.db import models
+from django import forms
 from django.contrib import admin
 from django.utils.safestring import mark_safe
+from image_cropping import ImageCroppingMixin
 
 from .models import (
     Author, Book, Paragraph, Content, Country, BookSeries, Genre,
     BookPage, UserBooks
 )
-import nested_admin
-from django.db import models
-from django import forms
+
+admin.site.register(Country)
+admin.site.register(UserBooks)
+admin.site.register(Genre)
+admin.site.register(BookSeries)
 
 form_preset = {
     models.TextField: {
@@ -34,26 +40,23 @@ def page(obj):
 
 
 @admin.register(Author)
-class AuthorAdmin(nested_admin.NestedModelAdmin):
+class AuthorAdmin(ImageCroppingMixin, nested_admin.NestedModelAdmin):
     formfield_overrides = form_preset
-    readonly_fields = [img]
     fieldsets = [
         ('Title', {
             'fields': [
                 ('last_name', 'first_name', 'patronymic', 'pseudonym',
                  'country'),
                 ('date_of_birth', 'date_of_death'),
-                ('image', img, 'biography'),
+                ('image', 'cropping', 'biography'),
             ],
         }),
     ]
-    img.short_description = 'Предпросмотр'
 
-
-admin.site.register(Country)
-admin.site.register(UserBooks)
-admin.site.register(Genre)
-admin.site.register(BookSeries)
+    class Media:
+        css = {
+            'all': ('css/custom_admin.css',)
+        }
 
 
 class ContentInline(nested_admin.NestedTabularInline):

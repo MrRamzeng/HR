@@ -4,7 +4,7 @@ const toggleDark = document.getElementById('toggle_dark')
 const toggleLight = document.getElementById('toggle_light')
 // typing
 const typingForm = document.getElementById('typing_form')
-const previewContainer = document.getElementById('preview_container')
+const preview = document.getElementById('preview')
 const textPosition = document.getElementById('id_position')
 const bookTitle = document.getElementById('book_title')
 const form = document.getElementById('text-form')
@@ -29,8 +29,7 @@ function init() {
     htmlTag.innerHTML = slicer(bookData['text'])
     bookLink.setAttribute('href', `books/${bookData['book']}`)
     bookPrice.innerText = `Купить ${bookData['book__price']}₽`
-
-    previewContainer.style.cssText = `background-image: url(${imgUrl}); background-size: contain`
+    preview.setAttribute('src', imgUrl)
     bookTitle.innerText = bookData['book__name']
   }
   typingForm.appendChild(htmlTag)

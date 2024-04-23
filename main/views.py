@@ -8,34 +8,18 @@ def index(request):
     books = Book.objects.filter(debug=False).only(
         'id', 'name', 'authors', 'price', 'image'
     ).order_by('-id')[:10]
+    print(Book.objects.all())
     queryset = Content.objects.filter(
         type__tag='p', book__debug=False  # , text_len__gte=200,
         # text_len__lte=500
     ).values(
-        'text', 'book', 'book__name', 'book__price',
-        'book__image'
+        'text', 'book', 'book__name', 'book__price', 'book__image'
     ).order_by('?')
 
     return render(
         request, 'book/index.html', {
             'contents': list(queryset),
             'books': books
-        }
-    )
-
-
-def authors(request):
-    return render(
-        request, 'book/authors.html', {
-            'authors': Author.objects.all()
-        }
-    )
-
-
-def author(request, id):
-    return render(
-        request, 'book/author.html', {
-            'author': Author.objects.get(id=id)
         }
     )
 
@@ -57,19 +41,32 @@ def books(request):
 
 
 def book(request, id):
+    return render(request, 'book/book.html', {'book': Book.objects.get(id=id)})
+
+
+def authors(request):
+    print(dir(Author.objects.get(id=1)))
     return render(
         request,
-        'book/book.html',
+        'book/authors.html',
         {
-            'book': Book.objects.get(id=id)
+            'authors': Author.objects.all()
+        }
+    )
+
+
+def author(request, id):
+    return render(
+        request,
+        'book/author.html',
+        {
+            'author': Author.objects.get(id=id)
         }
     )
 
 
 def add_book(request, book_id):
-    UserBooks.objects.get_or_create(
-        user_id=request.user.id, book_id=book_id
-    )
+    UserBooks.objects.get_or_create(user_id=request.user.id, book_id=book_id)
 
     return redirect('user_books')
 
@@ -99,11 +96,7 @@ def reading(request, book_id):
 
             return redirect('reading', book_id)
     else:
-        form = UpdatePosition(
-            initial={
-                'position': book.page_position
-            }
-        )
+        form = UpdatePosition(initial={'position': book.page_position})
     pages = BookPage.objects.filter(
         book_id=book_id
     )[book.page_position:book.page_position + 2]
@@ -165,16 +158,7 @@ def typing(request, book_id):
             }
         )
 
-    contents = Content.objects.filter(
-        book_id=book_id
-    )[book.typing_position:]
+    contents = Content.objects.filter(book_id=book_id)[book.typing_position:]
     part = set_part(contents)
 
-    return render(
-        request,
-        'book/typing.html',
-        {
-            'form': form,
-            'contents': part
-        }
-    )
+    return render(request, 'book/typing.html', {'form': form, 'contents': part})

@@ -3,6 +3,7 @@ from os import environ as env
 from dotenv import load_dotenv, find_dotenv
 from pathlib import Path
 from django.core.management.utils import get_random_secret_key
+from easy_thumbnails.conf import Settings as thumbnail_settings
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,6 +26,8 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'user.apps.UserConfig',
     'nested_admin',
+    'easy_thumbnails',
+    'image_cropping',
     'compressor'
 ]
 
@@ -136,3 +139,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = 'media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+THUMBNAIL_PROCESSORS = (
+    'image_cropping.thumbnail_processors.crop_corners',
+) + thumbnail_settings.THUMBNAIL_PROCESSORS

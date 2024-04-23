@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load cropping %}
 {% block title %}
   HandRead
 {% endblock %}
@@ -17,13 +18,13 @@
       <div class="flex justify-between items-center">
         <div class="flex justify-start gap-4">
           <button
-            class="bg-white px-5 py-2.5 border rounded-lg border-gray-200 text-sm font-medium
+            class="px-5 py-2.5 bg-white border rounded-lg border-gray-200 text-sm font-medium
             text-gray-900 cursor-not-allowed dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400
             dark:hover:bg-gray-700"
           >Другой абзац
           </button>
           <button
-            class="bg-white px-5 py-2.5 border rounded-lg border-gray-200 text-sm font-medium
+            class="px-5 py-2.5 bg-white border rounded-lg border-gray-200 text-sm font-medium
             text-gray-900 cursor-not-allowed dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400
             dark:hover:bg-gray-700"
           >Другая книга
@@ -36,7 +37,7 @@
           >Подробнее</a>
           <button
             id="book_price"
-            class="bg-white px-5 py-2.5 border rounded-lg border-gray-200 text-sm font-medium
+            class="px-5 py-2.5 bg-white border rounded-lg border-gray-200 text-sm font-medium
             text-gray-900 focus:outline-none hover:bg-gray-100 hover:text-blue-700 focus:ring-4
             focus:ring-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400
             dark:focus:ring-gray-700 dark:hover:text-white dark:hover:bg-gray-700"
@@ -56,15 +57,15 @@
         </div>
       </div>
     </div>
-    <div
-      id="preview_container"
+    <img
+      id="preview"
+      src=""
+      alt="preview"
       class="w-[315px] h-[428px] border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800
       dark:border-gray-700 card"
-    ></div>
+    >
   </div>
-
   {% include 'includes/keyboard.html' %}
-
   <h1
     class="my-4 text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 leading-none
     tracking-tight dark:bg-gray-800 z-10 dark:text-white"

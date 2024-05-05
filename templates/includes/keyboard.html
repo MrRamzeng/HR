@@ -5,11 +5,15 @@
 
   function Keyboard({keys = []}) {
     return (
-      <figure className="keyboard">
+      <figure
+        className="keyboard bg-gray-100 mx-auto border border-gray-300 rounded-lg
+        dark:bg-gray-600 dark:border-gray-700"
+      >
         {keys.map((key, index) => (
-          <div data-code={key[0]} className={`key ${key[1].class || ''}`} key={index}>
-            {key[1].key}
-          </div>
+          <div
+            data-code={key[0]} key={index}
+            className={`key ${key[1].class || ''} dark:bg-gray-700 dark:text-gray-300`}
+          >{key[1].key}</div>
         ))}
       </figure>
     )

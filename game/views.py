@@ -1,28 +1,8 @@
 from django.shortcuts import render, redirect
 from datetime import datetime
-from random import shuffle
 
 from .forms import GameForm
-from .words import words
 from .models import AccuracyGame
-
-
-def shuffle_words(list, ):
-    shuffle(words)
-    string = ''
-    string_len = 0
-    for word in words:
-        if len(string) < 10000:
-            word_len = len(word) + 1
-            if string_len + word_len < 80:
-                string += f'{word} '
-                string_len += word_len
-            else:
-                string += f'{word}\n'
-                string_len = 0
-        else:
-            break
-    return string
 
 
 def game(request):
@@ -32,36 +12,26 @@ def game(request):
             timer = form.cleaned_data.get('timer')
             mode = form.cleaned_data.get('mode')
             result, is_created = AccuracyGame.objects.get_or_create(
-                user_id=(request.user.id or 1), timer=timer, mode=mode
+                user_id=request.user.id, timer=timer, mode=mode
             )
             result.timer = timer
+            result.mode = mode
             result.score = form.cleaned_data.get('score')
             result.accuracy = form.cleaned_data.get('accuracy')
             result.speed = form.cleaned_data.get('speed')
-            result.mode = mode
-            if request.user.is_anonymous or result.score > result.max_score:
+            if (result.score > result.max_score
+                    and result.accuracy > result.best_accuracy):
                 result.max_score = result.score
                 result.max_speed = result.speed
                 result.best_accuracy = result.accuracy
                 result.best_score_time = datetime.now()
-            if request.user.is_authenticated and 1000 // 60 < result.speed:
+            if 1000 // 60 < result.speed:
                 result.is_win = True
             result.save()
             return redirect('leaderboard', mode)
     else:
-        form = GameForm(
-            initial={
-                'score': 0,
-                'accuracy': 0,
-                'speed': 0
-            }
-        )
-    return render(
-        request, 'game/accuracy.html', {
-            'form': form,
-            'words': shuffle_words(words)
-        }
-    )
+        form = GameForm(initial={'score': 0, 'accuracy': 0, 'speed': 0})
+    return render(request, 'game/accuracy.html', {'form': form})
 
 
 def leaderboard(request, mode):

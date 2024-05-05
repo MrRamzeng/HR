@@ -1,7 +1,3 @@
-const getKey = (code) => {
-  return document.querySelector(`[data-code="${code}"]`)
-}
-
 function getSymbols(code) {
   return keycaps.get(code).symbols || null
 }
@@ -33,17 +29,17 @@ typingForm.addEventListener('keydown', function (e) {
   e.preventDefault()
 })
 
-typingForm.addEventListener('keyup', function (e) {
-  const button = getKey(e.code)
-  if (button) {
-    const classes = button.classList
-
-    if (classes.contains('caps-active')) {
-      classes.remove('caps-active')
-    } else if (classes.contains('caps')) {
-      classes.add('caps-active')
-    }
-
-    button.removeAttribute('data-pressed')
-  }
-})
+// typingForm.addEventListener('keyup', function (e) {
+//   const button = getKey(e.code)
+//   if (button) {
+//     const classes = button.classList
+//
+//     if (classes.contains('caps-active')) {
+//       classes.remove('caps-active')
+//     } else if (classes.contains('caps')) {
+//       classes.add('caps-active')
+//     }
+//
+//     button.removeAttribute('data-pressed')
+//   }
+// })

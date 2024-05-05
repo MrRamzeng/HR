@@ -1,31 +1,17 @@
 /*@import url(https://fonts.googleapis.com/css?family=Duru+Sans);*/
 
 .keyboard {
-    background: linear-gradient(
-            to bottom,
-            #DCDCDC 0%,
-            #D8D8D8 95%,
-            #E2E2E2 100%
-    );
 
-    position: absolute;
-    left: 50%;
-    bottom: 15%;
+    width: calc(751px * 1.05);
+    height: calc(305px * 1.05);
 
-    width: 751px;
-    height: 305px;
-
-    margin-left: -377px;
-    margin-top: -150px;
+    margin-top: 50px;
     padding: 15px 10px;
 
     font-family: "Duru Sans", Arial, sans-serif;
 
-    box-sizing: border-box;
-    box-shadow: 0 1px 0 #8C8C8C, 0 2px 0 #828282, 0 3px 0 #7D7D7D, 0 4px 0 #969696, 0 5px 0 #646464, 0 -10px 40px #00000066;
+    box-shadow: 0 1px 0 #8C8C8C, 0 2px 0 #828282, 0 1px 0 #7D7D7D, 0 2px 0 #969696, 0 2px 0 #646464, 0 -5px 20px #00000066;
 
-    border-radius: 7px;
-    border: 1px solid #A0A0A0;
 }
 
 .key[data-pressed]:not(.unused), .key:active{
@@ -40,15 +26,15 @@
 
     display: block;
 
-    width: 40px;
-    height: 40px;
+    width: calc(40px * 1.05);
+    height: calc(40px * 1.05);
 
-    margin: 8px 5px 5px 5px;
-    padding-top: 13px;
+    margin: calc(8px * 1.05) calc(5px * 1.05) calc(5px * 1.05) calc(5px * 1.05);
+    padding-top: calc(13px * 1.05);
 
     float: left;
     box-sizing: border-box;
-    box-shadow: 0 1px 0 #FAFAFA, 0 2px 0 #FAFAFA, 0 3px 0 #FAFAFA, 0 4px 0 1px #B4B4B4, 0 4px 0 2px #828282;
+    box-shadow: 0 4px 0 1px #B4B4B4, 0 4px 0 2px #828282;
 
     text-align: center;
 
@@ -65,27 +51,27 @@
 }
 
 .key-size-2 {
-    width: 58px;
+    width: calc(58px * 1.05);
 }
 
 .key-size-3 {
-    width: 68px;
+    width: calc(68px * 1.05);
 }
 
 .key-size-4 {
-    width: 79px;
+    width: calc(79px * 1.05);
 }
 
 .key-size-5 {
-    width: 104px;
+    width: calc(104px * 1.05);
 }
 
 .key-size-6 {
-    width: 105px;
+    width: calc(105px * 1.05);
 }
 
 .key-size-7 {
-    width: 291px;
+    width: calc(291px * 1.05);
 }
 
 .caps:before {
@@ -95,11 +81,11 @@
 
     position: absolute;
 
-    width: 5px;
-    height: 5px;
+    width: calc(5px * 1.05);
+    height: calc(5px * 1.05);
 
     margin-left: 0;
-    margin-top: -10px;
+    margin-top: calc(-10px * 1.05);
 
     content: "";
     border-radius: 100%;
@@ -114,7 +100,7 @@
 
     font-size: 0.5em;
     text-align: left;
-    line-height: 40px;
+    line-height: calc(40px * 1.05);
     vertical-align: bottom;
 }
 
@@ -126,12 +112,12 @@
 }
 
 .function.small-type {
-    padding-right: 2px;
-    padding-top: 2px;
+    padding-right: calc(2px * 1.05);
+    padding-top: calc(2px * 1.05);
 
     font-size: 0.7em;
     text-align: center;
-    line-height: 18px;
+    line-height: calc(18px * 1.05);
 }
 
 .unused {
@@ -139,8 +125,8 @@
 }
 
 .function.small-type.right {
-    padding-top: 5px;
+    padding-top: calc(5px * 1.05);
 
-    font-size: 8px;
+    font-size: calc(8px * 1.05);
     text-align: right;
 }

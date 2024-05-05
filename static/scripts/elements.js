@@ -7,12 +7,12 @@ const typingForm = document.getElementById('typing_form')
 const preview = document.getElementById('preview')
 const textPosition = document.getElementById('id_position')
 const bookTitle = document.getElementById('book_title')
-const form = document.getElementById('text-form')
+const form = document.getElementById('text_form')
 // accuracy game
-const score = document.getElementById('id_score')
-const accuracy = document.getElementById('id_accuracy')
-const speed = document.getElementById('id_speed')
 const timerField = document.getElementById('id_timer')
+const score = document.getElementById('id_score')
+const speed = document.getElementById('id_speed')
+const accuracy = document.getElementById('id_accuracy')
 const TIMER = document.getElementById('timer')
 
 let textBlock, caretPosition, tags, tag, marginEnd
@@ -21,6 +21,10 @@ const jsonData = document.getElementById('json_data') && JSON.parse(document.get
 
 function init() {
   const htmlTag = document.createElement('p')
+  if (TIMER) {
+    const timer_id = document.querySelector('input[name="timer"]:checked').id
+    setPreset(timer_id)
+  }
   if (jsonData) {
     const bookData = jsonData.pop()
     const bookLink = document.getElementById('book_link')
@@ -38,6 +42,27 @@ function init() {
   caretPosition = 0
   tag = tags[caretPosition]
   marginEnd = parseFloat(window.getComputedStyle(textBlock).marginBlockEnd)
+}
+
+const getKey = (code) => {
+  return document.querySelector(`[data-code="${code}"]`)
+}
+
+if (typingForm) {
+  typingForm.addEventListener('keyup', function (e) {
+    const button = getKey(e.code)
+    if (button) {
+      const classes = button.classList
+
+      if (classes.contains('caps-active')) {
+        classes.remove('caps-active')
+      } else if (classes.contains('caps')) {
+        classes.add('caps-active')
+      }
+
+      button.removeAttribute('data-pressed')
+    }
+  })
 }
 
 if (

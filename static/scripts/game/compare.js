@@ -1,15 +1,12 @@
-TIMER.textContent = timerField.options[timerField.selectedIndex].textContent
-
-let is_start = true
+let isStart = true
 let errors = 0
-
 let symbols = 0
 
-function setTimer() {
-  TIMER.textContent = timerField.options[timerField.selectedIndex].textContent
+function setPreset(id) {
+  TIMER.textContent = document.querySelector(`label[for="${id}"]`).textContent
 }
 
-const modeField = document.getElementById('id_mode')
+const modeField = document.querySelector('input[name="mode"]:checked').id
 
 let htmlTag = document.createElement('symbols')
 typingForm.appendChild(htmlTag)
@@ -33,11 +30,11 @@ const mix = (type1, type2) => {
 }
 
 const getContentType = (type) => {
-  if (type === 'Только числа') {
+  if (type === 'D') {
     return getRandomNumber()
-  } else if (type === 'Только знаки') {
+  } else if (type === 'S') {
     return getRandomElement(signs)
-  } else if (type === 'Все') {
+  } else if (type === 'ALL') {
     const data = mix(getRandomElement(words), getRandomNumber())
     return mix(getRandomElement(signs), data)
   } else {
@@ -46,9 +43,9 @@ const getContentType = (type) => {
 }
 
 function setContent(type) {
-  let stringLen = 0
   let content = ''
-  while (content.length < 3000) {
+  let stringLen = 0
+  while (content.length < 1000) {
     const data = getContentType(type)
     const dataLen = data.length + 1
     if (stringLen + dataLen < 80) {
@@ -63,11 +60,12 @@ function setContent(type) {
   init()
 }
 
-typingForm.addEventListener('keydown', function (e) {
+typingForm.addEventListener('keydown', (e) => {
+  const key = getKey(e.code)
   if (!['Alt', 'Shift', 'Control', 'CapsLock', 'Delete'].includes(e.key)) {
-    if (is_start) {
-      timer(timerField.value)
-      is_start = false
+    if (isStart) {
+      timer(document.querySelector('input[name="timer"]:checked').value)
+      isStart = false
     }
     const tagContent = tag.textContent
     if (e.key === tagContent) {
@@ -91,20 +89,32 @@ typingForm.addEventListener('keydown', function (e) {
   }
   tag = tags[caretPosition]
   setCursorPosition(caretPosition)
+
+  key && key.setAttribute('data-pressed', 'on')
   e.preventDefault()
 })
 
+function setAnonymResult(timer, mode, score, accuracy, speed) {
+  localStorage.setItem('anonym_result', `${timer} ${mode} ${score} ${accuracy} ${speed}`)
+}
+
 function timer(timeStamp) {
   const timer = setInterval(() => {
-    if (timeStamp > 0) {
+    if (timeStamp) {
       timeStamp--
       let minutes = Math.floor(timeStamp / 60)
       let seconds = timeStamp % 60
       TIMER.textContent = `${minutes}:${seconds > 9 ? parseInt(seconds) : '0' + parseInt(seconds)}`
     } else {
       clearInterval(timer)
-      speed.value = Math.floor(symbols / parseInt(timerField.value) * 60)
-      form.submit()
+      const time = document.querySelector('input[name="timer"]:checked').value
+      speed.value = Math.floor(symbols * 60 / parseInt(time)      )
+      if (isAuth) {
+        form.submit()
+      } else {
+        const mode = document.querySelector('input[name="mode"]:checked').value
+        setAnonymResult(time, mode, score.value, accuracy.value, speed.value)
+      }
     }
   }, 1000)
 }

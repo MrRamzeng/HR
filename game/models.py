@@ -4,23 +4,26 @@ from django.db import models
 
 class AccuracyGame(models.Model):
     user = models.ForeignKey('user.User', models.CASCADE)
-    timer = models.PositiveSmallIntegerField('Таймер', default=60)
+    TIMERS = (
+        (30, "0:30"),
+        (60, "1:00"),
+        (120, "2:00")
+    )
+    timer = models.CharField(
+        'Таймер', choices=TIMERS, default=30, max_length=10
+    )
     score = models.PositiveSmallIntegerField(default=0)
     accuracy = models.DecimalField(
         validators=(MinValueValidator(0), MaxValueValidator(100)), max_digits=5,
         decimal_places=2, default=0
     )
-    W = 'Только слова'
-    D = 'Только числа'
-    S = 'Только знаки'
-    ALL = 'Все'
     MODES = (
-        (W, 'Только слова'),
-        (D, 'Только числа'),
-        (S, 'Только знаки'),
-        (ALL, 'Все')
+        ('W', 'Только слова'),
+        ('D', 'Только числа'),
+        ('S', 'Только знаки'),
+        ('ALL', 'Все')
     )
-    mode = models.CharField('Режим', choices=MODES, default=W, max_length=20)
+    mode = models.CharField('Режим', choices=MODES, default='W', max_length=20)
     speed = models.PositiveSmallIntegerField('Количество символов', default=0)
     max_score = models.PositiveSmallIntegerField('Лучший счёт', default=0)
     best_accuracy = models.DecimalField(

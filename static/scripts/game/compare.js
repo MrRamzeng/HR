@@ -60,6 +60,10 @@ function setContent(type) {
   init()
 }
 
+let errorMultiplier = 1
+let isCorrectly = true
+let wordLength = 0
+
 typingForm.addEventListener('keydown', (e) => {
   const key = getKey(e.code)
   if (!['Alt', 'Shift', 'Control', 'CapsLock', 'Delete'].includes(e.key)) {
@@ -69,19 +73,29 @@ typingForm.addEventListener('keydown', (e) => {
     }
     const tagContent = tag.textContent
     if (e.key === tagContent) {
+      errorMultiplier = 1
       Object.assign(tag, {
         className: 'text-gray-300 dark:text-gray-600',
         style: 'background: transparent'
       })
+      e.key !== ' ' && wordLength++
       score.value++
-      symbols++
+      if (!isCorrectly && e.key === ' ') {
+        score.value = parseInt(score.value) + wordLength
+        wordLength = 0
+      } else if (e.key === ' ') {
+        isCorrectly = true
+      }
       caretPosition++
       tag.lastChild.nodeName === 'BR' && newLine()
     } else {
       parseInt(score.value) && score.value--
-      errors++
+      errors += errorMultiplier
+      errorMultiplier *= 2
+      isCorrectly = false
       tag.style.cssText = 'background: orange; color: white'
     }
+    symbols++
     accuracy.value = ((symbols - errors) * 100 / (symbols || 1)).toFixed(2)
     if (parseInt(accuracy.value) < 0) {
       accuracy.value = 0
@@ -94,8 +108,16 @@ typingForm.addEventListener('keydown', (e) => {
   e.preventDefault()
 })
 
-function setAnonymResult(timer, mode, score, accuracy, speed) {
-  localStorage.setItem('anonym_result', `${timer} ${mode} ${score} ${accuracy} ${speed}`)
+function setAnonymResult(timer, score, speed, accuracy) {
+  const result = {
+    'timer': timer,
+    'user__username': 'Вы',
+    'max_score': score,
+    'max_speed': speed,
+    'best_accuracy': accuracy,
+    'unregister': true
+  }
+  localStorage.setItem('anonym_result', JSON.stringify(result))
 }
 
 function timer(timeStamp) {
@@ -108,12 +130,13 @@ function timer(timeStamp) {
     } else {
       clearInterval(timer)
       const time = document.querySelector('input[name="timer"]:checked').value
-      speed.value = Math.floor(symbols * 60 / parseInt(time)      )
+      speed.value = Math.floor(symbols * 60 / parseInt(time))
       if (isAuth) {
         form.submit()
       } else {
         const mode = document.querySelector('input[name="mode"]:checked').value
-        setAnonymResult(time, mode, score.value, accuracy.value, speed.value)
+        setAnonymResult(time, parseInt(score.value), parseInt(speed.value), accuracy.value)
+        window.location.replace(`/accuracy/leaderboard/${mode}/`)
       }
     }
   }, 1000)

@@ -22,6 +22,7 @@
       <div id="root"></div>
     </div>
     <form id="text_form" method="post">
+      {{ form.errors }}
       {% csrf_token %}
       {{ form.score }}
       {{ form.speed }}
@@ -109,7 +110,6 @@
   <script src="{% static 'scripts/game/compare.js' %}"></script>
   <script src="{% static 'scripts/words.min.js' %}"></script>
   <script>
-    const isAuth = {% if request.user.is_authenticated %} true {% else %} false {% endif %}
     const keySwitch = document.getElementById('key_switch');
     if (localStorage.getItem('keyboard') === 'on') {
       document.getElementById('root').classList.remove('hidden')

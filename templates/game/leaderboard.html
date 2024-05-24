@@ -1,140 +1,15 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block styles %}
-  <style>
-      table {
-          width: 33%;
-          display: inline-table;
-      }
-
-      table, th, td {
-          border: 1px solid;
-          border-collapse: collapse;
-          text-align: center;
-      }
-  </style>
-{% endblock styles %}
 {% block title %}Таблица лидеров{% endblock title %}
 {% block content %}
-  {% if results30 %}
-    <table>
-      <tr>
-        <th colspan="5">30 секунд</th>
-      </tr>
-      <tr>
-        <th>#</th>
-        <th>Пользователь</th>
-        <th>Счет</th>
-        <th>Скорость</th>
-        <th>Аккуратность</th>
-      </tr>
-      {% for result in results30 %}
-        {% if position > results.count|add:1 and result == results.last %}
-          <tr>
-            <td colspan="5">...</td>
-          </tr>
-        {% endif %}
-        <tr>
-          <td>
-            {% if position > 1 and result == results.last %}
-              {{ position }}
-            {% else %}
-              {{ forloop.counter }}
-            {% endif %}
-          </td>
-          <td>
-            {% if request.user == result.user %}
-              Вы
-            {% else %}
-              {{ result.user.username }}
-            {% endif %}
-          </td>
-          <td>{{ result.max_score }}</td>
-          <td>{{ result.max_speed }}</td>
-          <td>{{ result.best_accuracy }}%</td>
-        </tr>
-      {% endfor results %}
-    </table>
-  {% endif %}
-  {% if results60 %}
-    <table>
-      <tr>
-        <th colspan="5">1 минута</th>
-      </tr>
-      <tr>
-        <th>#</th>
-        <th>Пользователь</th>
-        <th>Счет</th>
-        <th>Скорость</th>
-        <th>Аккуратность</th>
-      </tr>
-      {% for result in results60 %}
-        {% if position > results.count|add:1 and result == results.last %}
-          <tr>
-            <td colspan="5">...</td>
-          </tr>
-        {% endif %}
-        <tr>
-          <td>
-            {% if position > 1 and result == results.last %}
-              {{ position }}
-            {% else %}
-              {{ forloop.counter }}
-            {% endif %}
-          </td>
-          <td>
-            {% if request.user == result.user %}
-              Вы
-            {% else %}
-              {{ result.user.username }}
-            {% endif %}
-          </td>
-          <td>{{ result.max_score }}</td>
-          <td>{{ result.max_speed }}</td>
-          <td>{{ result.best_accuracy }}%</td>
-        </tr>
-      {% endfor results %}
-    </table>
-  {% endif %}
-  {% if results120 %}
-    <table>
-      <tr>
-        <th colspan="5">2 минуты</th>
-      </tr>
-      <tr>
-        <th>#</th>
-        <th>Пользователь</th>
-        <th>Счет</th>
-        <th>Скорость</th>
-        <th>Аккуратность</th>
-      </tr>
-      {% for result in results120 %}
-        {% if position > results.count|add:1 and result == results.last %}
-          <tr>
-            <td colspan="5">...</td>
-          </tr>
-        {% endif %}
-        <tr>
-          <td>
-            {% if position > 1 and result == results.last %}
-              {{ position }}
-            {% else %}
-              {{ forloop.counter }}
-            {% endif %}
-          </td>
-          <td>
-            {% if request.user == result.user %}
-              Вы
-            {% else %}
-              {{ result.user.username }}
-            {% endif %}
-          </td>
-          <td>{{ result.max_score }}</td>
-          <td>{{ result.max_speed }}</td>
-          <td>{{ result.best_accuracy }}%</td>
-        </tr>
-      {% endfor results %}
-    </table>
-    {{ request.urlquery.fragment }}
-  {% endif %}
+  <div id="results" class="flex flex-wrap items-baseline"></div>
 {% endblock content %}
+{% block scripts %}
+  {{ results30|json_script:"json_results_30" }}
+  {{ results60|json_script:"json_results_60" }}
+  {{ results120|json_script:"json_results_120" }}
+  <script src="{% static 'scripts/vendor/react.development.js' %}"></script>
+  <script src="{% static 'scripts/vendor/react-dom.development.js' %}"></script>
+  <script src="{% static 'scripts/vendor/babel.min.js' %}"></script>
+  <script type="text/babel" src="{% static 'scripts/game/leaderboard.js' %}"></script>
+{% endblock scripts %}

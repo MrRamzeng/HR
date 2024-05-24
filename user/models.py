@@ -23,4 +23,4 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name = 'учетная запись'
 
     def __str__(self):
-        return f'{self.email} {self.username}'
+        return f'{self.username}'

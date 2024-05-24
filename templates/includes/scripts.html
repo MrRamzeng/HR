@@ -1,39 +1,6 @@
 {% load static %}
-<!--
-<script src="{% static 'scripts/vendor/react.development.js' %}"></script>
-<script src="{% static 'scripts/vendor/react-dom.development.js' %}"></script>
-<script src="{% static 'scripts/vendor/babel.min.js' %}"></script>
--->
 <script src="{% static 'scripts/slicer.js' %}"></script>
 <script src="{% static 'scripts/keycaps.js' %}"></script>
 <script src="{% static 'scripts/compare.js' %}"></script>
 <script src="{% static 'scripts/cursor.js' %}"></script>
 <script src="{% static 'scripts/book/compare.js' %}"></script>
-<script>
-{#  {% for content in contents %}#}
-    {#htmlTag = document.createElement(`{{ content.tag|default:'p' }}`)#}
-    {#{% if content.css %}#}
-    {#  htmlTag.setAttribute('class', '{{ content.css }}')#}
-    {#{% endif %}#}
-    {##}
-    {#{% if content.src %}#}
-    {#  htmlTag.setAttribute('src', '{{ content.src.url }}')#}
-    {#{% endif %}#}
-    {##}
-    {#htmlTag.nodeName !== 'IMG' ? htmlTag.innerHTML = slicer(`{{ content.text|safe }}`) : null#}
-    {#typingForm.appendChild(htmlTag)#}
-    {##}
-    {#{% if request.resolver_match.url_name == 'index' %}#}
-    {#  imgUrl = `{% get_media_prefix %}{{ content.type__book__image|safe }}`#}
-    {#  htmlTag = document.createElement('div')#}
-    {#  Object.assign(htmlTag, {#}
-    {#    className: 'w-[285px] h-[428px] border border-gray-200 rounded-lg shadow-lg ' +#}
-    {#      'dark:bg-gray-800 dark:border-gray-700 card',#}
-    {#    style: `background: url(${imgUrl}); background-size: 285px 428px`,#}
-    {#    id: `preview{{ content.type__book }}`#}
-    {#  })#}
-    {#  htmlTag.innerHTML = `{% include 'includes/book_preview.html' %}`#}
-    {#  previewContainer.appendChild(htmlTag)#}
-    {#{% endif %}#}
-{#  {% endfor %}#}
-</script>

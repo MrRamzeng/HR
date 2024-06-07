@@ -135,6 +135,10 @@ class Book(models.Model):
     def __str__(self):
         return f'{self.name}'
 
+    def get_authors(self):
+        authors = [author.__str__() for author in self.authors.all()]
+        return ', '.join(authors)
+
 
 class BookPage(models.Model):
     book = models.ForeignKey('Book', models.CASCADE)
@@ -172,8 +176,10 @@ class Paragraph(models.Model):
     H3 = 'h3'
     H4 = 'h4'
     H5 = 'h5'
+    DL = 'dl'
     I = 'i'
     IMG = 'img'
+    DIV = 'div'
     TAGS = (
         (H1, 'h1'),
         (H2, 'h2'),
@@ -183,6 +189,8 @@ class Paragraph(models.Model):
         (I, 'i'),
         (IMG, 'img'),
         (P, 'p'),
+        (DL, 'dl'),
+        (DIV, 'div')
     )
     tag = models.CharField(
         'Тег', choices=TAGS, default=P, max_length=20
@@ -191,6 +199,7 @@ class Paragraph(models.Model):
         'источник', storage=OverwriteStorage(), upload_to=file_path,
         blank=True, null=True
     )
+    tag_id = models.CharField('id', max_length=50, blank=True, null=True)
     css = models.CharField('Css', max_length=50, blank=True, null=True)
 
     class Meta:
@@ -202,7 +211,6 @@ class Paragraph(models.Model):
 
 
 class Content(models.Model):
-    book = models.ForeignKey('Book', models.CASCADE)
     type = models.ForeignKey('Paragraph', models.CASCADE)
     text = models.TextField('Текст', blank=True, null=True)
     text_len = models.PositiveIntegerField()

@@ -29,12 +29,12 @@ function init() {
     const bookData = jsonData.pop()
     const bookLink = document.getElementById('book_link')
     const bookPrice = document.getElementById('book_price')
-    const imgUrl = `media/${bookData['book__image']}`
+    const imgUrl = `media/${bookData['type__book__image']}`
     htmlTag.innerHTML = slicer(bookData['text'])
-    bookLink.setAttribute('href', `books/${bookData['book']}`)
-    bookPrice.innerText = `Купить ${bookData['book__price']}₽`
+    bookLink.setAttribute('href', `books/${bookData['type__book']}`)
+    bookPrice.innerText = `Купить ${bookData['type__book__price']}₽`
     preview.setAttribute('src', imgUrl)
-    bookTitle.innerText = bookData['book__name']
+    bookTitle.innerText = bookData['type__book__name']
   }
   typingForm.appendChild(htmlTag)
   textBlock = typingForm.firstElementChild

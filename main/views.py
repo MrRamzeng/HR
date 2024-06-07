@@ -8,13 +8,14 @@ def index(request):
     books = Book.objects.filter(debug=False).only(
         'id', 'name', 'authors', 'price', 'image'
     ).order_by('-id')[:10]
-    print(Book.objects.all())
     queryset = Content.objects.filter(
-        type__tag='p', book__debug=False  # , text_len__gte=200,
+        type__tag='p', type__book__debug=False  # , text_len__gte=200,
         # text_len__lte=500
     ).values(
-        'text', 'book', 'book__name', 'book__price', 'book__image'
+        'text', 'type__book', 'type__book__name', 'type__book__price',
+        'type__book__image'
     ).order_by('?')
+    print(queryset)
 
     return render(
         request, 'book/index.html', {
@@ -97,15 +98,17 @@ def reading(request, book_id):
             return redirect('reading', book_id)
     else:
         form = UpdatePosition(initial={'position': book.page_position})
-    pages = BookPage.objects.filter(
-        book_id=book_id
-    )[book.page_position:book.page_position + 2]
+    content = Content.objects.filter(
+        type__book_id=book_id
+    ).order_by('-id')
 
     return render(
         request,
         'book/reading.html',
         {
-            'pages': pages,
+            'content': content,
+            'content_count': content.count(),
+            'book': book,
             'form': form,
             'progress': book.get_read_progress(),
         }
@@ -158,7 +161,9 @@ def typing(request, book_id):
             }
         )
 
-    contents = Content.objects.filter(book_id=book_id)[book.typing_position:]
+    contents = Content.objects.filter(
+        type__book_id=book_id
+    )[book.typing_position:]
     part = set_part(contents)
 
     return render(request, 'book/typing.html', {'form': form, 'contents': part})

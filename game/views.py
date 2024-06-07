@@ -1,8 +1,6 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, redirect
 from datetime import datetime
 
-from user.models import User
 from .forms import GameForm
 from .models import AccuracyGame
 

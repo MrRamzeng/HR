@@ -1,19 +1,18 @@
 import os
 from os import environ as env
-from dotenv import load_dotenv, find_dotenv
+from dotenv import load_dotenv
 from pathlib import Path
-from django.core.management.utils import get_random_secret_key
 from easy_thumbnails.conf import Settings as thumbnail_settings
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv(find_dotenv())
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
-SECRET_KEY = get_random_secret_key()
+SECRET_KEY = env.get('KEY')
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['mrramzeng.pythonanywhere.com', 'localhost']
+ALLOWED_HOSTS = ['handread.pythonanywhere.com', 'localhost']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -48,7 +47,7 @@ ROOT_URLCONF = 'HandRead.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -66,7 +65,7 @@ WSGI_APPLICATION = 'HandRead.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': env.get('ENGINE'),
-        'NAME': env.get('DB'),
+        'NAME': os.path.join(BASE_DIR, env.get('DB')),
         'PASSWORD': env.get('DB_PASSWORD')
     }
 }

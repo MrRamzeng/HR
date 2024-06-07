@@ -8,18 +8,6 @@ class CustomUserManager(BaseUserManager):
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save()
-        AccuracyGame.objects.create(user=user)
-        AccuracyGame.objects.create(user=user, timer=60)
-        AccuracyGame.objects.create(user=user, timer=120)
-        AccuracyGame.objects.create(user=user, mode='D')
-        AccuracyGame.objects.create(user=user, mode='D', timer=60)
-        AccuracyGame.objects.create(user=user, mode='D', timer=120)
-        AccuracyGame.objects.create(user=user, mode='S')
-        AccuracyGame.objects.create(user=user, mode='S', timer=60)
-        AccuracyGame.objects.create(user=user, mode='S', timer=120)
-        AccuracyGame.objects.create(user=user, mode='ALL')
-        AccuracyGame.objects.create(user=user, mode='ALL', timer=60)
-        AccuracyGame.objects.create(user=user, mode='ALL', timer=120)
         return user
 
     def create_superuser(self, email, password, **extra_fields):

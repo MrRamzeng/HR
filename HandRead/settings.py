@@ -27,7 +27,8 @@ INSTALLED_APPS = [
     'nested_admin',
     'easy_thumbnails',
     'image_cropping',
-    'compressor'
+    'compressor',
+    'django_ckeditor_5'
 ]
 
 AUTH_USER_MODEL = 'user.User'

@@ -17,7 +17,7 @@
     /*** OPEN BOOK ***/
     .page {
       background: #fff;
-      box-shadow: rgba(0, 0, 0, 0.5) 0 1em 3em; color: #000;
+      {#box-shadow: rgba(0, 0, 0, 0.5) 0 1em 3em; color: #000;#}
       padding: 3em;
     }
 
@@ -35,11 +35,8 @@
     }
 
     /* Header/Footer */
-    .page .header {
-    {#  padding-bottom: 1em;#}
-    }
 
-    .page:nth-child(odd) .header {
+    .page.--right:not(.hard) .header {
       text-align: right;
     }
 
@@ -52,26 +49,24 @@
 
 
     .page .header {
+      grid-row: 1;
       font-size: 0.75em;
       text-transform: uppercase;
     }
 
     .page .page-number {
       grid-row: 3;
-      {#padding-top: 1em;#}
     }
 
-    .page:first-of-type .header, .page:last-of-type .header, .page:first-child .page-number,
-    .page:last-of-type .page-number {
+    .page:last-of-type .header, .page.hard .page-number {
       display: none;
     }
 
-    .page:nth-child(odd) .page-number {
+    .page.--soft.--right .page-number {
       text-align: right;
-
     }
 
-    .page:nth-child(even) .page-number {
+    .page.--soft.--left .page-number {
       text-align: left;
     }
 
@@ -113,23 +108,23 @@
     }
 
     /* Body Copy */
-    .page article {
+    .page .page-content {
       line-height: 1.5;
       hyphens: auto;
     }
 
-    .page article p {
+    .page .page-content p {
       text-indent: 2em;
       margin: 0 1em;
       text-align: justify;
     }
 
-    .page article > ul,
-    .page article > ol {
+    .page .page-content > ul,
+    .page .page-content > ol {
       padding-left: 3em;
     }
 
-    .page article > ul ul {
+    .page .page-content > ul ul {
       padding-left: 1em;
     }
 
@@ -215,21 +210,22 @@
         z-index: 1;
       }
 
-      .page:nth-child(odd):after {
+
+      .page.--right:not(.hard):after {
         background: linear-gradient(to right, rgba(0, 0, 0, 0.3) 1%, rgba(0, 0, 0, 0.5) 3%,
         rgba(0, 0, 0, 0.2) 5%, transparent 100%);
         left: 0;
       }
 
-      .page:nth-child(even):after {
+      .page.--left:not(.hard):after {
         background: linear-gradient(to left, rgba(0, 0, 0, 0.3) 1%, rgba(0, 0, 0, 0.5) 3%,
         rgba(0, 0, 0, 0.2) 5%, transparent 100%);
         right: 0;
       }
 
-      .page:last-of-type:after, .page:first-of-type:after {
-        background: none;
-      }
+      {#.hard:after {#}
+      {#  background: none;#}
+      {# }#}
 
       .page > * {
         position: relative;
@@ -241,10 +237,7 @@
         font-size: 3em;
       }
 
-      .page:first-child .header, .page:last-of-type .header {
-      {#.page:nth-child(odd) h1, .page:nth-child(even) h6,#}
-      {#.page:first-child h1, .page:first-child h6,#}
-      {#.page:last-of-type h1, .page:last-of-type h6 {#}
+      .hard .header {
         display: none;
       }
 
@@ -254,9 +247,8 @@
       }
 
       /* Body Copy */
-
-      .page article > ul,
-      .page article > ol {
+      .page .page-content > ul,
+      .page .page-content > ol {
         padding-left: 4em;
       }
     }
@@ -265,8 +257,6 @@
       height: calc(100vh - 2rem);
       margin-top: 1rem;
       margin-bottom: 1rem;
-      {#width: 100vw;#}
-      {#display: flex;#}
       overflow: hidden;
     }
 
@@ -280,9 +270,9 @@
         height: calc(100vw / .707 - 5rem);
         width: calc(100vw);
       }
-      .page:after {
-        background: none;
-      }
+      {#.page:after {#}
+      {#  background: none;#}
+      {# }#}
     }
 
     .cover {
@@ -295,22 +285,18 @@
   </style>
 {% endblock styles %}
 {% block content %}
+  <form id="read" method="post">
+    {% csrf_token %}
+    <input id="content" name="content" required><br>
+    <span id="status"></span>
+    <input id="cut" name="cut" value="0">
+  </form>
   <div id="book" class="book"></div>
 {% endblock content %}
 {% block scripts %}
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   <script src="{% static 'scripts/page-flip.browser.js' %}"></script>
   <script>
-    const win = document.getElementById('window')
-    win.style.cssText = `width: ${win.offsetWidth}px; display: flex; justify-content: center`
-    const sidebar = document.getElementById('logo_sidebar')
-    const bookHeight = win.clientHeight
-    const bookWidth = bookHeight * 0.707
-
-
-    document.getElementById('book').style.cssText = `max-width: ${window.innerWidth < window
-      .innerHeight ? bookWidth: bookWidth * 2 + 1}px;
-    width:
-    100%`
     const data = [
       {% for p in content %}
         {
@@ -321,109 +307,24 @@
         },
       {% endfor %}
     ]
-    function renderPage(number) {
-      const section = document.createElement('section')
-      Object.assign(section, {
-        id: `page_${number}`,
-        className: 'page dark:bg-gray-700 dark:text-gray-200',
-        style: `width: ${bookWidth}px; height: ${bookHeight}px`
-      })
-      section.innerHTML = `
-        <div id="page_grid_${number}" class="page-content" style="display: grid; row-gap: 1em;
-        grid-template-rows: max-content auto max-content; height: 100%">
-        ${number ?
-          `<header id="page_header_${number}" class="header">
-            ${number % 2 ? `{{ book.book.name }}` : `{{ book.book }}`}
-          </header>
-          <article id="content_${number}"></article>
-          <footer id="page_footer_${number}" class="page-number">${number}</footer>`
-        : `<article id="content_${number}"></article>`
-        }
-        </div>
-      `
-      document.getElementById('book').appendChild(section)
-    }
-
-    function truncateContent(block, container, maxHeight) {
-      const content = block.innerHTML.split(' ')
-      let end = content.length
-      for (end; end > 0; end--) {
-        if (container.offsetHeight < maxHeight) {
-          break
-        }
-        block.innerHTML = content.slice(0, end).join(' ')
-      }
-      return content.slice(end + 1).join(' ')
-    }
-
-    function getContainerSize(pageNumber) {
-      const page = document.getElementById(`page_${pageNumber}`)
-      const header = document.getElementById(`page_header_${pageNumber}`)
-      const footer = document.getElementById(`page_footer_${pageNumber}`)
-      const pageStyles = getComputedStyle(page)
-      const pageHeight = bookHeight - parseInt(pageStyles.paddingTop) - parseInt(pageStyles.paddingBottom)
-      const pageGrid = page.firstElementChild
-
-
-      return pageHeight - parseInt(getComputedStyle(pageGrid).rowGap) * 2 -
-        parseInt(getComputedStyle(header).lineHeight) - parseInt(getComputedStyle(footer).lineHeight)
-    }
-
-    function renderContent(html) {
-      const tag = document.createElement(html.tag)
-      if (html.class) Object.assign(tag, {className: html.class})
-      if (html.src) {
-        Object.assign(tag, {
-          src: `${html.src}`
-        })
-        return tag
-      }
-      Object.assign(tag, {
-        innerHTML: html.content
-      })
-      return tag
-    }
-
-    function renderBook() {
-      let isPrevious = false
-      let pageCounter = 0
-      let transfer
-
-      while (data.length || transfer) {
-        renderPage(pageCounter)
-        let contentCounter = 0
-        while (data.length || transfer) {
-          const container = document.getElementById(`content_${pageCounter}`)
-          const content = transfer ? transfer : data.pop()
-          if (!data.length && !transfer) {
-            transfer = content
-            break
-          }
-
-          transfer = null
-          container.appendChild(renderContent(content))
-          if (content.class === 'cover') break
-          const lastContent = container.lastElementChild
-          if (isPrevious) {
-            lastContent.style.textIndent = 0
-            isPrevious = false
-          } else {
-            contentCounter++
-          }
-          const containerHeight = getContainerSize(pageCounter)
-          if (container.offsetHeight > containerHeight) {
-            transfer = content
-            transfer['content'] = truncateContent(lastContent, container, containerHeight)
-            isPrevious = true
-            break
-          }
-        }
-        document.getElementById(`page_${pageCounter}`).dataset.contents = contentCounter.toLocaleString()
-        pageCounter++
-      }
-    }
-
-    renderBook()
+    const BOOK = '{{ book.book }}'
+    const AUTHORS = '{{ book.book.get_authors }}'
   </script>
-  <script src="{% static 'scripts/flip.js' %}"></script>
+  <script src="{% static 'scripts/book/reading.js' %}"></script>
+  <script>
+
+    const pageFlip = new St.PageFlip(document.getElementById('book'), {
+      width: bookWidth,
+      height: bookHeight,
+      drawShadow: true,
+      // size: "stretch",
+      autoSize: false,
+      mobileScrollSupport: true,
+      showCover:{% if book.content_read %} false {% else %} true {% endif %}
+    })
+    pageFlip.loadFromHTML(document.querySelectorAll('.page'));
+    document.addEventListener('DOMContentLoaded', () => {
+      nextContent()
+    })
+  </script>
 {% endblock scripts %}

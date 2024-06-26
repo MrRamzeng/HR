@@ -9,4 +9,5 @@ urlpatterns = [
     path('', include('user.urls')),
     path('', include('main.urls')),
     path('nested/', include('nested_admin.urls')),
+    path("ckeditor5/", include('django_ckeditor_5.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

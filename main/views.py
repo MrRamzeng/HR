@@ -1,3 +1,4 @@
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 
 from .forms import UpdatePosition
@@ -83,34 +84,25 @@ def user_books(request):
 
 
 def reading(request, book_id):
-    book = UserBooks.objects.get(book_id=book_id, user_id=request.user.id)
-    if book.has_read:
+    reading = UserBooks.objects.get(book_id=book_id, user_id=request.user.id)
+    if reading.has_read:
         return redirect('user_books')
-
     if request.method == 'POST':
-        form = UpdatePosition(request.POST)
-        if form.is_valid():
-            book.page_position = form.cleaned_data.get('position')
-            if book.page_position >= book.get_pages_count():
-                book.has_read = True
-            book.save()
-
-            return redirect('reading', book_id)
-    else:
-        form = UpdatePosition(initial={'position': book.page_position})
-    content = Content.objects.filter(
-        type__book_id=book_id
-    ).order_by('-id')
-
+        reading.content_read += int(request.POST['content'])
+        reading.cut_content_idx = request.POST['idx']
+        reading.save()
+        return HttpResponse('ok')
+    content = list(
+        reversed(
+            Content.objects.filter(type__book_id=book_id)[reading.content_read:]
+        )
+    )
     return render(
         request,
         'book/reading.html',
         {
             'content': content,
-            'content_count': content.count(),
-            'book': book,
-            'form': form,
-            'progress': book.get_read_progress(),
+            'book': reading,
         }
     )
 

@@ -161,8 +161,8 @@ class BookPage(models.Model):
 
 
 # class Chapter(models.Model):
-#     book = None
-#     name = None
+#     book = models.CharField(max_length=10)
+#     name = models.CharField(max_length=10)
 # ...
 # ...
 # ...
@@ -230,28 +230,33 @@ class Content(models.Model):
 class UserBooks(models.Model):
     user = models.ForeignKey(User, models.CASCADE)
     book = models.ForeignKey('Book', models.CASCADE)
-    # todo: edit
+    # reading
+    previous_content = models.PositiveSmallIntegerField(default=0)
+    content_read = models.PositiveIntegerField(
+        default=0
+    )
+    has_read = models.BooleanField(default=False)
+    cut_content_idx = models.PositiveIntegerField(
+        default=0
+    )
+    # typing
     typing_position = models.PositiveIntegerField(
         validators=[MinValueValidator(0)], default=0
     )
-    page_position = models.PositiveIntegerField(
-        validators=[MinValueValidator(0)], default=0
-    )
-    has_read = models.BooleanField(default=False)
     has_print = models.BooleanField(default=False)
-    position = models.PositiveIntegerField(
-        validators=[MinValueValidator(0)], default=0
-    )
 
     class Meta:
         verbose_name_plural = 'чтение'
         verbose_name = 'чтение'
 
+    def get_content_count(self):
+        return Content.objects.filter(type__book_id=self.book).count()
+
     def get_read_progress(self):
-        pages = self.book.bookpage_set.count()
-        if self.page_position + 1 == pages:
+        content = self.get_content_count()
+        if self.content_read + 1 == content:
             return '100%'
-        return f'{(self.page_position + 1) * 100 // pages}%'
+        return f'{(self.content_read + 1) * 100 // content}%'
 
     def has_content(self):
         return Content.objects.filter(type__book_id=self.book_id).exists()

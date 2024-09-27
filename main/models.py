@@ -5,17 +5,18 @@ from image_cropping import ImageRatioField
 from user.models import User
 from HandRead.storage import OverwriteStorage
 
+from main.word_parser import extract_word_data
 
 def file_path(instance, file):
     return (
         f'{instance._meta.verbose_name_plural}/{instance}/{file}'
-        .replace(' ', '_')
+
     )
 
 
 def page_path(instance, file):
     return (f'{instance.book._meta.verbose_name_plural}/{instance.book.name}/'
-            f'{instance._meta.verbose_name_plural}/{file}')
+            f'{instance._meta.verbose_name_plural}/{file}'.replace(' ', '_'))
 
 
 class Country(models.Model):
@@ -140,24 +141,22 @@ class Book(models.Model):
         return ', '.join(authors)
 
 
-class BookPage(models.Model):
+class BookFile(models.Model):
     book = models.ForeignKey('Book', models.CASCADE)
-    A4 = 'A4'
-    A6 = 'A6'
-    SIZES = (
-        (A4, 'A4'),
-        (A6, 'A6'),
-    )
-    size = models.CharField(
-        'Размер', max_length=10, choices=SIZES, default=A4
-    )
-    image = models.ImageField(
+    file = models.FileField(
         'Файл книги', storage=OverwriteStorage(), upload_to=page_path
     )
 
+    def extract_content(self):
+        file_path = self.file.path
+        if file_path.endswith('.docx'):
+            # get_word_content(file_path)
+            return extract_word_data(file_path)
+        return
+
     class Meta:
-        verbose_name_plural = 'страницы'
-        verbose_name = 'страница'
+        verbose_name_plural = 'Файл книги'
+        verbose_name = 'Файлы книги'
 
 
 # class Chapter(models.Model):
@@ -168,7 +167,7 @@ class BookPage(models.Model):
 # ...
 
 
-class Paragraph(models.Model):
+class Content(models.Model):
     book = models.ForeignKey('Book', models.CASCADE)
     P = 'p'
     H1 = 'h1'
@@ -199,19 +198,8 @@ class Paragraph(models.Model):
         'источник', storage=OverwriteStorage(), upload_to=file_path,
         blank=True, null=True
     )
-    tag_id = models.CharField('id', max_length=50, blank=True, null=True)
     css = models.CharField('Css', max_length=50, blank=True, null=True)
-
-    class Meta:
-        verbose_name_plural = 'абзацы'
-        verbose_name = 'абзац'
-
-    def __str__(self):
-        return f'{self.tag}'
-
-
-class Content(models.Model):
-    type = models.ForeignKey('Paragraph', models.CASCADE)
+    style = models.CharField('Стили', max_length=500, blank=True, null=True)
     text = models.TextField('Текст', blank=True, null=True)
     text_len = models.PositiveIntegerField()
 
@@ -222,23 +210,15 @@ class Content(models.Model):
     def __str__(self):
         return str(self.id)
 
-    def save(self, *args, **kwargs):
-        self.text_len = len(self.text)
-        return super(Content, self).save(*args, **kwargs)
-
 
 class UserBooks(models.Model):
     user = models.ForeignKey(User, models.CASCADE)
     book = models.ForeignKey('Book', models.CASCADE)
     # reading
-    previous_content = models.PositiveSmallIntegerField(default=0)
     content_read = models.PositiveIntegerField(
-        default=0
+        default=1
     )
     has_read = models.BooleanField(default=False)
-    cut_content_idx = models.PositiveIntegerField(
-        default=0
-    )
     # typing
     typing_position = models.PositiveIntegerField(
         validators=[MinValueValidator(0)], default=0
@@ -267,3 +247,8 @@ class UserBooks(models.Model):
 
     def __str__(self):
         return f'{self.book.name}'
+
+
+# Сигнал для обновления содержимого в Content при изменении файла
+
+

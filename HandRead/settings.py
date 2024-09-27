@@ -15,6 +15,12 @@ DEBUG = True
 ALLOWED_HOSTS = ['handread.pythonanywhere.com', 'localhost']
 
 INSTALLED_APPS = [
+    'nested_admin',
+    'easy_thumbnails',
+    'image_cropping',
+    'django_admin_inline_paginator',
+    'compressor',
+    'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -24,11 +30,6 @@ INSTALLED_APPS = [
     'game.apps.GameConfig',
     'main.apps.MainConfig',
     'user.apps.UserConfig',
-    'nested_admin',
-    'easy_thumbnails',
-    'image_cropping',
-    'compressor',
-    'django_ckeditor_5'
 ]
 
 AUTH_USER_MODEL = 'user.User'
@@ -122,9 +123,9 @@ USE_TZ = False
 
 STATIC_URL = 'static/'
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
-]
+STATICFILES_DIRS = [  #
+    os.path.join(BASE_DIR, 'static')  #
+]  #
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
@@ -132,7 +133,7 @@ COMPRESS_ROOT = STATIC_URL
 
 COMPRESS_ENABLED = True
 
-STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
+STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)  #
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 

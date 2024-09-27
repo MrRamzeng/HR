@@ -1,13 +1,16 @@
 from django.contrib import admin
+from django.contrib.admin import ModelAdmin
+from django.db.models import Case, When, IntegerField
 from django.utils.safestring import mark_safe
 
 from .models import (
-    Author, Book, Paragraph, Content, Country, BookSeries, Genre,
-    BookPage, UserBooks
+    Author, Book, Content, Country, BookSeries, Genre,
+    BookFile, UserBooks
 )
 import nested_admin
 from django.db import models
 from django import forms
+from django_admin_inline_paginator.admin import TabularInlinePaginated
 
 form_preset = {
     models.TextField: {
@@ -19,7 +22,6 @@ form_preset = {
         )
     }
 }
-
 
 def img(obj):
     return mark_safe(
@@ -56,30 +58,36 @@ admin.site.register(Genre)
 admin.site.register(BookSeries)
 
 
-class ContentInline(nested_admin.NestedTabularInline):
-    formfield_overrides = form_preset
+class PageInline(admin.TabularInline):
+    model = BookFile
+    extra = 1
+
+
+class ContentInline(TabularInlinePaginated):
     model = Content
-    exclude = 'text_len', 'book'
-    extra = 1
-    max_num = 1
-
-
-class ParagraphInline(nested_admin.NestedTabularInline):
-    formfield_overrides = form_preset
-    model = Paragraph
+    exclude = ('id', 'text_len')
+    sortable_field_name = "tag"
     extra = 0
-    inlines = [ContentInline]
+    per_page = 10
 
-
-class PageInline(nested_admin.NestedTabularInline):
-    model = BookPage
-    extra = 1
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        queryset = queryset.annotate(
+            tag_hierarchy=Case(
+                When(tag='img', then=0),
+                When(tag='h1', then=1),
+                When(tag='h2', then=2),
+                When(tag='h3', then=3),
+                default=4,
+                output_field=IntegerField()
+            )
+        ).order_by('tag_hierarchy', 'id')
+        return queryset
 
 
 @admin.register(Book)
-class BookAdmin(nested_admin.NestedModelAdmin):
-    formfield_overrides = form_preset
-    inlines = [PageInline, ParagraphInline]
+class BookAdmin(ModelAdmin):
+    inlines = [PageInline, ContentInline]
     readonly_fields = [img]
     fieldsets = [
         ('О книге', {
@@ -92,10 +100,11 @@ class BookAdmin(nested_admin.NestedModelAdmin):
             ],
         }),
     ]
+
     img.short_description = 'Предпросмотр'
 
     class Media:
-        css = {
-            'all': ('css/custom_admin.css',)
-        }
+        # css = {
+        #     'all': ('css/custom_admin.css',)
+        # }
         js = ['scripts/admin_scroll.js']

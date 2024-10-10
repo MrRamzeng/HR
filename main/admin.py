@@ -75,10 +75,9 @@ class ContentInline(TabularInlinePaginated):
         queryset = queryset.annotate(
             tag_hierarchy=Case(
                 When(tag='img', then=0),
-                When(tag='h1', then=1),
-                When(tag='h2', then=2),
-                When(tag='h3', then=3),
-                default=4,
+                When(tag='header', then=1),
+                When(tag='h1', then=2),
+                default=3,
                 output_field=IntegerField()
             )
         ).order_by('tag_hierarchy', 'id')

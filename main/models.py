@@ -5,7 +5,7 @@ from image_cropping import ImageRatioField
 from user.models import User
 from HandRead.storage import OverwriteStorage
 
-from main.word_parser import extract_word_data
+from main.docx_parser import extract_word_data
 
 def file_path(instance, file):
     return (
@@ -170,6 +170,7 @@ class BookFile(models.Model):
 class Content(models.Model):
     book = models.ForeignKey('Book', models.CASCADE)
     P = 'p'
+    HEADER = 'header'
     H1 = 'h1'
     H2 = 'h2'
     H3 = 'h3'
@@ -178,8 +179,9 @@ class Content(models.Model):
     DL = 'dl'
     I = 'i'
     IMG = 'img'
-    DIV = 'div'
+    SIGNATURE = 'signature'
     TAGS = (
+        (HEADER, 'header'),
         (H1, 'h1'),
         (H2, 'h2'),
         (H3, 'h3'),
@@ -189,7 +191,7 @@ class Content(models.Model):
         (IMG, 'img'),
         (P, 'p'),
         (DL, 'dl'),
-        (DIV, 'div')
+        (SIGNATURE, 'signature')
     )
     tag = models.CharField(
         'Тег', choices=TAGS, default=P, max_length=20

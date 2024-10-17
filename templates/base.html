@@ -7,22 +7,24 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>{% block title %}HandRead{% endblock title %}</title>
+    {% block extra %}
+    {% endblock extra %}
     {% compress css %}
       <link rel="stylesheet" href="{% static 'css/output.css' %}">
       <link rel="stylesheet" href="{% static 'css/keyboard.css' %}"/>
+      {% block page_styles %}{% endblock page_styles %}
     {% endcompress css %}
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css"
-    />
-  <script>
-    const isAuth = {% if request.user.is_authenticated %} true {% else %} false {% endif %}
-  </script>
-    {% block styles %}{% endblock styles %}
+    <link rel="stylesheet" href="{% static 'css/flowbite.min.css' %}"/>
+    {% compress js %}
+      <script>
+        const isAuth = {% if request.user.is_authenticated %} true {% else %} false {% endif %}
+      </script>
+      {% block prescript %}
+      {% endblock prescript %}
+    {% endcompress %}
   </head>
 
   <style>
-
     aside .border-b {
       margin: 0 !important;
     }
@@ -336,9 +338,12 @@
     <div id="window" class="md:c-ml-64 md:c-mt-8 px-16 xsm:px-3">
       {% block content %}{% endblock content %}
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
-    <script src="{% static 'scripts/elements.js' %}"></script>
-    {% block scripts %}{% endblock scripts %}
+    <script src="{% static 'scripts/flowbite.min.js' %}"></script>
+  
+{#    {% compress js %}#}
+      <script src="{% static 'scripts/elements.js' %}"></script>
+      {% block scripts %}{% endblock scripts %}
+{#    {% endcompress %}#}
   </body>
 
 </html>

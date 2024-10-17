@@ -1,197 +1,243 @@
 const win = document.getElementById('window')
-win.style.cssText = `width: ${win.offsetWidth}px; display: flex; justify-content: center`
-const bookHeight = win.clientHeight
-const bookWidth = bookHeight * 0.707
+win.style.cssText = `width: ${win.offsetWidth}px; display: flex;`
 
+const bookContainer = document.getElementById('book')
+const maxBookWidth = window.innerWidth < window.innerHeight * 2 ? 714.2 : 714.2 * 2
+bookContainer.style.cssText = `margin: auto; max-width: ${maxBookWidth}px; width: 100%;`
 
-document.getElementById('book').style.cssText = `
-  max-width: ${window.innerWidth < window.innerHeight ? bookWidth : bookWidth * 2 + 1}px;
-  width: 100%
-`
-
-function truncateContent(block, container, maxHeight) {
-  let content = block.innerHTML.split(' ')
-  let end = content.length
-
-  for (end; end > 0; end--) {
-    if (container.offsetHeight < maxHeight) {
-      break
-    }
-    block.innerHTML = content.slice(0, end).join(' ')
+class Book {
+  constructor(renderContainer, name, authors, data) {
+    this.blocks = data
+    this.pageCounter = 0
+    this.book = renderContainer
+    this.name = name
+    this.authors = authors
+    this.containerHeight = null
+    this.isPrevious = false
+    this.currentBlock = this.blocks[this.blocks.length - 1]
+    this.blocksHeight = 0
   }
-  content = content.slice(end + 1).join(' ')
 
-  return [content, content.length - 1]
-}
+  renderPages() {
+    if (!this.blocks.length) return
 
-function getContainerSize(grid, header, footer) {
-  const gridStyles = getComputedStyle(grid)
+    while (this.blocks.length) {
+      this.currentBlock = this.blocks[this.blocks.length - 1]
+      const page = this.renderPage()
 
-  return parseInt(gridStyles.height) - parseInt(gridStyles.rowGap) * 2 - parseInt(getComputedStyle(header).lineHeight) - parseInt(getComputedStyle(footer).lineHeight)
-}
+      if (this.currentBlock.classes.includes('cover')) {
+        this.renderCover(page)
+      } else if (this.currentBlock.classes.includes('chapter-header')) {
+        this.renderChapter(page)
+      } else {
+        const contentBlock = this.renderGrid(page)
+        if (this.currentBlock.classes.includes('chapter-title')) {
+          this.renderTitle(contentBlock)
+        }
 
-function renderBlock(html) {
-  const tag = document.createElement(html.tag)
+        while (this.blocks.length) {
+          this.currentBlock = this.blocks[this.blocks.length - 1]
+          if (['cover', 'chapter-header', 'chapter-title'].some(className => this.currentBlock.classes.includes(className))) {
+            break
+          }
 
-  if (html.class) Object.assign(tag, {className: html.class})
+          const block = this.blocks.pop()
+          const renderedBlock = this.renderContent(block, contentBlock)
 
-  if (html.src) {
-    Object.assign(tag, {src: `${html.src}`})
+          if (this.isPrevious) {
+            renderedBlock.style.textIndent = '0'
+            this.isPrevious = false
+          }
+
+          if (this.blocksHeight + renderedBlock.clientHeight > this.containerHeight) {
+            block.innerHTML = this.truncateContent(renderedBlock)
+            this.blocks.push(block)
+            this.blocksHeight = 0
+            break
+          } else {
+            this.blocksHeight += renderedBlock.clientHeight
+          }
+        }
+      }
+      this.pageCounter++
+    }
+  }
+
+  createTag({tagName, id, src, alt, classes, cssText, innerHTML}) {
+    const tag = document.createElement(tagName)
+    if (id) tag.id = id
+    if (src) tag.src = src
+    if (alt) tag.alt = alt
+    if (classes) tag.className = classes
+    if (cssText) tag.style.cssText = cssText
+    if (innerHTML) tag.innerHTML = innerHTML
     return tag
   }
 
-  Object.assign(tag, {innerHTML: html.content})
+  renderPage() {
+    const pageTag = this.createTag({
+      tagName: 'section',
+      id: `section_${this.pageCounter}`,
+      classes: 'page dark:bg-gray-700 dark:text-gray-200',
+      cssText: 'width: 707px; height: 1000px;'
+    })
+    this.book.appendChild(pageTag)
+    return pageTag
+  }
 
-  return tag
-}
+  getContainerSize(grid, header, footer) {
+    const gridStyles = getComputedStyle(grid)
+    const headerStyles = getComputedStyle(header)
+    const footerStyles = getComputedStyle(footer)
 
-let cut = document.querySelector('.--portrait') ? 1 : 2
+    const gridHeight = parseInt(gridStyles.height)
+    const rowGap = parseFloat(gridStyles.rowGap)
+    const headerLineHeight = parseInt(headerStyles.lineHeight)
+    const footerLineHeight = parseInt(footerStyles.lineHeight)
+    this.containerHeight = gridHeight - rowGap * 2 - headerLineHeight - footerLineHeight
 
-function renderPage(number) {
-  const section = document.createElement('section')
+    const gridWidth = parseInt(gridStyles.width)
+    const style = document.createElement('style')
+    style.innerHTML = `.page .page-content {width: ${gridWidth}px !important;}`
+    document.head.appendChild(style)
+  }
 
-  Object.assign(section, {
-    id: `page_${number}`,
-    className: 'page dark:bg-gray-700 dark:text-gray-200',
-    style: `width: ${bookWidth}px; height: ${bookHeight}px`
-  })
-  document.getElementById('book').appendChild(section)
+  renderCover(page) {
+    const {tagName, id, src, alt, classes} = this.blocks.pop()
+    const imgTag = this.createTag({tagName, id, src, alt, classes})
+    page.appendChild(imgTag)
+  }
 
-  return document.getElementById(section.id)
-}
+  renderChapter(page) {
+    const gridTag = this.createTag({
+      tagName: 'div',
+      classes: 'page-content',
+      cssText: 'display: flex; height: 100%; justify-content: center; flex-direction: column;'
+    })
 
-function renderGrid(number, page, header, content, footer) {
-  const grid = document.createElement('div')
+    const {tagName, id, classes, cssText, innerHTML} = this.blocks.pop()
+    const headerTag = this.createTag({tagName, id, classes, cssText, innerHTML})
+    this.currentBlock = this.blocks[this.blocks.length - 1]
 
-  Object.assign(grid, {
-    id: `page_grid_${number}`,
-    className: 'page-content grid h-full',
-    style: 'grid-template-rows: max-content auto max-content; row-gap: 1em;'
-  })
-  grid.append(header, content, footer)
-  page.appendChild(grid)
-
-  return [grid, header, content, footer]
-}
-
-function createHeader(number) {
-  const header = document.createElement('div')
-
-  Object.assign(header, {
-    id: `header_${number}`,
-    className: 'header',
-    textContent: number % 2 ? BOOK : AUTHORS
-  })
-
-  return header
-}
-
-function createContent(number) {
-  const content = document.createElement('div')
-
-  Object.assign(content, {
-    id: `content_${number}`,
-    className: 'page-content'
-  })
-
-  return content
-}
-
-function createFooter(number) {
-  const footer = document.createElement('div')
-
-  Object.assign(footer, {
-    id: `footer_${number}`,
-    className: 'page-number',
-    textContent: number
-  })
-
-  return footer
-}
-
-function renderBook() {
-  let isPrevious = false
-  let pageCounter = 0
-
-  while (data.length) {
-    const page = renderPage(pageCounter)
-    let contentCounter = 0
-
-    if (data.length >= 0 && data[data.length - 1].class === 'cover') {
-      const content = data.pop()
-      page.dataset.content = 1
-      const img = document.createElement('img')
-      Object.assign(img, {
-        src: content.src,
-        style: 'position: absolute; top: 0; left: 0; height 100%; width: 100%'
-      })
-      pageCounter++
-      page.appendChild(img)
-      continue
+    if (this.currentBlock.tagName === 'signature') {
+      const {tagName, id, cssText, innerHTML} = this.blocks.pop()
+      const signatureTag = this.createTag({tagName, id, cssText, innerHTML})
+      gridTag.append(headerTag, signatureTag)
+    } else {
+      gridTag.appendChild(headerTag)
     }
 
-    const [grid, header, contentContainer, footer] = renderGrid(
-      pageCounter, page, createHeader(pageCounter), createContent(pageCounter),
-      createFooter(pageCounter)
-    )
+    page.appendChild(gridTag)
+  }
 
+  renderGrid(page) {
+    const gridTag = this.createTag({
+      tagName: 'div',
+      classes: 'grid h-full',
+      cssText: 'grid-template-rows: 15px auto 20px; row-gap: 1rem;'
+    })
 
-    while (data.length) {
-      if (data[data.length - 1].class === 'cover') break
-      const content = data.pop()
-      contentContainer.appendChild(renderBlock(content))
-      const lastContent = contentContainer.lastElementChild
+    const headerTag = this.createTag({
+      tagName: 'div',
+      classes: 'header',
+      innerHTML: this.pageCounter % 2 ? this.name : this.authors
+    })
 
-      if (isPrevious) {
-        lastContent.style.textIndent = 0
-        isPrevious = false
-      } else {
-        contentCounter++
-      }
+    const contentTag = this.createTag({
+      tagName: 'div',
+      classes: 'page-content'
+    })
 
-      const containerHeight = getContainerSize(grid, header, footer)
+    const footerTag = this.createTag({
+      tagName: 'div',
+      classes: 'page-number',
+      innerHTML: this.pageCounter
+    })
 
-      if (contentContainer.offsetHeight > containerHeight) {
-        let cut_idx
-        [content['content'], cut_idx] = truncateContent(
-          lastContent, contentContainer, containerHeight
-        )
-        !cut && ($('#cut').val(cut_idx))
-        cut--
-        data.push(content)
-        isPrevious = true
+    gridTag.append(headerTag, contentTag, footerTag)
+    page.appendChild(gridTag)
+
+    if (!this.containerHeight) {
+      this.getContainerSize(gridTag, headerTag, footerTag)
+    }
+
+    return contentTag
+  }
+
+  renderTitle(container) {
+    const {tagName, id, classes, cssText, innerHTML} = this.blocks.pop()
+    const titleTag = this.createTag({tagName, id, classes, cssText, innerHTML})
+    container.appendChild(titleTag)
+    this.blocksHeight = titleTag.clientHeight
+  }
+
+  renderContent(block, container) {
+    const {tagName, id, src, alt, classes, cssText, innerHTML} = block
+    const blockTag = this.createTag({tagName, id, src, alt, classes, cssText, innerHTML})
+    container.appendChild(blockTag)
+    return blockTag
+  }
+
+  truncateContent(block) {
+    const content = block.innerHTML.match(/<[^>]+>|[^\s<]+/g);
+    const truncatedContent = []
+    const remainingContent = []
+    block.innerHTML = ''
+    for (let i = 0; i < content.length; i++) {
+      let word = content[i]
+      block.innerHTML += truncatedContent.length ? ` ${word}` : word
+
+      if (this.blocksHeight + block.clientHeight > this.containerHeight) {
+        block.innerHTML = truncatedContent.join(' ')
+        if (truncatedContent.length > 0) {
+          this.isPrevious = true
+        }
+        remainingContent.push(...content.slice(i))
         break
       }
+      truncatedContent.push(word)
     }
-
-    page.dataset.content = contentCounter.toLocaleString()
-    pageCounter++
+    return remainingContent.join(' ')
   }
 }
 
-renderBook()
+function lastContentId(page) {
+  const contentElements = Array.from(page.querySelectorAll('[id]')).filter(element => /^\d+$/.test(element.id))
+  return contentElements[contentElements.length - 1].id
+}
 
-$(document).on("submit", '#read', function (e) {
-  e.preventDefault()
+function setStartPage(searchId) {
+  const content = document.getElementById(searchId)
+  const parent = content.closest('.page')
+  return parseInt(parent.id.match(/\d+/)[0])
+}
+
+const book = new Book(bookContainer, BOOK_NAME, AUTHORS, data)
+
+window.onload = function () {
+  bookContainer.innerHTML = ''
+  book.renderPages()
+  const pageFlip = new St.PageFlip(document.getElementById('book'), {
+    width: 714.2,
+    height: 1000,
+    drawShadow: true,
+    autoSize: false,
+    mobileScrollSupport: false,
+    showCover: showCover,
+    startPage: setStartPage(START),
+  })
+
+  const PGS = document.querySelectorAll('.page')
+  pageFlip.loadFromHTML(PGS)
+}
+
+function submit(id) {
   $.ajax({
     type: 'POST',
     data: {
       csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(),
-      content: $('#content').val(),
-      idx: $('#cut').val()
+      content: id,
     },
-    success: function (data) {
-      $('#status').html(data)
-    }
+    dataType: 'json',
   })
-})
-
-function nextContent() {
-  const contentField = $('#content')
-  const pages = document.querySelectorAll('.page:not([style="display: none;"])')
-  let content = 0
-  for (const page of pages) {
-    content += parseInt(page.dataset['content'])
-  }
-  contentField.val(content)
 }

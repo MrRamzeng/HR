@@ -149,19 +149,11 @@
     }
 
     nextBy(t) {
-      // const pages = document.querySelectorAll('.page:not([style="display: none;"])')
-      // for (const page of pages) {
-      //   pos.value = parseInt(pos.value) - parseInt(page.dataset['contents'])
-      // }
       const e = this.pages.indexOf(t);
       return e < this.pages.length - 1 ? this.pages[e + 1] : null
     }
 
     prevBy(t) {
-      // const pages = document.querySelectorAll('.page:not([style="display: none;"])')
-      // for (const page of pages) {
-      //   pos.value = parseInt(pos.value) + parseInt(page.dataset['contents'])
-      // }
       const e = this.pages.indexOf(t);
       return e > 0 ? this.pages[e - 1] : null
     }
@@ -186,10 +178,12 @@
 
     showNext() {
       this.currentSpreadIndex < this.getSpread().length && (this.currentSpreadIndex++, this.showSpread())
+      submit(lastContentId(this.pagesElement[this.currentPageIndex]), 'n')
     }
 
     showPrev() {
       this.currentSpreadIndex > 0 && (this.currentSpreadIndex--, this.showSpread())
+      submit(lastContentId(this.pagesElement[this.currentPageIndex]), 'p')
     }
 
     getCurrentPageIndex() {
@@ -1244,15 +1238,12 @@
     }
 
     turnToPrevPage() {
-      setTimeout(nextContent, 1)
       this.pages.showPrev()
       // $('#read').submit()
     }
 
     turnToNextPage() {
-      setTimeout(nextContent, 1)
       this.pages.showNext()
-      $('#read').submit()
     }
 
     turnToPage(t) {

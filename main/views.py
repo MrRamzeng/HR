@@ -1,27 +1,25 @@
-from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 
 from .forms import UpdatePosition
-from .models import Book, Content, UserBooks, BookPage, Genre, Author
+from .models import Book, Content, UserBooks, Genre, Author
 
 
 def index(request):
-    books = Book.objects.filter(debug=False).only(
+    book_list = Book.objects.filter(debug=False).only(
         'id', 'name', 'authors', 'price', 'image'
     ).order_by('-id')[:10]
     queryset = Content.objects.filter(
-        type__tag='p', type__book__debug=False  # , text_len__gte=200,
+        tag='p', book__debug=False  # , text_len__gte=200,
         # text_len__lte=500
     ).values(
-        'text', 'type__book', 'type__book__name', 'type__book__price',
-        'type__book__image'
+        'text', 'book', 'book__name', 'book__price',
+        'book__image'
     ).order_by('?')
-    print(queryset)
 
     return render(
         request, 'book/index.html', {
             'contents': list(queryset),
-            'books': books
+            'books': book_list
         }
     )
 
@@ -47,7 +45,6 @@ def book(request, id):
 
 
 def authors(request):
-    print(dir(Author.objects.get(id=1)))
     return render(
         request,
         'book/authors.html',
@@ -84,25 +81,31 @@ def user_books(request):
 
 
 def reading(request, book_id):
-    reading = UserBooks.objects.get(book_id=book_id, user_id=request.user.id)
-    if reading.has_read:
-        return redirect('user_books')
-    if request.method == 'POST':
-        reading.content_read += int(request.POST['content'])
-        reading.cut_content_idx = request.POST['idx']
-        reading.save()
-        return HttpResponse('ok')
-    content = list(
-        reversed(
-            Content.objects.filter(type__book_id=book_id)[reading.content_read:]
+    try:
+        user_book = UserBooks.objects.get(
+            book_id=book_id, user_id=request.user.id
         )
-    )
+    except UserBooks.DoesNotExist:
+        return redirect('user_books')
+
+    if user_book.has_read:
+        return redirect('user_books')
+
+    if request.method == 'POST':
+        user_book.content_read = request.POST.get('content')
+        user_book.save()
+    content = Content.objects.filter(book_id=book_id).order_by(
+        '-id'
+    ).only('id', 'tag', 'style', 'text')
+    content_id = user_book.content_read
+
     return render(
         request,
         'book/reading.html',
         {
             'content': content,
-            'book': reading,
+            'content_count': content_id,
+            'book': user_book,
         }
     )
 
@@ -124,9 +127,9 @@ def set_part(contents):
 def slice_content(lst, content, position=0):
     lst.append(
         {
-            'tag': content.type.tag,
-            'css': content.type.css,
-            'src': content.type.src,
+            'tag': content.tag,
+            'css': content.css,
+            'src': content.src,
             'text': content.text[:position] + '...' if position else
             content.text
         }
@@ -154,8 +157,9 @@ def typing(request, book_id):
         )
 
     contents = Content.objects.filter(
-        type__book_id=book_id
+        book_id=book_id
     )[book.typing_position:]
     part = set_part(contents)
 
     return render(request, 'book/typing.html', {'form': form, 'contents': part})
+

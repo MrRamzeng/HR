@@ -1,6 +1,7 @@
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
+
 def process_text(paragraph, text):
     """Обработка текста и добавление к последнему элементу списка"""
     if 'footnote' in paragraph:
@@ -11,17 +12,17 @@ def process_text(paragraph, text):
 def extract_word_data(file_path):
     doc = Document(file_path)
     data = []
-    ps = doc.paragraphs[:15]
-    for paragraph in ps:
-        # print(paragraph.text[:50])
-        text_len = len(paragraph.text.strip())
+    blocks = doc.paragraphs
+    trunc_text = False
+    for block in blocks:
+        text_len = len(block.text.strip())
         text = ''
         style = ''
         css = ''
-        if paragraph.text == '':
+        if block.text == '':
             data[-1]['text'] += '<br>'
 
-        for run in paragraph.runs:
+        for run in block.runs:
             content = run.text.replace('\n', '<br>')
             if run.italic:
                 content = f'<i>{content}</i>'
@@ -30,35 +31,46 @@ def extract_word_data(file_path):
             else:
                 text += content
 
-        if paragraph.style.name == 'Subtitle':
+        if block.style.name == 'Subtitle':
             tag = 'img'
             css += 'cover'
             text_len = 0
-        elif paragraph.style.name == 'Title':
+        elif block.style.name == 'Title':
             tag = 'header'
             css = 'chapter-header dark:chapter-header'
-        elif paragraph.style.name == 'Signature':
+        elif block.style.name == 'Signature':
             tag = 'signature'
-        elif paragraph.style.name == 'Heading 1':
+        elif block.style.name == 'Heading 1':
             tag = 'h1'
             css = 'chapter-title dark:chapter-title'
-        elif paragraph.style.name == 'Caption':
-            note = f'<footnote-t title="{text}"></footnote-t>'
+        elif block.style.name == 'Caption':
+            note = (
+                f'<strong>{text}</strong>'
+            )
             data[-1]['text'] += note
+            trunc_text = True
             continue
-        elif paragraph.style.name == 'footnote text':
-            tag = 'p'
-            text = f'<footnote-c text="{text}"></footnote-c>'
-        elif paragraph.style.name == 'Body Text':
+        elif block.style.name == 'footnote text':
+            continue
+        elif block.style.name == 'Body Text':
+            if trunc_text:
+                data[-1]['text'] += f' {text}'
+                trunc_text = False
+                continue
             tag = 'p'
         else:
+            if trunc_text:
+                data[-1]['text'] += f' {text}'
+                trunc_text = False
+                continue
             tag = 'i'
 
-        if paragraph.style.paragraph_format.alignment == WD_ALIGN_PARAGRAPH.CENTER:
+        if block.style.paragraph_format.alignment == WD_ALIGN_PARAGRAPH.CENTER:
             style += 'text-align: center;'
-        elif paragraph.style.paragraph_format.alignment == WD_ALIGN_PARAGRAPH.RIGHT:
+        elif block.style.paragraph_format.alignment == WD_ALIGN_PARAGRAPH.RIGHT:
             style += 'text-align: right; '
-        elif paragraph.style.paragraph_format.alignment == WD_ALIGN_PARAGRAPH.JUSTIFY:
+        elif (block.style.paragraph_format.alignment ==
+              WD_ALIGN_PARAGRAPH.JUSTIFY):
             style += 'text-align: justify;'
         if text:
             data.append(
@@ -71,6 +83,4 @@ def extract_word_data(file_path):
                     'text_len': text_len,
                 }
             )
-    # print(json.dumps(data, indent=4, ensure_ascii=False))
     return data
-# extract_word_data('media/книги/Жизнь_пи/Файл_книги/Пи.docx')

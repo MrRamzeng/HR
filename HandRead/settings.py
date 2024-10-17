@@ -14,6 +14,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['handread.pythonanywhere.com', 'localhost']
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "https://handread.pythonanywhere.com",
+]
+
 INSTALLED_APPS = [
     'nested_admin',
     'easy_thumbnails',
@@ -21,6 +26,7 @@ INSTALLED_APPS = [
     'django_admin_inline_paginator',
     'compressor',
     'grappelli',
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -37,6 +43,7 @@ AUTH_USER_MODEL = 'user.User'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

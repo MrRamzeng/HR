@@ -1,9 +1,11 @@
 const win = document.getElementById('window')
-win.style.cssText = `width: ${win.offsetWidth}px; display: flex;`
+win.style.cssText = `display: flex;`
+const bookHeight = win.offsetHeight * 0.85
+const bookWidth = bookHeight * 0.7142
 
 const bookContainer = document.getElementById('book')
-const maxBookWidth = window.innerWidth < window.innerHeight * 2 ? 714.2 : 714.2 * 2
-bookContainer.style.cssText = `margin: auto; max-width: ${maxBookWidth}px; width: 100%;`
+
+bookContainer.style.cssText = `margin: auto;`
 
 class Book {
   constructor(renderContainer, name, authors, data) {
@@ -16,6 +18,7 @@ class Book {
     this.isPrevious = false
     this.currentBlock = this.blocks[this.blocks.length - 1]
     this.blocksHeight = 0
+    this.footnoteCounter = 1
   }
 
   renderPages() {
@@ -24,7 +27,6 @@ class Book {
     while (this.blocks.length) {
       this.currentBlock = this.blocks[this.blocks.length - 1]
       const page = this.renderPage()
-
       if (this.currentBlock.classes.includes('cover')) {
         this.renderCover(page)
       } else if (this.currentBlock.classes.includes('chapter-header')) {
@@ -79,7 +81,7 @@ class Book {
       tagName: 'section',
       id: `section_${this.pageCounter}`,
       classes: 'page dark:bg-gray-700 dark:text-gray-200',
-      cssText: 'width: 707px; height: 1000px;'
+      cssText: `width: ${bookWidth}px; height: ${bookHeight}px;`
     })
     this.book.appendChild(pageTag)
     return pageTag
@@ -174,6 +176,14 @@ class Book {
   renderContent(block, container) {
     const {tagName, id, src, alt, classes, cssText, innerHTML} = block
     const blockTag = this.createTag({tagName, id, src, alt, classes, cssText, innerHTML})
+    if (innerHTML.includes('data-modal-target')) {
+      const {tagName, classes, innerHTML} = this.blocks.pop()
+      const footnoteTag = this.createTag({tagName, classes, innerHTML})
+      footnoteTag.id = `footnote_${this.footnoteCounter}`
+      footnoteTag.tabIndex = -1
+      this.footnoteCounter++
+      document.getElementById('footnotes').appendChild(footnoteTag)
+    }
     container.appendChild(blockTag)
     return blockTag
   }
@@ -214,12 +224,12 @@ function setStartPage(searchId) {
 
 const book = new Book(bookContainer, BOOK_NAME, AUTHORS, data)
 
-window.onload = function () {
+window.addEventListener('DOMContentLoaded', () => {
   bookContainer.innerHTML = ''
   book.renderPages()
   const pageFlip = new St.PageFlip(document.getElementById('book'), {
-    width: 714.2,
-    height: 1000,
+    width: bookWidth,
+    height: bookHeight,
     drawShadow: true,
     autoSize: false,
     mobileScrollSupport: false,
@@ -229,7 +239,7 @@ window.onload = function () {
 
   const PGS = document.querySelectorAll('.page')
   pageFlip.loadFromHTML(PGS)
-}
+})
 
 function submit(id) {
   $.ajax({

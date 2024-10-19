@@ -12,6 +12,8 @@ def process_text(paragraph, text):
 def extract_word_data(file_path):
     doc = Document(file_path)
     data = []
+    footnote_counter = 1
+    footnote_title = ''
     blocks = doc.paragraphs
     trunc_text = False
     for block in blocks:
@@ -44,23 +46,51 @@ def extract_word_data(file_path):
             tag = 'h1'
             css = 'chapter-title dark:chapter-title'
         elif block.style.name == 'Caption':
-            note = (
-                f'<strong>{text}</strong>'
-            )
-            data[-1]['text'] += note
+            footnote_title = text
+            data[-1]['text'] += (f'<button data-modal-target="footnote_{footnote_counter}" data-modal-toggle="footnote_{footnote_counter}" type="button">'
+                                 f'{footnote_title}<sup>{footnote_counter}</sup></button>')
             trunc_text = True
             continue
         elif block.style.name == 'footnote text':
-            continue
+            tag = 'div'
+            css = ('footnote fixed top-0 left-0 right-0 z-50 hidden w-full p-4 '
+                   'overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full')
+            text = f'''
+<div class="relative w-full max-w-md max-h-full">
+    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+        <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+            <h3 class="text-xl font-medium text-gray-900 dark:text-white">
+                {footnote_title}
+            </h3>
+            <button type="button" class="text-gray-400 bg-transparent 
+            hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 
+            ms-auto inline-flex justify-center items-center 
+            dark:hover:bg-gray-600 dark:hover:text-white" 
+            data-modal-hide="footnote_{footnote_counter}">
+                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                </svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+        </div>
+        <div class="p-4 md:p-5 space-y-4">
+            <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+            {text}
+            </p>
+        </div>
+    </div>
+</div>
+            '''
+            footnote_counter += 1
         elif block.style.name == 'Body Text':
             if trunc_text:
-                data[-1]['text'] += f' {text}'
+                data[-2]['text'] += f' {text}'
                 trunc_text = False
                 continue
             tag = 'p'
         else:
             if trunc_text:
-                data[-1]['text'] += f' {text}'
+                data[-2]['text'] += f' {text}'
                 trunc_text = False
                 continue
             tag = 'i'

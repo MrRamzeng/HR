@@ -170,7 +170,7 @@ class BookFile(models.Model):
 class Content(models.Model):
     book = models.ForeignKey('Book', models.CASCADE)
     P = 'p'
-    HEADER = 'header'
+    DIV = 'div'
     H1 = 'h1'
     H2 = 'h2'
     H3 = 'h3'
@@ -181,7 +181,7 @@ class Content(models.Model):
     IMG = 'img'
     SIGNATURE = 'signature'
     TAGS = (
-        (HEADER, 'header'),
+        (DIV, 'div'),
         (H1, 'h1'),
         (H2, 'h2'),
         (H3, 'h3'),

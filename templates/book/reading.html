@@ -2,9 +2,7 @@
 {% load tags %}
 {% load static %}
 
-{% block title %}
-  {{ book.book.name }}
-{% endblock title %}
+{% block title %}{{ book.book.name }}{% endblock title %}
 
 {% block extra %}
   <link rel="preload" href="{% static 'css/fonts/inglobal.ttf' %}" as="font" type="font/ttf" crossorigin="anonymous">

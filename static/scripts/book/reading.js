@@ -26,7 +26,16 @@ class Book {
 
     while (this.blocks.length) {
       this.currentBlock = this.blocks[this.blocks.length - 1]
+
+      if (this.currentBlock.classes.includes('footnote')) {
+        const block = this.renderContent(this.blocks.pop(), document.getElementById('footnotes'))
+        block.id = `footnote_${this.footnoteCounter}`
+        this.footnoteCounter++
+        continue
+      }
+
       const page = this.renderPage()
+
       if (this.currentBlock.classes.includes('cover')) {
         this.renderCover(page)
       } else if (this.currentBlock.classes.includes('chapter-header')) {
@@ -39,7 +48,7 @@ class Book {
 
         while (this.blocks.length) {
           this.currentBlock = this.blocks[this.blocks.length - 1]
-          if (['cover', 'chapter-header', 'chapter-title'].some(className => this.currentBlock.classes.includes(className))) {
+          if (['cover', 'chapter-header', 'chapter-title', 'footnote'].some(className => this.currentBlock.classes.includes(className))) {
             break
           }
 
@@ -176,14 +185,6 @@ class Book {
   renderContent(block, container) {
     const {tagName, id, src, alt, classes, cssText, innerHTML} = block
     const blockTag = this.createTag({tagName, id, src, alt, classes, cssText, innerHTML})
-    if (innerHTML.includes('data-modal-target')) {
-      const {tagName, classes, innerHTML} = this.blocks.pop()
-      const footnoteTag = this.createTag({tagName, classes, innerHTML})
-      footnoteTag.id = `footnote_${this.footnoteCounter}`
-      footnoteTag.tabIndex = -1
-      this.footnoteCounter++
-      document.getElementById('footnotes').appendChild(footnoteTag)
-    }
     container.appendChild(blockTag)
     return blockTag
   }

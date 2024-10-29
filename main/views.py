@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 
 from .forms import UpdatePosition
@@ -94,6 +95,13 @@ def reading(request, book_id):
     if request.method == 'POST':
         user_book.content_read = request.POST.get('content')
         user_book.save()
+        return JsonResponse(
+            {
+                'status': 'success',
+                'blocks': user_book.content_read,
+            }
+        )
+
     content = Content.objects.filter(book_id=book_id).order_by(
         '-id'
     ).only('id', 'tag', 'style', 'text')

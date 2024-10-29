@@ -15,13 +15,13 @@
       {% block page_styles %}{% endblock page_styles %}
     {% endcompress css %}
     <link rel="stylesheet" href="{% static 'css/flowbite.min.css' %}"/>
-    {% compress js %}
+{#    {% compress js %}#}
       <script>
         const isAuth = {% if request.user.is_authenticated %} true {% else %} false {% endif %}
       </script>
       {% block prescript %}
       {% endblock prescript %}
-    {% endcompress %}
+{#    {% endcompress %}#}
   </head>
 
   <style>
@@ -335,11 +335,15 @@
       </div>
     </aside>
 
-    <div id="window" class="md:c-ml-64 md:c-mt-8 px-16 xsm:px-3">
+    <div id="window" class="p-4 sm:ml-64">
       {% block content %}{% endblock content %}
     </div>
+
+{#    <div id="window" class="md:c-ml-64 md:c-mt-8 px-16 xsm:px-3">#}
+{#      {% block content %}{% endblock content %}#}
+{#    </div>#}
     <script src="{% static 'scripts/flowbite.min.js' %}"></script>
-  
+{#  #}
 {#    {% compress js %}#}
       <script src="{% static 'scripts/elements.js' %}"></script>
       {% block scripts %}{% endblock scripts %}

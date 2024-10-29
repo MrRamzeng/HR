@@ -20,8 +20,6 @@ function calcWinWidth() {
 function calcBookWidth(win, pageWidth) {
   bookContainer.style.width = `${win < pageWidth * 2 ? pageWidth : pageWidth * 2}px`;
 }
-// const coverData = data.pop()
-
 
 bookContainer.style.cssText = `height: ${containerHeight}!important; max-height: ${containerHeight}px;`
 
@@ -290,6 +288,10 @@ window.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
       document.getElementById('book').classList.add('visible');
   }, 100); // Задержка 100 мс
+})
+
+window.addEventListener('resize', () => {
+  calcBookWidth(calcWinWidth(), pageWidth)
 })
 
 function turnTo(blockId) {

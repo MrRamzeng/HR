@@ -5,8 +5,20 @@
 {% block title %}{{ book.book.name }}{% endblock title %}
 
 {% block extra %}
-  <link rel="preload" href="{% static 'css/fonts/inglobal.ttf' %}" as="font" type="font/ttf" crossorigin="anonymous">
-  <link rel="preload" href="{% static 'css/fonts/PlayfairDisplay-VariableFont_wght.ttf' %}" as="font" type="font/ttf" crossorigin="anonymous">
+  <link 
+    rel="preload"
+    href="{% static 'css/fonts/inglobal.ttf' %}"
+    as="font"
+    type="font/ttf"
+    crossorigin="anonymous"
+  >
+  <link
+    rel="preload"
+    href="{% static 'css/fonts/PlayfairDisplay-VariableFont_wght.ttf' %}"
+    as="font"
+    type="font/ttf"
+    crossorigin="anonymous"
+  >
   <link rel="stylesheet" href="{% static 'css/book_styles.css' %}">
 {% endblock extra %}
 
@@ -14,22 +26,27 @@
   <script src="{% static 'scripts/tags.js' %}"></script>
   <script src="{% static 'scripts/jquery-3.7.1.min.js' %}"></script>
   <script>
-    const data = [
-      {% for p in content %}
-        {
-          tagName: `{{ p.tag }}`,
-          id: `{{ p.id }}`,
-          classes: `{{ p.css }}`,
-          {% if p.src %}src: `{{ p.src.url }}`,{% endif %}
-          {% if p.style %}cssText: `{{ p.style }}`,{% endif %}
-          {% if p.text %}
-            {% if p.tag == 'img' %}
-              alt: `{{ p.text|safe }}`
-            {% else %}
-              innerHTML: `{{ p.text|safe }}`
-            {% endif %}
-          {% endif %}
-        },
+    const data = [{% for p in content %}{
+      tagName: `{{ p.tag }}`,
+      id: `{{ p.id }}`,
+      classes: `{{ p.css }}`,
+      {% if p.src %}
+        src: `{{ p.src.url }}`,
+      {% endif %}
+      {% if p.style %}
+        cssText: `{{ p.style }}`,
+      {% endif %}
+      {% if p.text %}
+        {% if p.tag == 'img' %}
+          alt: `{{ p.text|safe }}`
+        {% else %}
+          innerHTML: `{{ p.text|safe }}`
+        {% endif %}
+      {% endif %}
+    },{% endfor %}]
+    const footnotes = [
+      {% for footnote in footnotes %}
+        `{{ footnote.text|safe }}`,
       {% endfor %}
     ]
     const showCover = true
@@ -39,24 +56,40 @@
   </script>
 {% endblock prescript %}
 
-
 {% block content %}
-  <form id="read" method="post">
-    {% csrf_token %}
-  </form>
-  <img id="cover" src="{{ book.book.image.url }}">
-  <div id="book" class="book">
-    <div id="progress_block" class="absolute bg-gray-400 z-10 w-full rounded-full h-1.5 
-    dark:bg-gray-700" style="top: -10px">
-      <div id="progress" class="bg-blue-600 h-1.5 rounded-full dark:bg-blue-500" 
-           style="transition: width 1s ease"></div>
+  <div class="flex justify-center items-center w-full h-full relative">
+    <form id="read" class="hidden" method="post">{% csrf_token %}</form>
+    <form id="finish" class="hidden" method="post">{% csrf_token %}</form>
+    <img id="cover" src="{{ book.book.image.url }}" alt="cover">
+    <div id="book" class="book">
+      <div 
+        id="progress_block"
+        class="w-full bg-gray-200 rounded-full h-1.5 dark:bg-gray-700"
+      >
+        <div id="progress" class="bg-blue-600 h-1.5 rounded-full dark:bg-blue-500"></div>
+      </div>
+      <section id="end_book" class="page dark:page">
+        <div class="page-content">
+          <button 
+            class="
+              hover:text-gray-800 border border-gray-800 hover:bg-blue-600 font-medium rounded-lg
+              text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-gray-600 dark:hover:bg-blue-500 
+            "
+            id="{{ content|length|add:1 }}"
+            onclick="submit('was read')"
+          >
+            finish
+          </button>
+        </div>
+      </section>
     </div>
+    <div id="footnotes" class="hidden"></div>
   </div>
-
-  <div id="footnotes"></div>
 {% endblock content %}
 
 {% block scripts %}
+  <script>
+  </script>
   <script src="{% static 'scripts/page-flip.browser.js' %}"></script>
   <script src="{% static 'scripts/book/reading.js' %}" defer></script>
 {% endblock scripts %}

@@ -213,6 +213,11 @@ class Content(models.Model):
         return str(self.id)
 
 
+class Footnote(models.Model):
+    content = models.ForeignKey(Content, models.CASCADE)
+    text = models.TextField()
+
+
 class UserBooks(models.Model):
     user = models.ForeignKey(User, models.CASCADE)
     book = models.ForeignKey('Book', models.CASCADE)
@@ -231,21 +236,21 @@ class UserBooks(models.Model):
         verbose_name_plural = 'чтение'
         verbose_name = 'чтение'
 
-    def get_content_count(self):
-        return Content.objects.filter(type__book_id=self.book).count()
+    # def get_content_count(self):
+    #     return Content.objects.filter(type__book_id=self.book).count()
+    #
+    # def get_read_progress(self):
+    #     content = self.get_content_count()
+    #     if self.content_read + 1 == content:
+    #         return '100%'
+    #     return f'{(self.content_read + 1) * 100 // content}%'
+    #
+    # def has_content(self):
+    #     return Content.objects.filter(type__book_id=self.book_id).exists()
 
-    def get_read_progress(self):
-        content = self.get_content_count()
-        if self.content_read + 1 == content:
-            return '100%'
-        return f'{(self.content_read + 1) * 100 // content}%'
-
-    def has_content(self):
-        return Content.objects.filter(type__book_id=self.book_id).exists()
-
-    def get_print_progress(self):
-        count = self.book.paragraph_set.count()
-        return f'{self.typing_position * 100 // count}%'
+    # def get_print_progress(self):
+    #     count = self.book.paragraph_set.count()
+    #     return f'{self.typing_position * 100 // count}%'
 
     def __str__(self):
         return f'{self.book.name}'

@@ -5,7 +5,7 @@ from django.utils.safestring import mark_safe
 
 from .models import (
     Author, Book, Content, Country, BookSeries, Genre,
-    BookFile, UserBooks
+    BookFile, UserBooks, Footnote
 )
 import nested_admin
 from django.db import models
@@ -56,36 +56,44 @@ admin.site.register(Country)
 admin.site.register(UserBooks)
 admin.site.register(Genre)
 admin.site.register(BookSeries)
+admin.site.register(Footnote)
 
 
-class PageInline(admin.TabularInline):
+class PageInline(nested_admin.NestedTabularInline):
     model = BookFile
     extra = 1
 
 
-class ContentInline(TabularInlinePaginated):
+class FootnoteInline(nested_admin.NestedTabularInline):
+    model = Footnote
+    # exclude = ('id')
+    extra = 0
+
+
+class ContentInline(nested_admin.NestedTabularInline, TabularInlinePaginated):
     model = Content
+    inlines = [FootnoteInline]
+    template = 'admin/inlines/grappelli_tabular.html'
     exclude = ('id', 'text_len')
-    sortable_field_name = "tag"
     extra = 0
     per_page = 10
 
-    def get_queryset(self, request):
-        queryset = super().get_queryset(request)
-        queryset = queryset.annotate(
-            tag_hierarchy=Case(
-                When(tag='img', then=0),
-                When(tag='header', then=1),
-                When(tag='h1', then=2),
-                default=3,
-                output_field=IntegerField()
-            )
-        ).order_by('tag_hierarchy', 'id')
-        return queryset
+    # def get_queryset(self, request):
+    #     queryset = super().get_queryset(request)
+    #     queryset = queryset.annotate(
+    #         tag_hierarchy=Case(
+    #             When(tag='img', then=0),
+    #             When(tag='header', then=1),
+    #             When(tag='h1', then=2),
+    #             default=3,
+    #             output_field=IntegerField()
+    #         )
+    #     ).order_by('tag_hierarchy', 'id')
+    #     return queryset
 
 
 @admin.register(Book)
-class BookAdmin(ModelAdmin):
+class BookAdmin(nested_admin.NestedModelAdmin):
     inlines = [PageInline, ContentInline]
     readonly_fields = [img]
     fieldsets = [

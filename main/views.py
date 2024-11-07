@@ -1,25 +1,26 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
+from django.urls import reverse
 
 from .forms import UpdatePosition
-from .models import Book, Content, UserBooks, Genre, Author
+from .models import Book, Content, UserBooks, Genre, Author, Footnote
 
 
 def index(request):
     book_list = Book.objects.filter(debug=False).only(
         'id', 'name', 'authors', 'price', 'image'
     ).order_by('-id')[:10]
-    queryset = Content.objects.filter(
-        tag='p', book__debug=False  # , text_len__gte=200,
-        # text_len__lte=500
-    ).values(
-        'text', 'book', 'book__name', 'book__price',
-        'book__image'
-    ).order_by('?')
+    # queryset = Content.objects.filter(
+    #     tag='p', book__debug=False  # , text_len__gte=200,
+    #     # text_len__lte=500
+    # ).values(
+    #     'text', 'book', 'book__name', 'book__price',
+    #     'book__image'
+    # ).order_by('?')
 
     return render(
         request, 'book/index.html', {
-            'contents': list(queryset),
+            # 'contents': list(queryset),
             'books': book_list
         }
     )
@@ -93,18 +94,33 @@ def reading(request, book_id):
         return redirect('user_books')
 
     if request.method == 'POST':
-        user_book.content_read = request.POST.get('content')
-        user_book.save()
-        return JsonResponse(
-            {
-                'status': 'success',
-                'blocks': user_book.content_read,
-            }
-        )
+        data = request.POST.get('content')
+        if data == 'was read':
+            user_book.has_read = True
+            user_book.content = 1
+            user_book.save()
+
+            return JsonResponse(
+                {
+                    'status': 'redirect',
+                    'redirect': reverse('user_books')
+                }
+            )
+        else:
+            user_book.content_read = data
+            user_book.save()
+
+            return JsonResponse(
+                {
+                    'status': 'success',
+                    'blocks': user_book.content_read,
+                }
+            )
 
     content = Content.objects.filter(book_id=book_id).order_by(
         '-id'
     ).only('id', 'tag', 'style', 'text')
+    footnotes = Footnote.objects.filter(content__in=content)
     content_id = user_book.content_read
 
     return render(
@@ -114,6 +130,7 @@ def reading(request, book_id):
             'content': content,
             'content_count': content_id,
             'book': user_book,
+            'footnotes': footnotes
         }
     )
 

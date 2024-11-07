@@ -619,14 +619,13 @@
       const i = this.app.getPageCollection().getCurrentSpreadIndex(),
         s = this.app.getPageCollection().getSpreadIndexByPage(t);
       try {
-        s > i && (this.app.getPageCollection().setCurrentSpreadIndex(s - 1), this.flipNext(e)), s < i && (this.app.getPageCollection().setCurrentSpreadIndex(s + 1), this.flipPrev(e))
+        s > i && (this.app.getPageCollection().setCurrentSpreadIndex(s - 1), this.flipNext(e))
+        s < i && (this.app.getPageCollection().setCurrentSpreadIndex(s + 1), this.flipPrev(e))
       } catch (t) {
       }
     }
 
     flipNext(t) {
-      // let pos = document.getElementById('id_position')
-      // pos.value = parseInt(pos.value) + 1
       this.flip({
         x: this.render.getRect().left + 2 * this.render.getRect().pageWidth,
         y: "top" === t ? 1 : this.render.getRect().height - 2

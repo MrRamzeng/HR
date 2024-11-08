@@ -40,9 +40,8 @@
             aria-controls="logo_sidebar"
             type="button"
             class="
-              inline-flex items-center p-3 text-sm text-gray-500 rounded-lg sm:hidden
-              hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 
-              dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600
+              inline-flex items-center text-sm text-gray-500 rounded-lg hover:bg-gray-100 
+              focus:outline-none dark:text-gray-400 dark:hover:bg-gray-700
             "
           >
             <span class="sr-only">Open sidebar</span>
@@ -110,7 +109,8 @@
     id="logo_sidebar"
     class="
       fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white 
-      border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700
+      border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700
+      {% if request.resolver_match.url_name != 'reading' %}sm:translate-x-0{% endif %}
     "
     aria-label="Sidebar"
   >
@@ -306,7 +306,8 @@
     </div>
   </aside>
   
-  <div id="window" class="p-4 sm:ml-64 mt-14">
+  <div id="window" class="p-4 
+{% if request.resolver_match.url_name != 'reading' %}sm:ml-64{% endif %} mt-14">
     {% block content %}{% endblock content %}
   </div>
   <script>

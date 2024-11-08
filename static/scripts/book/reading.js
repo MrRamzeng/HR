@@ -13,7 +13,7 @@ const pageWidth = bookContainer.offsetWidth
 
 function calcBookWidth() {
   win.style.width = `${document.body.offsetWidth - parseInt(winStyles.marginLeft)}px`
-  bookContainer.style.width = `${win.offsetWidth < pageWidth * 2 ? pageWidth : pageWidth * 2}px`;
+  bookContainer.style.width = `${win.offsetWidth - parseInt(winStyles.padding) * 2 < (pageWidth + 5) * 2 ? pageWidth : pageWidth * 2}px`;
 }
 
 const end = document.getElementById('end_book')
@@ -280,25 +280,25 @@ let pageFlip
 book.renderPages()
 
 window.addEventListener('DOMContentLoaded', () => {
-    pageFlip = new St.PageFlip(document.getElementById('book'), {
-        width: bookContainer.offsetWidth,
-        height: bookContainer.offsetHeight,
-        drawShadow: true,
-        autoSize: true,
-        mobileScrollSupport: false,
-        showCover: false,
-        startPage: setStartPage(book.currentBlockId),
-    });
-    PROGRESS.style.width = `${(book.currentBlockId / data.length) * 100}%`;
-    pageFlip.loadFromHTML(document.querySelectorAll('.page'))
-    calcBookWidth()
-    setTimeout(() => document.getElementById('book').classList.add('visible'), 1);
+  document.getElementById('cover').style.opacity = '0'
+  pageFlip = new St.PageFlip(document.getElementById('book'), {
+    width: bookContainer.offsetWidth,
+    height: bookContainer.offsetHeight,
+    drawShadow: true,
+    autoSize: true,
+    mobileScrollSupport: false,
+    showCover: false,
+    startPage: setStartPage(book.currentBlockId),
+  });
+  PROGRESS.style.width = `${(book.currentBlockId / data.length) * 100}%`;
+  pageFlip.loadFromHTML(document.querySelectorAll('.page'))
+  calcBookWidth()
+  setTimeout(() => document.getElementById('book').classList.add('visible'), 1);
 });
 
 // Троттлинг для `resize` события
 let resizeTimeout;
 window.addEventListener('resize', () => {
-  console.log('resize')
     clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(calcBookWidth, 100);
 });

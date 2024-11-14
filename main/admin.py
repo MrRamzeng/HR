@@ -5,7 +5,7 @@ from django.utils.safestring import mark_safe
 
 from .models import (
     Author, Book, Content, Country, BookSeries, Genre,
-    BookFile, UserBooks, Footnote
+    BookFile, UserBooks, Footnote, Chapter
 )
 import nested_admin
 from django.db import models
@@ -56,7 +56,6 @@ admin.site.register(Country)
 admin.site.register(UserBooks)
 admin.site.register(Genre)
 admin.site.register(BookSeries)
-admin.site.register(Footnote)
 
 
 class PageInline(nested_admin.NestedTabularInline):
@@ -70,7 +69,7 @@ class FootnoteInline(nested_admin.NestedTabularInline):
     extra = 0
 
 
-class ContentInline(nested_admin.NestedTabularInline, TabularInlinePaginated):
+class ContentInline(nested_admin.NestedTabularInline, TabularInlinePaginated): #
     model = Content
     inlines = [FootnoteInline]
     template = 'admin/inlines/grappelli_tabular.html'
@@ -92,9 +91,23 @@ class ContentInline(nested_admin.NestedTabularInline, TabularInlinePaginated):
     #     return queryset
 
 
+
+class ChapterInline(nested_admin.NestedTabularInline):
+    model = Chapter
+    # inlines = [ContentInline]
+    readonly_fields = ('chapter_link',)  # Поле только для чтения
+
+    def chapter_link(self, obj):
+        # Создаем ссылку на страницу автора
+        url = f'/admin/main/chapter/{obj.id}/change/'  # Ссылка на
+        # страницу автора в админке
+        return mark_safe(f'<a href="{url}">{obj.name}</a>')
+    extra = 0
+    chapter_link.allow_tags = True
+
 @admin.register(Book)
 class BookAdmin(nested_admin.NestedModelAdmin):
-    inlines = [PageInline, ContentInline]
+    inlines = [PageInline, ChapterInline]
     readonly_fields = [img]
     fieldsets = [
         ('О книге', {
@@ -115,3 +128,8 @@ class BookAdmin(nested_admin.NestedModelAdmin):
         #     'all': ('css/custom_admin.css',)
         # }
         js = ['scripts/admin_scroll.js']
+
+
+@admin.register(Chapter)
+class Chapter(nested_admin.NestedModelAdmin):
+    inlines = [ContentInline]

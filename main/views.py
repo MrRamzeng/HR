@@ -1,9 +1,11 @@
+from importlib.resources import contents
+
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from .forms import UpdatePosition
-from .models import Book, Content, UserBooks, Genre, Author, Footnote
+from .models import Book, Chapter, Content, UserBooks, Genre, Author, Footnote
 
 
 def index(request):
@@ -116,18 +118,43 @@ def reading(request, book_id):
                     'blocks': user_book.content_read,
                 }
             )
+    chapters = Chapter.objects.filter(book_id=book_id)
+    data = []
+    footnotes = []
 
-    content = Content.objects.filter(book_id=book_id).order_by(
-        '-id'
-    ).only('id', 'tag', 'style', 'text')
-    footnotes = Footnote.objects.filter(content__in=content)
+    for chapter in chapters:
+        data.append(
+            {
+                'id': chapter.id,
+                'text': chapter.name,
+                'tag': 'header',
+                'css': 'chapter-header dark:chapter-header'
+            }
+        )
+        contents = Content.objects.filter(chapter_id=chapter.id).only(
+            'id', 'tag', 'style', 'text'
+        )
+
+        for content in contents:
+            data.append({
+                'tag': content.tag,
+                'id': content.id,
+                'css': content.css,
+                'style': content.style,
+                'text': content.text
+            })
+            related_footnotes = Footnote.objects.filter(content_id=content.id)
+
+            if related_footnotes:
+                for footnote in related_footnotes:
+                    footnotes.append(footnote)
     content_id = user_book.content_read
 
     return render(
         request,
         'book/reading.html',
         {
-            'content': content,
+            'data': list(reversed(data)),
             'content_count': content_id,
             'book': user_book,
             'footnotes': footnotes

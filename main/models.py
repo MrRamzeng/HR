@@ -5,8 +5,6 @@ from image_cropping import ImageRatioField
 from user.models import User
 from HandRead.storage import OverwriteStorage
 
-from main.docx_parser import extract_word_data
-
 def file_path(instance, file):
     return (
         f'{instance._meta.verbose_name_plural}/{instance}/{file}'
@@ -148,10 +146,10 @@ class BookFile(models.Model):
     )
 
     def extract_content(self):
+        from main.docx_parser import extract_word_data
         file_path = self.file.path
         if file_path.endswith('.docx'):
-            # get_word_content(file_path)
-            return extract_word_data(file_path)
+            extract_word_data(file_path, self.book_id)
         return
 
     class Meta:
@@ -159,16 +157,13 @@ class BookFile(models.Model):
         verbose_name = 'Файлы книги'
 
 
-# class Chapter(models.Model):
-#     book = models.CharField(max_length=10)
-#     name = models.CharField(max_length=10)
-# ...
-# ...
-# ...
+class Chapter(models.Model):
+    book = models.ForeignKey('Book', models.CASCADE)
+    name = models.CharField(max_length=100)
 
 
 class Content(models.Model):
-    book = models.ForeignKey('Book', models.CASCADE)
+    chapter = models.ForeignKey('Chapter', models.CASCADE)
     P = 'p'
     DIV = 'div'
     H1 = 'h1'
@@ -222,9 +217,7 @@ class UserBooks(models.Model):
     user = models.ForeignKey(User, models.CASCADE)
     book = models.ForeignKey('Book', models.CASCADE)
     # reading
-    content_read = models.PositiveIntegerField(
-        default=1
-    )
+    content_read = models.PositiveIntegerField(default=1)
     has_read = models.BooleanField(default=False)
     # typing
     typing_position = models.PositiveIntegerField(
@@ -254,8 +247,3 @@ class UserBooks(models.Model):
 
     def __str__(self):
         return f'{self.book.name}'
-
-
-# Сигнал для обновления содержимого в Content при изменении файла
-
-

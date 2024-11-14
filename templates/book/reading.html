@@ -26,29 +26,29 @@
   <script src="{% static 'scripts/tags.js' %}"></script>
   <script src="{% static 'scripts/jquery-3.7.1.min.js' %}"></script>
   <script>
-    const data = [{% for p in content %}{
-      tagName: `{{ p.tag }}`,
-      id: `{{ p.id }}`,
-      classes: `{{ p.css }}`,
-      {% if p.src %}
-        src: `{{ p.src.url }}`,
-      {% endif %}
-      {% if p.style %}
-        cssText: `{{ p.style }}`,
-      {% endif %}
-      {% if p.text %}
-        {% if p.tag == 'img' %}
-          alt: `{{ p.text|safe }}`
-        {% else %}
-          innerHTML: `{{ p.text|safe }}`
-        {% endif %}
-      {% endif %}
-    },{% endfor %}]
-    const footnotes = [
-      {% for footnote in footnotes %}
-        `{{ footnote.text|safe }}`,
+    const data = [
+      {% for p in data %}
+        {
+          tagName: `{{ p.tag }}`,
+          id: `{{ p.id }}`,
+          classes: `{{ p.css }}`,
+          {% if p.src %}
+            src: `{{ p.src.url }}`,
+          {% endif %}
+          {% if p.style %}
+            cssText: `{{ p.style }}`,
+          {% endif %}
+          {% if p.text %}
+            {% if p.tag == 'img' %}
+              alt: `{{ p.text|safe }}`
+            {% else %}
+              innerHTML: `{{ p.text|safe }}`
+            {% endif %}
+          {% endif %}
+        },
       {% endfor %}
     ]
+    const footnotes = [{% for footnote in footnotes %}`{{ footnote.text|safe }}`,{% endfor %}]
     const showCover = true
     const BOOK_NAME = '{{ book.book.name }}'
     const AUTHORS = '{{ book.book.get_authors }}'
@@ -83,13 +83,12 @@
         </div>
       </section>
     </div>
+    
     <div id="footnotes"></div>
   </div>
 {% endblock content %}
 
 {% block scripts %}
-  <script>
-  </script>
   <script src="{% static 'scripts/page-flip.browser.js' %}"></script>
   <script src="{% static 'scripts/book/reading.js' %}" defer></script>
 {% endblock scripts %}

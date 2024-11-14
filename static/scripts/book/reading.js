@@ -139,7 +139,7 @@ class Book {
     })
     const {tagName, id, classes, cssText, innerHTML} = this.blocks.pop()
     const headerTag = this.createTag({tagName, id, classes, cssText, innerHTML})
-    this.renderChapterToSidebar(id, innerHTML)
+    this.renderChapterToSidebar(page.id.match(/\d+/)[0], innerHTML)
     this.currentBlock = this.blocks[this.blocks.length - 1]
     if (this.currentBlock.tagName === 'signature') {
       const {tagName, id, cssText, innerHTML} = this.blocks.pop()
@@ -151,7 +151,7 @@ class Book {
     page.appendChild(gridTag)
   }
 
-  renderChapterToSidebar(blockId, title) {
+  renderChapterToSidebar(pageId, title) {
     this.chapterCounter++
     const chapterTag = this.createTag({
       tagName: 'li',
@@ -163,8 +163,7 @@ class Book {
         </svg>
       </button>
       <ul id="chapter_${this.chapterCounter}" class="hidden py-2 space-y-2">
-        <li class="p-3 text-gray-900 rounded-lg dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700
-        group border-b dark:border-gray-700" onclick="turnTo(${blockId})">
+        <li class="p-3 text-gray-900 rounded-lg dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 group border-b dark:border-gray-700" onclick="pageFlip.flip(${pageId})">
           ${title}
         </li>
       </ul>

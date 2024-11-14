@@ -12,7 +12,7 @@ SECRET_KEY = env.get('KEY')
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['handread.pythonanywhere.com', 'localhost']
+ALLOWED_HOSTS = ['*']
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
